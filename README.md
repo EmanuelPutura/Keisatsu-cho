@@ -2,6 +2,15 @@
 Software Engineering Course Team Project - Keisatsu-cho Team
 
 ## Team
+### Members:
+<ul>
+    <li><a href="https://github.com/EmanuelPutura">Emanuel-Vasile Puțura</a></li>
+    <li><a href="https://github.com/HoriaRaduRusu">Horia-Radu Rusu</a></li>
+    <li><a href="https://github.com/nacho-vlad">Florin-Vlad Sabău</a></li>
+    <li><a href="https://github.com/916-Pop-Felix">Felix-Cristian Pop</a></li>
+    <li><a href="https://github.com/PredaBoss">Andrei-Constantin Preda</a></li>
+</ul>
+
 ### Front-end
 - technology: ```React``` + ```Typescript```
 - devs: Radu
