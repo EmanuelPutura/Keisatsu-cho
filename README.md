@@ -36,26 +36,26 @@ The process of managing information required for organising a ```conference``` i
 The application will support three types of ```users (i.e., chair, reviewer and author).``` It will follow a server-client arhitecture, providing a database management system for data persistency.
 
 ### 2.2 Functional requirements
-#### 2.2.1 General Requirements:
+#### 2.2.1 General Requirements
 - sign up/sign in
 - upload personal information
 - assign papers to reviewers automatically
 
-#### 2.2.2 Chair:
+#### 2.2.2 Chair
 - submit basic conference information, such as conference name, URL, subtitles, main organiser's contact information
 - set and modify the deadline for paper submission, paper review, acceptance notification, and the uploading of accepted paper (camera ready-copies)
 - set up topics of interest
 - make the final decision on accepting or rejecting a specific paper
 - assign an accepted paper to a specific conference session
 
-#### 2.2.3 Reviewer:
+#### 2.2.3 Reviewer
 - specify the topics that falls into the area of expertise of the reviewer
 - bid for papers that they are interested in reviewing
 - indicate any conflict of interest
 - submit an evaluation of a paper that was assigned to the reviewer
 - submit a special comment that can be read by other reviewers
  
-#### 2.2.4 Author:
+#### 2.2.4 Author
 - submit an abstract of a paper in addition to the paper title, authors, their emails, addresses, keywords, and the topic of interest that applies to their paper
 - upload the full paper in a specific format (e.g. PDF file or Word file)
 - upload the camera-ready copy of an accepted paper
