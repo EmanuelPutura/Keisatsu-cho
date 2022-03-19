@@ -14,7 +14,7 @@ Software Engineering Course Team Project - Keisatsu-cho Team
 - devs: Florin, Andrei
 
 ### Database:
-- technology: ```PostgreSQL```
+- technology: ```PostgreSQL``` + ```Ktorm (ORM)?```
 - devs: Andrei, Florin
 
 <hr/>
