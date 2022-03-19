@@ -63,3 +63,7 @@ The application will support three types of ```users (i.e., chair, reviewer and 
 
 ### Full Stack:
 - devs: Florin, Andrei
+
+### Database:
+- technology: ```PostgreSQL```
+- devs: Andrei, Florin
