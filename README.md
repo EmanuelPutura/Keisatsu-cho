@@ -1,6 +1,24 @@
 # Keisatsu-cho
 Software Engineering Course Team Project - Keisatsu-cho Team
 
+## Team
+### Front-end
+- technology: ```React``` + ```Typescript```
+- devs: Radu
+
+### Backend
+- technology: ```Kotlin``` + ```Spring Boot```
+- devs: Emanuel, Felix
+
+### Full Stack:
+- devs: Florin, Andrei
+
+### Database:
+- technology: ```PostgreSQL```
+- devs: Andrei, Florin
+
+<hr/>
+
 ## 1. Introduction
 The process of managing information required for organising a ```conference``` is a time-consuming activity. In order to produce and manage this information, using a dedicated software application is by far the best solution.
 
@@ -51,19 +69,3 @@ The application will support three types of ```users (i.e., chair, reviewer and 
 ### 2.4 Constraints
 - emails should be validated to exist and be unique
 - usernames should be validated to be unique
-
-## 3. Team
-### Front-end
-- technology: ```React``` + ```Typescript```
-- devs: Radu
-
-### Backend
-- technology: ```Kotlin``` + ```Spring Boot```
-- devs: Emanuel, Felix
-
-### Full Stack:
-- devs: Florin, Andrei
-
-### Database:
-- technology: ```PostgreSQL```
-- devs: Andrei, Florin
