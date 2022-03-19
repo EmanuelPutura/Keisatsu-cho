@@ -2,7 +2,7 @@
 Software Engineering Course Team Project - Keisatsu-cho Team
 
 ## Team
-### Members:
+### Members
 <ul>
     <li><a href="https://github.com/EmanuelPutura">Emanuel-Vasile Puțura</a></li>
     <li><a href="https://github.com/HoriaRaduRusu">Horia-Radu Rusu</a></li>
@@ -11,18 +11,18 @@ Software Engineering Course Team Project - Keisatsu-cho Team
     <li><a href="https://github.com/PredaBoss">Andrei-Constantin Preda</a></li>
 </ul>
 
-### Front-end
+### Front-end Devs
 - technology: ```React``` + ```Typescript```
 - devs: Radu
 
-### Backend
+### Backend Devs
 - technology: ```Kotlin``` + ```Spring Boot```
 - devs: Emanuel, Felix
 
-### Full Stack:
+### Full Stack Devs
 - devs: Florin, Andrei
 
-### Database:
+### Database Devs
 - technology: ```PostgreSQL``` + ```Ktorm (ORM)?```
 - devs: Andrei, Florin
 
