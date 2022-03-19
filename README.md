@@ -11,18 +11,18 @@ Software Engineering Course Team Project - ```Keisatsu-cho Team```
     <li><a href="https://github.com/PredaBoss">Andrei-Constantin Preda</a></li>
 </ul>
 
-### Front-end Devs
+### Front-end
 - technology: ```React``` + ```Typescript```
 - devs: Radu
 
-### Backend Devs
+### Backend
 - technology: ```Kotlin``` + ```Spring Boot```
 - devs: Emanuel, Felix
 
-### Full Stack Devs
+### Full Stack
 - devs: Florin, Andrei
 
-### Database Devs
+### Database
 - technology: ```PostgreSQL``` + ```Ktorm (ORM)?```
 - devs: Andrei, Florin
 
