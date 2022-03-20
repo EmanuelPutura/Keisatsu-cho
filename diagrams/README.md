@@ -17,3 +17,8 @@
 
 <hr/>
 
+## Flowchart
+
+<p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/flowchart.jpg" height="500"/> </p>
+
+<hr/>
