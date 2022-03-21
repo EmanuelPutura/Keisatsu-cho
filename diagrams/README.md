@@ -17,13 +17,13 @@
 
 <hr/>
 
-## Flowchart
+## Flowchart Diagram
 
 <p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/flowchart.jpg" height="500"/> </p>
 
 <hr/>
 
-## Flowchart
+## Arhitecture Diagram
 
 <p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/Architecture_diagram.drawio.png" height="600"/> </p>
 
