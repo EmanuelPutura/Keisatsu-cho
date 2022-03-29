@@ -36,3 +36,31 @@
     transform: rotate(360deg);
   }
 }
+
+.log-in {
+  background: darkblue;
+  height: 100vh;
+}
+
+.form-container{
+  background: white;
+  width: 50%;
+  min-width: 300px;
+  margin: auto;
+  position: relative;
+  top: 20%;
+  height: 40%;
+  display: flex;
+  justify-content: center;
+  border-radius: 25px;
+}
+
+#main-title{
+  margin: 0 auto;
+  position: relative;
+  top: 10%;
+  width: 50%;
+  align-content: center;
+  color: white;
+  text-align: center;
+}
