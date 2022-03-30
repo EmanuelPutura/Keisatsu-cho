@@ -1,7 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
-import './logIn/LogInForm'
-import LogInForm from "./logIn/LogInForm";
+import './enterPage/LogInForm'
+import LogInForm from "./enterPage/LogInForm";
+import SignUpForm  from "./enterPage/SignUpForm";
 
 function App() {
   // return (
@@ -23,10 +24,15 @@ function App() {
   //   </div>
   // );
   return(
-      <main className="log-in">
+      <main>
           <h1 id="main-title">Conference management</h1>
-          <div className="form-container">
-              <LogInForm />
+          <div className="form_container">
+              <div className="log-form_container">
+                  <SignUpForm />
+              </div>
+              <div className="log-form_container">
+                  <LogInForm />
+              </div>
           </div>
       </main>
   )
