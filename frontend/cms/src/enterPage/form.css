@@ -1,0 +1,36 @@
+.form{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    width: 80%;
+}
+
+.form input{
+    box-sizing: border-box;
+}
+
+.form>label, .form input[type=submit]{
+    margin: 5px 0;
+}
+
+.form input:not([type=radio]){
+    width: 100%;
+}
+
+.form input[type=submit]{
+    border-radius: 3px;
+    border-width: 0;
+    background-color: #0CE4F8;
+    box-shadow: 0 1px gray;
+    padding: 5px 0;
+}
+
+.form h2{
+    text-align: center;
+}
+
+.type_container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
