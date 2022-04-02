@@ -5,18 +5,14 @@ function SignUpForm(){
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [user_name, setUser_name] = useState("");
-    const [password_repeat, setPassword_repeat] = useState("");
-    const [user_type, setUser_type] = useState("");
-
-
-    function handleSubmit(event) {
-        alert('Submitted ' + email + ' ' + user_name + ' ' + password + ' ' + user_type);
-        event.preventDefault();
-    }
+    const [userName, setUserName] = useState("");
+    const [passwordRepeat, setPasswordRepeat] = useState("");
+    const [userType, setUserType] = useState("");
 
     return (
-        <form onSubmit={handleSubmit} className="form">
+        // <form onSubmit={handleSubmit} className="form">
+        // TODO: do not give absolute url?
+        <form action="http://localhost:8080/accounts/sign-up" method="POST" className="form">
             <h2>SIGN UP</h2>
             <label>E-mail:
                 <br/>
@@ -26,26 +22,26 @@ function SignUpForm(){
             </label>
             <label>Name:
                 <br/>
-                <input name="user_name" type="text"
-                       value={user_name}
-                       onChange={e => setUser_name(e.target.value)}/>
+                <input name="userName" type="text"
+                       value={userName}
+                       onChange={e => setUserName(e.target.value)}/>
             </label>
             <label>User Type:</label>
             <div className="type_container">
                 <label>
-                    <input value="chair" name="user_type" type="radio"
-                           checked={user_type === "chair"}
-                           onChange={e => setUser_type(e.target.value)}/> Chair
+                    <input value="chair" name="userType" type="radio"
+                           checked={userType === "chair"}
+                           onChange={e => setUserType(e.target.value)}/> Chair
                 </label>
                 <label>
-                    <input value="reviewer" name="user_type" type="radio"
-                           checked={user_type === "reviewer"}
-                           onChange={e => setUser_type(e.target.value)}/> Reviewer
+                    <input value="reviewer" name="userType" type="radio"
+                           checked={userType === "reviewer"}
+                           onChange={e => setUserType(e.target.value)}/> Reviewer
                 </label>
                 <label>
-                    <input value="author" name="user_type" type="radio"
-                           checked={user_type === "author"}
-                           onChange={e => setUser_type(e.target.value)}/> Author
+                    <input value="author" name="userType" type="radio"
+                           checked={userType === "author"}
+                           onChange={e => setUserType(e.target.value)}/> Author
                 </label>
             </div>
             <label>Password:
@@ -56,11 +52,14 @@ function SignUpForm(){
             </label>
             <label>Confirm password:
                 <br/>
-                <input name="password_repeat" type="password"
-                       value={password_repeat}
-                       onChange={e => setPassword_repeat(e.target.value)}/>
+                <input name="passwordRepeat" type="password"
+                       value={passwordRepeat}
+                       onChange={e => setPasswordRepeat(e.target.value)}/>
             </label>
-            <input type="submit" value="Sign up"/>
+
+            <div>
+                <button type="submit">Sign up</button>
+            </div>
         </form>
     )
 }
