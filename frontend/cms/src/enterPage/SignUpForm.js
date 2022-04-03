@@ -8,10 +8,12 @@ function SignUpForm(){
     const [user_name, setUser_name] = useState("");
     const [password_repeat, setPassword_repeat] = useState("");
     const [user_type, setUser_type] = useState("");
+    const [birth_date, setBirth_date] = useState("");
+    const [address, setAddress] = useState("");
 
 
     function handleSubmit(event) {
-        alert('Submitted ' + email + ' ' + user_name + ' ' + password + ' ' + user_type);
+        alert('Submitted ' + email + ' ' + user_name + ' ' + password + ' ' + user_type + ' ' + birth_date + ' ' + address);
         event.preventDefault();
     }
 
@@ -29,6 +31,20 @@ function SignUpForm(){
                 <input name="user_name" type="text"
                        value={user_name}
                        onChange={e => setUser_name(e.target.value)}/>
+            </label>
+            <label>
+                Birthday:
+                <br/>
+                <input name="birth_date" type="date"
+                       value={birth_date}
+                       onChange={e => setBirth_date(e.target.value)}/>
+            </label>
+            <label>
+                Home Address:
+                <br/>
+                <input name="address" type="text"
+                       value={address}
+                       onChange={e => setAddress(e.target.value)} />
             </label>
             <label>User Type:</label>
             <div className="type_container">
@@ -54,7 +70,7 @@ function SignUpForm(){
                        value={password}
                        onChange={e => setPassword(e.target.value)}/>
             </label>
-            <label>Confirm password:
+            <label>Confirm Password:
                 <br/>
                 <input name="password_repeat" type="password"
                        value={password_repeat}
