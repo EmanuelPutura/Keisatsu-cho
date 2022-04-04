@@ -6,13 +6,9 @@ function LogInForm(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    function handleSubmit(event) {
-        alert('Submitted ' + email + " " + password);
-        event.preventDefault();
-    }
-
     return (
-        <form onSubmit={handleSubmit} className="form">
+        // TODO: do not give absolute url?
+        <form action="http://localhost:8080/accounts/login" method="POST" className="form">
             <h2>LOG IN</h2>
             <label>E-mail:
                 <br/>
@@ -26,7 +22,10 @@ function LogInForm(){
                        value={password}
                        onChange={e => setPassword(e.target.value)}/>
             </label>
-            <input type="submit" value="Log in"/>
+
+            <div>
+                <input type="submit" value="Log in" />
+            </div>
         </form>
     )
 }
