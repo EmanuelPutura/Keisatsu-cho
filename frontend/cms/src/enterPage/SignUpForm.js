@@ -6,16 +6,16 @@ function SignUpForm(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
-    const [user_fname, setUser_fname] = useState("");
-    const [user_lname, setUser_lname] = useState("");
-    const [password_repeat, setPassword_repeat] = useState("");
-    const [user_type, setUser_type] = useState("");
-    const [birth_date, setBirth_date] = useState("");
+    const [userFName, setUserFName] = useState("");
+    const [userLName, setUserLName] = useState("");
+    const [passwordRepeat, setPasswordRepeat] = useState("");
+    const [userType, setUserType] = useState("");
+    const [birthDate, setBirthDate] = useState("");
     const [address, setAddress] = useState("");
 
 
     function handleSubmit(event) {
-        alert('Submitted ' + email + ' ' + username + ' ' + user_fname + ' ' + user_lname + ' ' + password + ' ' + user_type + ' ' + birth_date + ' ' + address);
+        alert('Submitted ' + email + ' ' + username + ' ' + userFName + ' ' + userLName + ' ' + password + ' ' + userType + ' ' + birthDate + ' ' + address);
         event.preventDefault();
     }
 
@@ -40,22 +40,22 @@ function SignUpForm(){
                 <label>First Name:
                     <br/>
                     <input name="user_fname" type="text"
-                           value={user_fname}
-                           onChange={e => setUser_fname(e.target.value)}/>
+                           value={userFName}
+                           onChange={e => setUserFName(e.target.value)}/>
                 </label>
                 <label>Last Name:
                     <br/>
                     <input name="user_lname" type="text"
-                           value={user_lname}
-                           onChange={e => setUser_lname(e.target.value)}/>
+                           value={userLName}
+                           onChange={e => setUserLName(e.target.value)}/>
                 </label>
                 </div>
             <label>
                 Birthday:
                 <br/>
                 <input name="birth_date" type="date"
-                       value={birth_date}
-                       onChange={e => setBirth_date(e.target.value)}/>
+                       value={birthDate}
+                       onChange={e => setBirthDate(e.target.value)}/>
             </label>
             <label>
                 Home Address:
