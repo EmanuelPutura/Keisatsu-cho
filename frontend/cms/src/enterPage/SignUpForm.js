@@ -5,9 +5,19 @@ function SignUpForm(){
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [userName, setUserName] = useState("");
-    const [passwordRepeat, setPasswordRepeat] = useState("");
-    const [userType, setUserType] = useState("");
+    const [username, setUsername] = useState("");
+    const [user_fname, setUser_fname] = useState("");
+    const [user_lname, setUser_lname] = useState("");
+    const [password_repeat, setPassword_repeat] = useState("");
+    const [user_type, setUser_type] = useState("");
+    const [birth_date, setBirth_date] = useState("");
+    const [address, setAddress] = useState("");
+
+
+    function handleSubmit(event) {
+        alert('Submitted ' + email + ' ' + username + ' ' + user_fname + ' ' + user_lname + ' ' + password + ' ' + user_type + ' ' + birth_date + ' ' + address);
+        event.preventDefault();
+    }
 
     return (
         // <form onSubmit={handleSubmit} className="form">
@@ -20,14 +30,42 @@ function SignUpForm(){
                        value={email}
                        onChange={e => setEmail(e.target.value)}/>
             </label>
-            <label>Name:
+            <label>Username:
                 <br/>
-                <input name="userName" type="text"
-                       value={userName}
-                       onChange={e => setUserName(e.target.value)}/>
+                <input name="username" type="text"
+                       value={username}
+                       onChange={e => setUsername(e.target.value)}/>
+            </label>
+            <div className="input_container">
+                <label>First Name:
+                    <br/>
+                    <input name="user_fname" type="text"
+                           value={user_fname}
+                           onChange={e => setUser_fname(e.target.value)}/>
+                </label>
+                <label>Last Name:
+                    <br/>
+                    <input name="user_lname" type="text"
+                           value={user_lname}
+                           onChange={e => setUser_lname(e.target.value)}/>
+                </label>
+                </div>
+            <label>
+                Birthday:
+                <br/>
+                <input name="birth_date" type="date"
+                       value={birth_date}
+                       onChange={e => setBirth_date(e.target.value)}/>
+            </label>
+            <label>
+                Home Address:
+                <br/>
+                <input name="address" type="text"
+                       value={address}
+                       onChange={e => setAddress(e.target.value)} />
             </label>
             <label>User Type:</label>
-            <div className="type_container">
+            <div className="input_container">
                 <label>
                     <input value="chair" name="userType" type="radio"
                            checked={userType === "chair"}
@@ -44,22 +82,21 @@ function SignUpForm(){
                            onChange={e => setUserType(e.target.value)}/> Author
                 </label>
             </div>
-            <label>Password:
+            <div className="input_container">
+                <label>Password:
                 <br/>
                 <input name="password" type="password"
                        value={password}
                        onChange={e => setPassword(e.target.value)}/>
             </label>
-            <label>Confirm password:
+            <label>Confirm Password:
                 <br/>
                 <input name="passwordRepeat" type="password"
                        value={passwordRepeat}
                        onChange={e => setPasswordRepeat(e.target.value)}/>
             </label>
-
-            <div>
-                <button type="submit">Sign up</button>
             </div>
+            <input type="submit" value="Sign up"/>
         </form>
     )
 }
