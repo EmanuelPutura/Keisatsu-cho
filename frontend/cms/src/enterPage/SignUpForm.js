@@ -20,7 +20,9 @@ function SignUpForm(){
     }
 
     return (
-        <form onSubmit={handleSubmit} className="form">
+        // <form onSubmit={handleSubmit} className="form">
+        // TODO: do not give absolute url?
+        <form action="http://localhost:8080/accounts/sign-up" method="POST" className="form">
             <h2>SIGN UP</h2>
             <label>E-mail:
                 <br/>
@@ -65,19 +67,19 @@ function SignUpForm(){
             <label>User Type:</label>
             <div className="input_container">
                 <label>
-                    <input value="chair" name="user_type" type="radio"
-                           checked={user_type === "chair"}
-                           onChange={e => setUser_type(e.target.value)}/> Chair
+                    <input value="chair" name="userType" type="radio"
+                           checked={userType === "chair"}
+                           onChange={e => setUserType(e.target.value)}/> Chair
                 </label>
                 <label>
-                    <input value="reviewer" name="user_type" type="radio"
-                           checked={user_type === "reviewer"}
-                           onChange={e => setUser_type(e.target.value)}/> Reviewer
+                    <input value="reviewer" name="userType" type="radio"
+                           checked={userType === "reviewer"}
+                           onChange={e => setUserType(e.target.value)}/> Reviewer
                 </label>
                 <label>
-                    <input value="author" name="user_type" type="radio"
-                           checked={user_type === "author"}
-                           onChange={e => setUser_type(e.target.value)}/> Author
+                    <input value="author" name="userType" type="radio"
+                           checked={userType === "author"}
+                           onChange={e => setUserType(e.target.value)}/> Author
                 </label>
             </div>
             <div className="input_container">
@@ -89,9 +91,9 @@ function SignUpForm(){
             </label>
             <label>Confirm Password:
                 <br/>
-                <input name="password_repeat" type="password"
-                       value={password_repeat}
-                       onChange={e => setPassword_repeat(e.target.value)}/>
+                <input name="passwordRepeat" type="password"
+                       value={passwordRepeat}
+                       onChange={e => setPasswordRepeat(e.target.value)}/>
             </label>
             </div>
             <input type="submit" value="Sign up"/>
