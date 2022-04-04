@@ -24,7 +24,7 @@ function LogInForm(){
             </label>
 
             <div>
-                <button type="submit">Log in</button>
+                <input type="submit" value="Log in" />
             </div>
         </form>
     )
