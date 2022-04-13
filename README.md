@@ -29,11 +29,11 @@ Software Engineering Course Team Project - ```Keisatsu-cho Team```
 <hr/>
 
 ## 1. Introduction
-The process of managing information required for organising a ```conference``` is a time-consuming activity. In order to produce and manage this information, using a dedicated software application is by far the best solution.
+The process of managing information required for organizing a ```conference``` is a time-consuming activity. In order to produce and manage this information, using a dedicated software application is by far the best solution.
 
 ## 2. Proposed system
 ### 2.1 Overview
-The application will support three types of ```users (i.e., chair, reviewer and author).``` It will follow a server-client arhitecture, providing a database management system for data persistency.
+The application will support three types of ```users (i.e., chair, reviewer and author).``` It will follow a server-client architecture, providing a database management system for data persistency.
 
 ### 2.2 Functional requirements
 #### 2.2.1 General Requirements
@@ -42,14 +42,14 @@ The application will support three types of ```users (i.e., chair, reviewer and 
 - assign papers to reviewers automatically
 
 #### <a name="functional-chair"></a>2.2.2 Chair
-- submit basic conference information, such as conference name, URL, subtitles, main organiser's contact information
+- submit basic conference information, such as conference name, URL, subtitles, main organizer's contact information
 - set and modify the deadline for paper submission, paper review, acceptance notification, and the uploading of accepted paper (camera ready-copies)
 - set up topics of interest
 - make the final decision on accepting or rejecting a specific paper
 - assign an accepted paper to a specific conference session
 
 #### 2.2.3 Reviewer
-- specify the topics that falls into the area of expertise of the reviewer
+- specify the topics that fall into the area of expertise of the reviewer
 - bid for papers that they are interested in reviewing
 - indicate any conflict of interest
 - submit an evaluation of a paper that was assigned to the reviewer
@@ -73,7 +73,7 @@ The application will support three types of ```users (i.e., chair, reviewer and 
 #### 2.3.3 Maintainability
 - the system should be able to ```restart``` after a failure
 - the system should be able to ```back-up``` data and recover it using the backups
-- the system should generate ```fault reports & various logs``` (both for user behaviour & error logging)
+- the system should generate ```fault reports & various logs``` (both for user behavior & error logging)
 
 ### 2.4 Constraints
 - emails should be validated to exist and be unique
