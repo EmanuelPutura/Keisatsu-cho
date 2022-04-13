@@ -5,17 +5,10 @@
     width: 80%;
 }
 
-.form input{
-    box-sizing: border-box;
-}
-
 .form>label, .form input[type=submit]{
     margin: 5px 0;
 }
 
-.form input:not([type=radio]){
-    width: 100%;
-}
 
 .form input[type=submit]{
     border-radius: 3px;
