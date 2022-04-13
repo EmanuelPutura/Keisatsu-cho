@@ -41,7 +41,7 @@ The application will support three types of ```users (i.e., chair, reviewer and 
 - upload personal information
 - assign papers to reviewers automatically
 
-#### 2.2.2 Chair
+#### <a name="functional-chair"></a>2.2.2 Chair
 - submit basic conference information, such as conference name, URL, subtitles, main organiser's contact information
 - set and modify the deadline for paper submission, paper review, acceptance notification, and the uploading of accepted paper (camera ready-copies)
 - set up topics of interest
