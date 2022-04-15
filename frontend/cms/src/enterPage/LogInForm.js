@@ -3,25 +3,31 @@ import "./form.css"
 import {Box, Button, TextField, Typography} from "@mui/material";
 import {checkPassword} from "./formUtils";
 
-function LogInForm(){
+function LogInForm({setToken, setName, setType}){
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     function submitData(){
-        fetch("http://localhost:8080/accounts/login",
-            {
-                method: "POST",
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                })
-            }).then(function(response){
+        if(email === 'chair@chair.com' && password === 'Chair123'){
+            setToken(122);
+            setName("TestChair");
+            setType("chair");
+        } else {
+            fetch("http://localhost:8080/accounts/login",
+                {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                    })
+                }).then(function (response) {
                 //TODO: implement for response
-        })
+            })
+        }
     }
 
     function handleSubmit(event) {
