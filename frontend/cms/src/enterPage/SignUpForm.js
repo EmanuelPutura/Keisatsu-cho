@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import "./form.css"
 import {Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
-import {checkPassword} from "./formUtils";
+import {checkPassword} from "../formUtils";
 
 function SignUpForm(){
 

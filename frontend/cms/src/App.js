@@ -2,6 +2,7 @@ import './App.css';
 import RegisterPage from './enterPage/RegisterPage'
 import {useState} from "react";
 import {Container} from "@mui/material";
+import ChairPage from "./chairPage/ChairPage";
 
 function App() {
     const [token, setToken] = useState(null);
@@ -10,7 +11,9 @@ function App() {
 
     return(
         <Container component="main" id="main" disableGutters={true} maxWidth={false}>
-            {!token ? <RegisterPage setToken={setToken} setName={setName} setType={setType}/> : null}
+            {!token ? <RegisterPage setToken={setToken} setName={setName} setType={setType}/> :
+                type === "chair" ? <ChairPage name={name} /> : null
+            }
         </Container>
         )
 }
