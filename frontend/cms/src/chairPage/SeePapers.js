@@ -59,7 +59,7 @@ function SeePapers(){
     return (
         <Box component="div" className="chair_container">
             <Typography component="h2" variant="h5" align="center" my="5px">
-                Papers:
+                Papers
             </Typography>
             <Stack component="div"
                    direction="column"

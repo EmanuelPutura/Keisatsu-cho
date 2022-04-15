@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Collapse, IconButton, List, ListItem, ListItemText} from "@mui/material";
-import {KeyboardArrowDown} from "@mui/icons-material";
+import {ExpandLess, ExpandMore} from "@mui/icons-material";
 
 export function checkPassword(password){
     return password.length >= 8 && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/.test(password);
@@ -18,7 +18,7 @@ export function ListItemWithCollapsible({collapsible, value}) {
                     <IconButton
                         onClick={() => setOpen(!open)}
                     >
-                        <KeyboardArrowDown/>
+                        {open ? <ExpandLess/> : <ExpandMore/>}
                     </IconButton>
                 }
             >

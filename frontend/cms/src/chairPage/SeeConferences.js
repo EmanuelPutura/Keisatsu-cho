@@ -107,7 +107,7 @@ function SeeConferences() {
     return (
         <Box component="div" className="chair_container">
             <Typography component="h2" variant="h5" align="center" my="5px">
-                Conferences:
+                Conferences
             </Typography>
             <Stack component="div"
                    direction="column"
