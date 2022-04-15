@@ -1,5 +1,7 @@
 import React, {useState} from 'react'
 import "./form.css"
+import {Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography} from "@mui/material";
+import {checkPassword} from "./formUtils";
 
 function SignUpForm(){
 
@@ -12,92 +14,175 @@ function SignUpForm(){
     const [userType, setUserType] = useState("");
     const [birthDate, setBirthDate] = useState("");
     const [address, setAddress] = useState("");
+    const [validPassword, setValidPassword] = useState(true);
 
+    function checkPasswordValid(data){
+        if(!checkPassword(data)){
+            setValidPassword(false);
+        }else{
+            setValidPassword(true);
+        }
+    }
+
+    function submitData(){
+        fetch("http://localhost:8080/accounts/sign-up",
+            {
+                method: "POST",
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    username: username,
+                    userFName: userFName,
+                    userLName: userLName,
+                    userType: userType,
+                    birthDate: birthDate,
+                    address: address,
+                })
+            }).then(function(response){
+            //TODO: implement for response
+        })
+    }
 
     function handleSubmit(event) {
-        alert('Submitted ' + email + ' ' + username + ' ' + userFName + ' ' + userLName + ' ' + password + ' ' + userType + ' ' + birthDate + ' ' + address);
         event.preventDefault();
+        alert('Submitted ' + email + ' ' + username + ' ' + userFName + ' ' + userLName + ' ' + password + ' ' + passwordRepeat + ' ' + userType + ' ' + birthDate + ' ' + address);
+        if(!validPassword || passwordRepeat !== password){
+            alert("Invalid data!")
+        }else{
+            submitData()
+        }
     }
 
     return (
-        // <form onSubmit={handleSubmit} className="form">
-        // TODO: do not give absolute url?
-        <form action="http://localhost:8080/accounts/sign-up" method="POST" className="form">
-            <h2>SIGN UP</h2>
-            <label>E-mail:
-                <br/>
-                <input name="email" type="text"
-                       value={email}
-                       onChange={e => setEmail(e.target.value)}/>
-            </label>
-            <label>Username:
-                <br/>
-                <input name="username" type="text"
-                       value={username}
-                       onChange={e => setUsername(e.target.value)}/>
-            </label>
-            <div className="input_container">
-                <label>First Name:
-                    <br/>
-                    <input name="user_fname" type="text"
-                           value={userFName}
-                           onChange={e => setUserFName(e.target.value)}/>
-                </label>
-                <label>Last Name:
-                    <br/>
-                    <input name="user_lname" type="text"
-                           value={userLName}
-                           onChange={e => setUserLName(e.target.value)}/>
-                </label>
-                </div>
-            <label>
-                Birthday:
-                <br/>
-                <input name="birth_date" type="date"
-                       value={birthDate}
-                       onChange={e => setBirthDate(e.target.value)}/>
-            </label>
-            <label>
-                Home Address:
-                <br/>
-                <input name="address" type="text"
-                       value={address}
-                       onChange={e => setAddress(e.target.value)} />
-            </label>
-            <label>User Type:</label>
-            <div className="input_container">
-                <label>
-                    <input value="chair" name="userType" type="radio"
-                           checked={userType === "chair"}
-                           onChange={e => setUserType(e.target.value)}/> Chair
-                </label>
-                <label>
-                    <input value="reviewer" name="userType" type="radio"
-                           checked={userType === "reviewer"}
-                           onChange={e => setUserType(e.target.value)}/> Reviewer
-                </label>
-                <label>
-                    <input value="author" name="userType" type="radio"
-                           checked={userType === "author"}
-                           onChange={e => setUserType(e.target.value)}/> Author
-                </label>
-            </div>
-            <div className="input_container">
-                <label>Password:
-                <br/>
-                <input name="password" type="password"
-                       value={password}
-                       onChange={e => setPassword(e.target.value)}/>
-            </label>
-            <label>Confirm Password:
-                <br/>
-                <input name="passwordRepeat" type="password"
-                       value={passwordRepeat}
-                       onChange={e => setPasswordRepeat(e.target.value)}/>
-            </label>
-            </div>
-            <input type="submit" value="Sign up"/>
-        </form>
+        <Box component="form" onSubmit={handleSubmit} className="form">
+            <Typography component="h2" variant="h5" sx={{fontWeight: 'bold'}}>SIGN UP</Typography>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                size="small"
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+            />
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Username"
+                name="username"
+                autoComplete="username"
+                size="small"
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+            />
+
+            <Stack direction="row">
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="First name"
+                    name="userFName"
+                    size="small"
+                    type="text"
+                    value={userFName}
+                    onChange={e => setUserFName(e.target.value)}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Last name"
+                    name="userLName"
+                    size="small"
+                    type="text"
+                    value={userLName}
+                    onChange={e => setUserLName(e.target.value)}
+                />
+            </Stack>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Birthday"
+                name="birthDate"
+                size="small"
+                type="date"
+                value={birthDate}
+                InputLabelProps={{ shrink: true }}
+                onChange={e => setBirthDate(e.target.value)}
+            />
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Home Address"
+                name="address"
+                size="small"
+                type="text"
+                value={address}
+                onChange={e => setAddress(e.target.value)}
+            />
+            <FormControl  required fullWidth size="small" sx={{my: 1}}>
+                <InputLabel id="type-select-label">User Type</InputLabel>
+                <Select
+                    labelId="type-select-label"
+                    label="User Type"
+                    name="userType"
+                    value={userType}
+                    onChange = {e => setUserType(e.target.value)}
+                >
+                    <MenuItem value="chair">Chair</MenuItem>
+                    <MenuItem value="reviewer">Reviewer</MenuItem>
+                    <MenuItem value="author">Author</MenuItem>
+                </Select>
+            </FormControl>
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Password"
+                name="password"
+                size="small"
+                type="password"
+                value={password}
+                error={!validPassword}
+                helperText={!validPassword ? "The password needs minimum eight characters, at least one uppercase letter" +
+                    ", one lowercase letter and one number:" : ""}
+                onChange={e => {
+                    setPassword(e.target.value);
+                    checkPasswordValid(e.target.value);
+                }}
+            />
+            <TextField
+                margin="normal"
+                required
+                fullWidth
+                label="Confirm Password"
+                name="passwordRepeat"
+                size="small"
+                type="password"
+                value={passwordRepeat}
+                error={passwordRepeat !== "" && passwordRepeat !== password}
+                helperText={passwordRepeat !== "" && passwordRepeat !== password ? "The passwords do not match!" : ""}
+                onChange={e => setPasswordRepeat(e.target.value)}
+            />
+            <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+            >
+                Sign up
+            </Button>
+        </Box>
     )
 }
 
