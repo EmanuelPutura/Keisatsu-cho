@@ -1,4 +1,12 @@
-import {Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Typography} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
 import {ListItemWithCollapsible} from "../formUtils";
 import React from "react";
 

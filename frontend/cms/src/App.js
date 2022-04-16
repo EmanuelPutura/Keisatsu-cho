@@ -4,7 +4,7 @@ import React from 'react'
 
 import RegisterPage from './enterPage/RegisterPage'
 import {useState} from "react";
-import {Container} from "@mui/material";
+import Container from "@mui/material/Container";
 import ChairPage from "./chairPage/ChairPage";
 
 function App() {

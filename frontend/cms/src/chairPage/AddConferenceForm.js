@@ -1,4 +1,10 @@
-import {Box, Button, Divider, Stack, TextField, Typography} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+
 import React, {useState} from "react";
 
 function AddConferenceForm(){

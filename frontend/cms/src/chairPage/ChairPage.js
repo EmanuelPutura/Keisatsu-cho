@@ -1,6 +1,8 @@
 import "./chairStyle.css"
 import React from "react";
-import {Container, Stack, Typography} from "@mui/material";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import AddConferenceForm from "./AddConferenceForm";
 import SeeConferences from "./SeeConferences";
 import SeePapers from "./SeePapers";
