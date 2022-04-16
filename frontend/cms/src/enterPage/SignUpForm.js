@@ -50,7 +50,7 @@ function SignUpForm(){
                     address: address,
                 })
             }).then(function(response){
-            //TODO: implement for response
+            //TODO: implement for response (don't do anything for now ig? maybe check for errors)
         })
     }
 

@@ -8,11 +8,18 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import {ListItemWithCollapsible} from "../formUtils";
-import React from "react";
+import React, {useState} from "react";
 
-function PaperCollapsible({paper}){
+function PaperCollapsible({paper, conferences}){
+
+    //TODO: request for accepting / rejecting paper
+    //TODO: request for assigning paper to conference
+    paper = JSON.parse(paper);
+    const [decided, setDecided] = useState(paper.decided);
+    const [conference, setConference] = useState("");
     return (
         <Box component="div" className="chair-form">
+            { !decided ?
             <Stack component="div"
                    direction="row"
                    justifyContent="space-evenly"
@@ -31,7 +38,7 @@ function PaperCollapsible({paper}){
                 >
                     REJECT
                 </Button>
-            </Stack>
+            </Stack> :
             <Stack component="form"
                    direction="column"
                    justifyContent="space-evenly"
@@ -42,10 +49,12 @@ function PaperCollapsible({paper}){
                         labelId="conference-select-label"
                         label="Conference"
                         name="conference"
+                        value={conference}
+                        onChange={e => setConference(e.target.value)}
                     >
                         {
-                            [1, 2, 3].map((number) =>(
-                                <MenuItem value={number}>{number}</MenuItem>
+                            conferences.map((conference) =>(
+                                <MenuItem value={conference}>{conference}</MenuItem>
                             ))
                         }
                     </Select>
@@ -58,12 +67,13 @@ function PaperCollapsible({paper}){
                     ASSIGN TO CONFERENCE
                 </Button>
             </Stack>
-
+            }
         </Box>
     )
 }
 
-function SeePapers(){
+function SeePapers({papers, conferences}){
+
     return (
         <Box component="div" className="chair_container">
             <Typography component="h2" variant="h5" align="center" my="5px">
@@ -75,10 +85,12 @@ function SeePapers(){
                    divider={<Divider orientation="horizontal" flexItem/>}
             >
                 {
-                    [1, 2, 3].map((number) => (
-                        <ListItemWithCollapsible value={number} collapsible={
-                            <PaperCollapsible paper={number}/>
+                    papers.map((paper) => (
+                    <ListItemWithCollapsible value={paper.name} collapsible={
+                        <PaperCollapsible paper={JSON.stringify(paper)} conferences={
+                            conferences.map(conference => conference.name)
                         }/>
+                    }/>
                     ))
                 }
             </Stack>

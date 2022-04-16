@@ -4,10 +4,16 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import React from "react";
+import React, {useState} from "react";
 import {ListItemWithCollapsible} from "../formUtils";
 
 function InterestTopicsForm({conference}) {
+
+    //TODO: request for updating topics of interest
+
+    conference = JSON.parse(conference)
+    const [topics, setTopics] = useState(conference.topics);
+
     return (
         <Box component="form" className="chair-form">
             <TextField
@@ -18,12 +24,13 @@ function InterestTopicsForm({conference}) {
                 name="topics"
                 size="small"
                 multiline
+                value={topics}
+                onChange={e => setTopics(e.target.value)}
             />
             <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-
             >
                 UPDATE TOPICS OF INTEREST
             </Button>
@@ -32,6 +39,15 @@ function InterestTopicsForm({conference}) {
 }
 
 function DeadlineForm({conference}) {
+
+    //TODO: request for updating deadlines
+
+    conference = JSON.parse(conference);
+    const [submission, setSubmission] = useState(conference.submission);
+    const [review, setReview] = useState(conference.review);
+    const [acceptance, setAcceptance] = useState(conference.acceptance);
+    const [upload, setUpload] = useState(conference.upload);
+
     return (
         <Box component="form" className="chair-form">
             <Stack component="div"
@@ -48,6 +64,8 @@ function DeadlineForm({conference}) {
                     size="small"
                     type="date"
                     InputLabelProps={{shrink: true}}
+                    value={submission}
+                    onChange={e => setSubmission(e.target.value)}
                 />
                 <TextField
                     margin="normal"
@@ -58,6 +76,8 @@ function DeadlineForm({conference}) {
                     size="small"
                     type="date"
                     InputLabelProps={{shrink: true}}
+                    value={review}
+                    onChange={e => setReview(e.target.value)}
                 />
                 <TextField
                     margin="normal"
@@ -68,6 +88,8 @@ function DeadlineForm({conference}) {
                     size="small"
                     type="date"
                     InputLabelProps={{shrink: true}}
+                    value={acceptance}
+                    onChange={e => setAcceptance(e.target.value)}
                 />
                 <TextField
                     margin="normal"
@@ -78,6 +100,8 @@ function DeadlineForm({conference}) {
                     size="small"
                     type="date"
                     InputLabelProps={{shrink: true}}
+                    value={upload}
+                    onChange={e => setUpload(e.target.value)}
                 />
             </Stack>
             <Button
@@ -101,7 +125,7 @@ function ConferenceCollapsible({conference}) {
     )
 }
 
-function SeeConferences() {
+function SeeConferences({conferences}) {
     return (
         <Box component="div" className="chair_container">
             <Typography component="h2" variant="h5" align="center" my="5px">
@@ -113,9 +137,9 @@ function SeeConferences() {
                    divider={<Divider orientation="horizontal" flexItem/>}
             >
                 {
-                    [1, 2, 3].map((number) => (
-                        <ListItemWithCollapsible value={number} collapsible={
-                            <ConferenceCollapsible conference={number}/>
+                    conferences.map((conference) => (
+                        <ListItemWithCollapsible value={conference.name} collapsible={
+                            <ConferenceCollapsible conference={JSON.stringify(conference)}/>
                         }/>
                     ))
                 }

@@ -28,7 +28,9 @@ function LogInForm({setToken, setName, setType}){
                         password: password,
                     })
                 }).then(function (response) {
-                //TODO: implement for response
+                //TODO: implement for response (get token from response, get name and type from backend (either another
+                // request or from this response) and set them using their functions
+                // we can consider token to be the account id
             })
         }
     }

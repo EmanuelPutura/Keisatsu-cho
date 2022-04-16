@@ -1,6 +1,6 @@
 import './App.css';
 
-import React from 'react'
+import React, {useState} from 'react'
 
 import RegisterPage from './enterPage/RegisterPage'
 import Container from "@mui/material/Container";
@@ -9,8 +9,8 @@ import useLocalStorage from "./UseLocalStorage";
 
 function App() {
     const { setItem: setToken, item: token } = useLocalStorage("token", undefined);
-    const { setItem: setName, item: name } = useLocalStorage("name", "");
-    const { setItem: setType, item: type } = useLocalStorage("type", "");
+    const [ name, setName ] = useState("");
+    const [ type, setType ] = useState("");
 
     if(!token){
         return(
