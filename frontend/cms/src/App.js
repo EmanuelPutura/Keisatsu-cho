@@ -1,4 +1,7 @@
 import './App.css';
+
+import React from 'react'
+
 import RegisterPage from './enterPage/RegisterPage'
 import {useState} from "react";
 import {Container} from "@mui/material";
