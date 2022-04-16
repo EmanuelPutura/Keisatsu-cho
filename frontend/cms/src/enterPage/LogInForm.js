@@ -34,7 +34,6 @@ function LogInForm({setToken, setName, setType}){
     }
 
     function handleSubmit(event) {
-        event.preventDefault();
         alert('Submitted ' + email + " " + password);
         if(!checkPassword(password)) {
             alert("Invalid email and password!");

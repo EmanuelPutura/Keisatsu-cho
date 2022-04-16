@@ -17,6 +17,7 @@ function ChairPage({name}){
                 <AddConferenceForm />
                 <SeeConferences />
                 <SeePapers />
+
             </Stack>
         </Container>
     )

@@ -55,7 +55,6 @@ function SignUpForm(){
     }
 
     function handleSubmit(event) {
-        event.preventDefault();
         alert('Submitted ' + email + ' ' + username + ' ' + userFName + ' ' + userLName + ' ' + password + ' ' + passwordRepeat + ' ' + userType + ' ' + birthDate + ' ' + address);
         if(!validPassword || passwordRepeat !== password){
             alert("Invalid data!")
