@@ -9,7 +9,6 @@ import useLocalStorage from "./UseLocalStorage";
 
 function App() {
     const { setItem: setToken, item: token } = useLocalStorage("token", undefined);
-
     const [ name, setName ] = useState("");
     const [ type, setType ] = useState("");
 
@@ -18,17 +17,17 @@ function App() {
             fetch("http://localhost:8080/accounts/" + accountID.toString())
                 .then(response => response.json())
                 .then(data => {
-                    setName(accountID === 122 ? "testName" : data.name);
-                    setType(accountID === 122 ? "chair" : data.type);
+                    setName(data.name);
+                    setType(data.type);
                 })
                 .catch(() => alert("Invalid account!"));
         } else {
             setName(accountID === 122 ? "testName" : "");
             setType(accountID === 122 ? "chair" : "");
         }
-
     }
-    useEffect(() => accountRequest(token));
+
+    useEffect(() => accountRequest(token), []);
 
     const setAll = token => {
         setToken(token);
@@ -41,7 +40,7 @@ function App() {
             case "chair":
                 return (<ChairPage name={name} token={token} setToken={setAll}/>);
             default:
-                alert(type);
+                //alert(type);
         }
     }
 
