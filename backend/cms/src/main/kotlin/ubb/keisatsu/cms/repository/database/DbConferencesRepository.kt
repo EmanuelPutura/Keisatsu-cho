@@ -18,7 +18,7 @@ class DbConferencesRepository : MemoryRepository<Conference>() {
     }
 
     private fun connect(): Unit {
-        database = Database.connect("jdbc:postgresql://localhost:5432/cms", user = "postgres", password = "postgres")
+        database = Database.connect("jdbc:postgresql://localhost:5432/CMS", user = "postgres", password = "postgres")
         for (row in database.from(ConferenceTable).select()){
             println(row[ConferenceTable.name])
         }
@@ -46,6 +46,6 @@ class DbConferencesRepository : MemoryRepository<Conference>() {
     }
 
     override fun retrieveAll(): Collection<Conference> {
-        return listOf()
+        return entities
     }
 }

@@ -16,7 +16,7 @@ class DbTopicOfInterestRepository: MemoryRepository<TopicOfInterest>(){
     }
 
     private fun connect(): Unit {
-        database = Database.connect("jdbc:postgresql://localhost:5432/cms", user = "postgres", password = "postgres")
+        database = Database.connect("jdbc:postgresql://localhost:5432/CMS", user = "postgres", password = "postgres")
         for (row in database.from(TopicTable).select()){
             println(row[TopicTable.name])
         }
