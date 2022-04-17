@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 function ChairPage({name, token, setToken}){
 
     function logOut(){
-        setToken("");
+        setToken(undefined)
     }
 
     //TODO: request to get conferences (see format below for example)

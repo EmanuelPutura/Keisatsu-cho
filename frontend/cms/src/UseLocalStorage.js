@@ -11,7 +11,11 @@ function useLocalStorage(key, defaultValue) {
     const [item, setItem] = useState(getItem());
 
     const saveItem = userItem => {
-        localStorage.setItem(key, JSON.stringify(userItem));
+        if(userItem === undefined){
+            localStorage.removeItem(key);
+        } else {
+            localStorage.setItem(key, JSON.stringify(userItem));
+        }
         setItem(userItem);
     }
 

@@ -49,9 +49,20 @@ function SignUpForm(){
                     birthDate: birthDate,
                     address: address,
                 })
-            }).then(function(response){
-            //TODO: implement for response (don't do anything for now ig? maybe check for errors)
-        })
+            }).then(response => response.json())
+            .then(data =>{
+                switch (data){
+                    case 1: // invalid account due to random data
+                        alert("Invalid account!");
+                        break;
+                    case 2: // email already in use
+                        alert("An account with that email already exists!");
+                        break;
+                    default:
+                        alert("Account created! Please log in!");
+                        break;
+                }
+            })
     }
 
     function handleSubmit(event) {

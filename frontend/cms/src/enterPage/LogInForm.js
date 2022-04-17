@@ -15,6 +15,7 @@ function LogInForm({setToken}){
         if(email === 'chair@chair.com' && password === 'Chair123'){
             setToken(122);
         } else {
+            // I need the user ID of the account that logged in
             fetch("http://localhost:8080/accounts/login",
                 {
                     method: "POST",
@@ -25,11 +26,10 @@ function LogInForm({setToken}){
                         email: email,
                         password: password,
                     })
-                }).then(function (response) {
-                //TODO: implement for response (get token from response, get name and type from backend (either another
-                // request or from this response) and set them using their functions
-                // we can consider token to be the account id
-            })
+                }).then(response => response.json())
+                .then(data => {
+                    setToken(data.id);
+                })
         }
     }
 

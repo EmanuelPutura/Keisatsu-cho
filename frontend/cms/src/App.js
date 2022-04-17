@@ -1,6 +1,6 @@
 import './App.css';
 
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import RegisterPage from './enterPage/RegisterPage'
 import Container from "@mui/material/Container";
@@ -10,15 +10,29 @@ import useLocalStorage from "./UseLocalStorage";
 function App() {
     const { setItem: setToken, item: token } = useLocalStorage("token", undefined);
 
-    //TODO: Request for account with id = token if token is not undefined
-    const [ name, setName ] = useState(token === 122 ? "testName" : "");
-    const [ type, setType ] = useState(token === 122 ? "chair" : "");
+    const [ name, setName ] = useState("");
+    const [ type, setType ] = useState("");
+
+    const accountRequest = accountID => {
+        if (accountID !== undefined && accountID !== 122) {
+            fetch("http://localhost:8080/accounts/" + accountID.toString())
+                .then(response => response.json())
+                .then(data => {
+                    setName(accountID === 122 ? "testName" : data.name);
+                    setType(accountID === 122 ? "chair" : data.type);
+                })
+                .catch(() => alert("Invalid account!"));
+        } else {
+            setName(accountID === 122 ? "testName" : "");
+            setType(accountID === 122 ? "chair" : "");
+        }
+
+    }
+    useEffect(() => accountRequest(token));
 
     const setAll = token => {
-        //TODO: Request for account with id = token if token is not undefined
         setToken(token);
-        setName(token === 122 ? "testName" : "");
-        setType(token === 122 ? "chair" : "");
+        accountRequest(token);
     }
 
 
