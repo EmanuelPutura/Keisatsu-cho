@@ -2,12 +2,13 @@ package ubb.keisatsu.cms
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
-import ubb.keisatsu.cms.controller.Controller
 
 @SpringBootApplication
 class CmsApplication
 
 fun main(args: Array<String>) {
+//    val o1 = DbConferencesRepository()
+//    o1.add(Conference("TestConference2", "http://testwebsite.com/", 1, 1))
+
     runApplication<CmsApplication>(*args)
 }

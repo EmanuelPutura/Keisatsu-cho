@@ -1,15 +1,20 @@
 package ubb.keisatsu.cms.controller
 
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import ubb.keisatsu.cms.model.Account
+import ubb.keisatsu.cms.model.LoginAccountDTO
+import ubb.keisatsu.cms.model.SignUpAccountDTO
 import ubb.keisatsu.cms.service.AccountsService
 
+
 @RestController
-class AccountsController(private var accountsService: AccountsService) {
+@CrossOrigin
+class AccountsController(private val accountsService: AccountsService) {
     @PostMapping("accounts/sign-up")
-    fun signUp(email: String, userType: String, userName: String, password: String, passwordRepeat: String): Unit {
+    fun signUp(@RequestBody message: SignUpAccountDTO): Unit {
         /*
             TODO
             - create specialized classes (i.e., chair, author, reviewer), which inherit from Account
@@ -19,15 +24,16 @@ class AccountsController(private var accountsService: AccountsService) {
             - hash passwords
             - server-side validation
         */
-        accountsService.addAccount(Account(email, userName, password))
+
+        accountsService.addAccount(Account(message.email, message.username, message.password))
 
         // TODO: remove line below
         println(accountsService.retrieveAll())
     }
 
     @PostMapping("accounts/login")
-    fun login(email: String, password: String): Boolean {
-        val account: Account = accountsService.retrieveAccount(email) ?: return false
-        return account.password == password
+    fun login(@RequestBody message: LoginAccountDTO): Boolean {
+        val account: Account = accountsService.retrieveAccount(message.email) ?: return false
+        return account.password == message.password
     }
 }

@@ -11,7 +11,7 @@ function AddConferenceForm(){
 
     function submitData(event){
         event.preventDefault();
-        fetch("http://localhost:8080/conferences",
+        fetch("http://localhost:8080/conferences/add",
             {
                 method: "POST",
                 headers:{
