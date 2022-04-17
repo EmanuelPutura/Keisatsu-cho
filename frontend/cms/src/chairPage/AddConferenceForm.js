@@ -9,6 +9,26 @@ import React, {useState} from "react";
 
 function AddConferenceForm(){
 
+    function submitData(event){
+        event.preventDefault();
+        fetch("http://localhost:8080/conferences",
+            {
+                method: "POST",
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    url: url,
+                    email: email,
+                    subtitles: subtitles,
+                })
+            }).then(response => response.json())
+            .then(() =>{
+                alert("conference added!");
+            })
+    }
+
     const [name, setName] = useState("");
     const [url, setURL] = useState("");
     const [email, setEmail] = useState("")
@@ -18,7 +38,7 @@ function AddConferenceForm(){
             <Typography variant="h5" component="h2" align="center" my="5px">
                 Create a new conference:
             </Typography>
-            <Box component="form" className="chair-form">
+            <Box component="form" className="chair-form" onSubmit={submitData}>
                 <Stack component="div"
                        direction="row"
                        justifyContent="space-evenly"

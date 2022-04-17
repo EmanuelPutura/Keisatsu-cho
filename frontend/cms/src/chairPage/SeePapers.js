@@ -12,11 +12,50 @@ import React, {useState} from "react";
 
 function PaperCollapsible({paper, conferences, token}){
 
-    //TODO: request for accepting / rejecting paper (send user token as well)
-    //TODO: request for assigning paper to conference (conferences have their id)
+    const paperObj = JSON.parse(paper);
+    const conferencesArray = JSON.parse(conferences)
+
+    function sendResponse(response){
+        fetch("http://localhost:8080/accounts/papers",
+            {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chairID: token,
+                    paperID: paperObj.id,
+                    response: response
+                })
+            }).then(response => response.json())
+            .then(() => {
+                alert("response sent");
+            })
+    }
+
+    function assignPaper(event){
+        event.preventDefault();
+        fetch("http://localhost:8080/accounts/papers/assign",
+            {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chairID: token,
+                    paperID: paperObj.id,
+                    conferenceID: conferenceID
+                })
+            }).then(response => response.json())
+            .then(() => {
+                alert("response sent");
+            })
+    }
+
+
     paper = JSON.parse(paper);
     const [decided, setDecided] = useState(paper.decided);
-    const [conference, setConference] = useState("");
+    const [conferenceID, setConferenceID] = useState("");
     return (
         <Box component="div" className="chair-form">
             { !decided ?
@@ -25,16 +64,16 @@ function PaperCollapsible({paper, conferences, token}){
                    justifyContent="space-evenly"
             >
                 <Button
-                    type="submit"
                     fullWidth
                     variant="contained"
+                    onClick={() => {sendResponse(true); setDecided(true);}}
                 >
                     ACCEPT
                 </Button>
                 <Button
-                    type="submit"
                     fullWidth
                     variant="contained"
+                    onClick={() => {sendResponse(false); setDecided(true);}}
                 >
                     REJECT
                 </Button>
@@ -42,19 +81,20 @@ function PaperCollapsible({paper, conferences, token}){
             <Stack component="form"
                    direction="column"
                    justifyContent="space-evenly"
+                   onSubmit={assignPaper}
             >
-                <FormControl  required fullWidth size="small" sx={{my: 1}}>
+                <FormControl required fullWidth size="small" sx={{my: 1}}>
                     <InputLabel id="conference-select-label">Conference</InputLabel>
                     <Select
                         labelId="conference-select-label"
                         label="Conference"
                         name="conference"
-                        value={conference}
-                        onChange={e => setConference(e.target.value)}
+                        value={conferenceID}
+                        onChange={e => setConferenceID(e.target.value)}
                     >
                         {
-                            conferences.map((conference) =>(
-                                <MenuItem value={conference}>{conference}</MenuItem>
+                            conferencesArray.map((conference) =>(
+                                <MenuItem value={conference.id}>{conference.name}</MenuItem>
                             ))
                         }
                     </Select>
@@ -87,9 +127,7 @@ function SeePapers({papers, conferences, token}){
                 {
                     papers.map((paper) => (
                     <ListItemWithCollapsible value={paper.title} collapsible={
-                        <PaperCollapsible paper={JSON.stringify(paper)} conferences={
-                            conferences.map(conference => conference.name)
-                        } token={token}/>
+                        <PaperCollapsible paper={JSON.stringify(paper)} conferences={JSON.stringify(conferences)} token={token}/>
                     }/>
                     ))
                 }

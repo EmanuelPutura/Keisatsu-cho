@@ -9,13 +9,29 @@ import {ListItemWithCollapsible} from "../formUtils";
 
 function InterestTopicsForm({conference}) {
 
-    //TODO: request for updating topics of interest
-
     conference = JSON.parse(conference)
     const [topics, setTopics] = useState(conference.topics);
 
+    function updateTopics(event){
+        event.preventDefault();
+        fetch("http://localhost:8080/accounts/conferenceTopics/",
+            {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    conferenceID: conference.id,
+                    topics: topics
+                })
+            }).then(response => response.json())
+            .then(() => {
+                alert("response sent");
+            })
+    }
+
     return (
-        <Box component="form" className="chair-form">
+        <Box component="form" className="chair-form" onSubmit={updateTopics}>
             <TextField
                 margin="normal"
                 required
@@ -40,7 +56,27 @@ function InterestTopicsForm({conference}) {
 
 function DeadlineForm({conference}) {
 
-    //TODO: request for updating deadlines
+    function updateDeadlines(event){
+        event.preventDefault();
+        fetch("http://localhost:8080/accounts/conferenceDeadlines/",
+            {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    conferenceID: conference.id,
+                    submission: submission,
+                    review: review,
+                    acceptance: acceptance,
+                    upload: upload
+                })
+            }).then(response => response.json())
+            .then(() => {
+                alert("response sent");
+            })
+    }
+
 
     conference = JSON.parse(conference);
     const [submission, setSubmission] = useState(conference.submission);
@@ -49,7 +85,7 @@ function DeadlineForm({conference}) {
     const [upload, setUpload] = useState(conference.upload);
 
     return (
-        <Box component="form" className="chair-form">
+        <Box component="form" className="chair-form" onSubmit={updateDeadlines}>
             <Stack component="div"
                    direction="row"
                    justifyContent="space-evenly"
