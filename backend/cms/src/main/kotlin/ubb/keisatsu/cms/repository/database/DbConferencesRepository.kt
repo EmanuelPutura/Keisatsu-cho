@@ -1,14 +1,15 @@
 package ubb.keisatsu.cms.repository.database
 
 import org.ktorm.database.Database
+import org.ktorm.dsl.from
 import org.ktorm.dsl.insert
-import org.springframework.stereotype.Repository
+import org.ktorm.dsl.select
 import ubb.keisatsu.cms.model.Conference
 import ubb.keisatsu.cms.model.ConferenceTable
+import ubb.keisatsu.cms.repository.Repository
 import ubb.keisatsu.cms.repository.memory.MemoryRepository
 
-
-@Repository
+@org.springframework.stereotype.Repository
 class DbConferencesRepository : MemoryRepository<Conference>() {
     private lateinit var database: Database
 
@@ -18,14 +19,15 @@ class DbConferencesRepository : MemoryRepository<Conference>() {
 
     private fun connect(): Unit {
         database = Database.connect("jdbc:postgresql://localhost:5432/cms", user = "postgres", password = "postgres")
-//        for (row in database.from(Conference).select()) {
-//            println(row[Conference.name])
-//        }
+        for (row in database.from(ConferenceTable).select()){
+            println(row[ConferenceTable.name])
+        }
     }
 
     private fun load(): Unit {
         // TODO
     }
+
 
     override fun add(entity: Conference) {
         database.insert(ConferenceTable) {
@@ -34,7 +36,6 @@ class DbConferencesRepository : MemoryRepository<Conference>() {
             set(it.mainOrganiserId, entity.organizerId)
             set(it.deadlinesID, entity.deadlinesId)
         }
-        super.add(entity)
     }
 
     override fun update(entity: Conference) {
@@ -42,10 +43,9 @@ class DbConferencesRepository : MemoryRepository<Conference>() {
     }
 
     override fun delete(entity: Conference) {
-        entities.remove(entity)
     }
 
     override fun retrieveAll(): Collection<Conference> {
-        return entities
+        return listOf()
     }
 }
