@@ -10,10 +10,10 @@ import Typography from "@mui/material/Typography";
 import {ListItemWithCollapsible} from "../formUtils";
 import React, {useState} from "react";
 
-function PaperCollapsible({paper, conferences}){
+function PaperCollapsible({paper, conferences, token}){
 
-    //TODO: request for accepting / rejecting paper
-    //TODO: request for assigning paper to conference
+    //TODO: request for accepting / rejecting paper (send user token as well)
+    //TODO: request for assigning paper to conference (conferences have their id)
     paper = JSON.parse(paper);
     const [decided, setDecided] = useState(paper.decided);
     const [conference, setConference] = useState("");
@@ -72,7 +72,7 @@ function PaperCollapsible({paper, conferences}){
     )
 }
 
-function SeePapers({papers, conferences}){
+function SeePapers({papers, conferences, token}){
 
     return (
         <Box component="div" className="chair_container">
@@ -86,10 +86,10 @@ function SeePapers({papers, conferences}){
             >
                 {
                     papers.map((paper) => (
-                    <ListItemWithCollapsible value={paper.name} collapsible={
+                    <ListItemWithCollapsible value={paper.title} collapsible={
                         <PaperCollapsible paper={JSON.stringify(paper)} conferences={
                             conferences.map(conference => conference.name)
-                        }/>
+                        } token={token}/>
                     }/>
                     ))
                 }

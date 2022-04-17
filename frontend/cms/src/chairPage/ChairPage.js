@@ -6,13 +6,21 @@ import Typography from "@mui/material/Typography";
 import AddConferenceForm from "./AddConferenceForm";
 import SeeConferences from "./SeeConferences";
 import SeePapers from "./SeePapers";
+import Button from "@mui/material/Button";
 
-function ChairPage({name}){
+function ChairPage({name, token, setToken}){
 
-    //TODO: request to get conferences
+    function logOut(){
+        setToken("");
+    }
+
+    //TODO: request to get conferences (see format below for example)
     //TODO: request to get papers
 
-    const conferences = [{  name: "Conference name",
+    const conferences = [{  id: 1,
+                            name: "Conference name",
+                            url: "conference.com",
+                            subtitles: "Subtitle1\nSubtitle2",
                             topics: "Topic1\n" +
                                 "Topic2\n" +
                                 "Topic3\n",
@@ -21,22 +29,36 @@ function ChairPage({name}){
                             acceptance:"2021-10-07",
                             upload:"2021-11-07"}];
 
-    const papers = [{ name: "Paper 1",
+    const papers = [{ id: 1,
+                      title: "Paper 1",
+                      keywords: "...",
+                      topic: "...",
                       decided: false
                     },
-                    { name: "Paper 2",
+                    { id: 2,
+                      title: "Paper 2",
+                      keywords: "...",
+                      topic: "...",
                       decided: true
                     }];
 
     return(
         <Container component="div" disableGutters={true} maxWidth={false}>
-            <Typography variant="h4" component="h1" id="main-title">
-                Hi {name}
-            </Typography>
+            <Stack component="div" direction="row" justifyContent="space-between" width="80%" mx="auto">
+                <Typography variant="h4" component="h1" id="main-title">
+                    Hi {name}
+                </Typography>
+                <Button
+                    variant="contained"
+                    onClick={logOut}
+                >
+                    LOG OUT
+                </Button>
+            </Stack>
             <Stack component="div" spacing={2}>
                 <AddConferenceForm />
                 <SeeConferences conferences={conferences}/>
-                <SeePapers papers={papers} conferences={conferences}/>
+                <SeePapers papers={papers} conferences={conferences} token={token}/>
 
             </Stack>
         </Container>

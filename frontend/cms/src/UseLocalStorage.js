@@ -12,7 +12,7 @@ function useLocalStorage(key, defaultValue) {
 
     const saveItem = userItem => {
         localStorage.setItem(key, JSON.stringify(userItem));
-        setItem(userItem.item);
+        setItem(userItem);
     }
 
     return{

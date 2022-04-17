@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import {checkPassword} from "../formUtils";
 
-function LogInForm({setToken, setName, setType}){
+function LogInForm({setToken}){
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -14,8 +14,6 @@ function LogInForm({setToken, setName, setType}){
     function submitData(){
         if(email === 'chair@chair.com' && password === 'Chair123'){
             setToken(122);
-            setName("TestChair");
-            setType("chair");
         } else {
             fetch("http://localhost:8080/accounts/login",
                 {
@@ -36,6 +34,7 @@ function LogInForm({setToken, setName, setType}){
     }
 
     function handleSubmit(event) {
+        event.preventDefault();
         alert('Submitted ' + email + " " + password);
         if(!checkPassword(password)) {
             alert("Invalid email and password!");

@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import SignUpForm from "./SignUpForm";
 import LogInForm from "./LogInForm";
 
-function RegisterPage({setToken, setName, setType}){
+function RegisterPage({setToken}){
     return(
         <Container component="div" disableGutters={true} maxWidth={false}>
             <Typography variant="h4" component="h1" id="main-title">
@@ -16,7 +16,7 @@ function RegisterPage({setToken, setName, setType}){
                     <SignUpForm />
                 </Box>
                 <Box component="div" className="log-form_container">
-                    <LogInForm setToken={setToken} setName={setName} setType={setType}/>
+                    <LogInForm setToken={setToken} />
                 </Box>
             </Box>
         </Container>
