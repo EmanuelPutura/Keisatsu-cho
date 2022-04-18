@@ -46,7 +46,7 @@ function ChairPage({name, token, setToken}){
 
     const conferenceRequest = accountID => {
         if (accountID !== undefined && accountID !== 122) {
-            fetch("http://localhost:8080/conferences/" + accountID.toString())
+            fetch("http://localhost:8080/conferences?accountID=" + accountID.toString())
                 .then(response => response.json())
                 .then(data => {
                     setConferences(data);
@@ -59,7 +59,7 @@ function ChairPage({name, token, setToken}){
 
     const paperRequest = accountID => {
         if (accountID !== undefined && accountID !== 122) {
-            fetch("http://localhost:8080/papers/" + accountID.toString())
+            fetch("http://localhost:8080/papers?accountID=" + accountID.toString())
                 .then(response => response.json())
                 .then(data => {
                     setPapers(data);
