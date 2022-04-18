@@ -28,7 +28,11 @@ function LogInForm({setToken}){
                     })
                 })
                 .then(data => {
-                    setToken(data.bod);
+                   data.text().then(function (text){
+                       let token = parseInt(text);
+                       alert(token);
+                       setToken(token);
+                   })
                 })
         }
     }
