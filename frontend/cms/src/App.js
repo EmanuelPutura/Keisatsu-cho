@@ -14,7 +14,8 @@ function App() {
 
     const accountRequest = accountID => {
         if (accountID !== undefined && accountID !== 122) {
-            fetch("http://localhost:8080/accounts?accountID=" + accountID.toString())
+            console.log("Hello!")
+            fetch("http://localhost:8080/accounts/details?accountID=" + accountID.toString())
                 .then(response => response.json())
                 .then(data => {
                     setName(data.name);

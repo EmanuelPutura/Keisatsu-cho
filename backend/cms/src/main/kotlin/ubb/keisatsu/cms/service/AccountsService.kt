@@ -2,13 +2,12 @@ package ubb.keisatsu.cms.service
 
 import org.springframework.stereotype.Service
 import ubb.keisatsu.cms.model.Account
-import ubb.keisatsu.cms.repository.AccountsRepository
 import ubb.keisatsu.cms.repository.database.DbAccountsRepository
 
 @Service
 class AccountsService(private val accountsRepository: DbAccountsRepository) {
     init {
-        loadDefaultAccounts()
+//        loadDefaultAccounts()
     }
 
     private fun loadDefaultAccounts() : Unit {

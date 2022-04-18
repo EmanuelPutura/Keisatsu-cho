@@ -26,9 +26,9 @@ function LogInForm({setToken}){
                         email: email,
                         password: password,
                     })
-                }).then(response => response.json())
+                })
                 .then(data => {
-                    setToken(data.id);
+                    setToken(data.bod);
                 })
         }
     }

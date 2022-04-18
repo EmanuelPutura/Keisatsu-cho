@@ -1,9 +1,6 @@
 package ubb.keisatsu.cms.controller
 
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.Account
 import ubb.keisatsu.cms.model.LoginAccountDTO
 import ubb.keisatsu.cms.model.SignUpAccountDTO
@@ -36,5 +33,10 @@ class AccountsController(private val accountsService: AccountsService) {
         val account: Account = accountsService.retrieveAccount(message.email) ?: return -1;
         if (account.password != message.password) return -1;
         return accountsService.retrieveId(account.email) ?: -1;
+    }
+
+    @GetMapping("accounts/details")
+    fun getUserDetails(@RequestParam id: Int) {
+        println("Hello!")
     }
 }

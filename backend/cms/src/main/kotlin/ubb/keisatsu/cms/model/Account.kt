@@ -2,17 +2,15 @@ package ubb.keisatsu.cms.model
 
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.schema.BaseTable
-import org.ktorm.schema.Table
 import org.ktorm.schema.int
 import org.ktorm.schema.varchar
-import ubb.keisatsu.cms.model.ConferenceTable.primaryKey
 
 
 object AccountTable : BaseTable<Account>("Account") {
     val id = int("AccountID").primaryKey()
     val email = varchar("Email")
     val username = varchar("Username")
-    val password = varchar("Password")
+    val password = varchar("PasswordDigest")
     val firstName = varchar("FirstName")
     val lastName = varchar("LastName")
     val address = varchar("Address")
