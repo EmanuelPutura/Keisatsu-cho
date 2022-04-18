@@ -8,7 +8,7 @@ import ubb.keisatsu.cms.model.ConferenceTopic
 import ubb.keisatsu.cms.model.ConferenceTopicTable
 import ubb.keisatsu.cms.repository.memory.MemoryRepository
 
-class DbConferenceTopicRepository: MemoryRepository<ConferenceTopic>(){
+class DbConferenceTopicRepository(val dbConfig: DatabaseConfig): MemoryRepository<ConferenceTopic>(){
     private lateinit var database: Database
 
     init {
@@ -16,7 +16,7 @@ class DbConferenceTopicRepository: MemoryRepository<ConferenceTopic>(){
     }
 
     private fun connect(): Unit {
-        database = Database.connect("jdbc:postgresql://localhost:5432/CMS", user = "postgres", password = "postgres")
+        database = Database.connect(dbConfig.url, user = dbConfig.user, password = dbConfig.password)
 
     }
 

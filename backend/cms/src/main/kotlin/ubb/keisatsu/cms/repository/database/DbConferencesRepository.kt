@@ -6,11 +6,10 @@ import org.ktorm.dsl.insert
 import org.ktorm.dsl.select
 import ubb.keisatsu.cms.model.Conference
 import ubb.keisatsu.cms.model.ConferenceTable
-import ubb.keisatsu.cms.repository.Repository
 import ubb.keisatsu.cms.repository.memory.MemoryRepository
 
 @org.springframework.stereotype.Repository
-class DbConferencesRepository : MemoryRepository<Conference>() {
+class DbConferencesRepository(val dbConfig: DatabaseConfig) : MemoryRepository<Conference>() {
     private lateinit var database: Database
 
     init {
@@ -18,7 +17,7 @@ class DbConferencesRepository : MemoryRepository<Conference>() {
     }
 
     private fun connect(): Unit {
-        database = Database.connect("jdbc:postgresql://localhost:5432/CMS", user = "postgres", password = "postgres")
+        database = Database.connect(url = dbConfig.url, user = dbConfig.user, password = dbConfig.password)
         for (row in database.from(ConferenceTable).select()){
             println(row[ConferenceTable.name])
         }

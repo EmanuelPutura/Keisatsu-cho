@@ -3,9 +3,10 @@ package ubb.keisatsu.cms.service
 import org.springframework.stereotype.Service
 import ubb.keisatsu.cms.model.Account
 import ubb.keisatsu.cms.repository.AccountsRepository
+import ubb.keisatsu.cms.repository.database.DbAccountsRepository
 
 @Service
-class AccountsService(private val accountsRepository: AccountsRepository) {
+class AccountsService(private val accountsRepository: DbAccountsRepository) {
     init {
         loadDefaultAccounts()
     }
@@ -16,9 +17,11 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
         addAccount(Account("cristina.pop@gmail.com", "cristina15", "popcris"))
     }
 
-    fun addAccount(account: Account): Unit = accountsRepository.addAccount(account)
+    fun addAccount(account: Account): Unit = accountsRepository.add(account)
 
-    fun retrieveAccount(email: String): Account? = accountsRepository.retrieveAccount(email)
+    fun retrieveAccount(email: String): Account? = accountsRepository.retrieveAccountByEmail(email)
 
     fun retrieveAll(): Collection<Account> = accountsRepository.retrieveAll()
+
+    fun retrieveId(email: String): Int? = accountsRepository.retrieveId(email)
 }

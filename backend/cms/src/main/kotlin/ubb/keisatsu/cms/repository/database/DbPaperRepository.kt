@@ -8,7 +8,7 @@ import ubb.keisatsu.cms.model.Paper
 import ubb.keisatsu.cms.model.PaperTable
 import ubb.keisatsu.cms.repository.memory.MemoryRepository
 
-class DbPaperRepository: MemoryRepository<Paper>() {
+class DbPaperRepository(val dbConfig: DatabaseConfig): MemoryRepository<Paper>() {
     private lateinit var database: Database
 
     init {
@@ -16,7 +16,7 @@ class DbPaperRepository: MemoryRepository<Paper>() {
     }
 
     private fun connect(): Unit {
-        database = Database.connect("jdbc:postgresql://localhost:5432/CMS", user = "postgres", password = "postgres")
+        database = Database.connect(dbConfig.url, user = dbConfig.user, password = dbConfig.password)
         for (row in database.from(PaperTable).select()){
             println(row[PaperTable.title])
         }

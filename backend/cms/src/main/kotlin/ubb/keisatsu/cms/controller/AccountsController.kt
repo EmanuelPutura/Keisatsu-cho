@@ -32,8 +32,9 @@ class AccountsController(private val accountsService: AccountsService) {
     }
 
     @PostMapping("accounts/login")
-    fun login(@RequestBody message: LoginAccountDTO): Boolean {
-        val account: Account = accountsService.retrieveAccount(message.email) ?: return false
-        return account.password == message.password
+    fun login(@RequestBody message: LoginAccountDTO): Int {
+        val account: Account = accountsService.retrieveAccount(message.email) ?: return -1;
+        if (account.password != message.password) return -1;
+        return accountsService.retrieveId(account.email) ?: -1;
     }
 }
