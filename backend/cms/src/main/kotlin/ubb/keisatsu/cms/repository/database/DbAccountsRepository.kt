@@ -4,8 +4,6 @@ import org.ktorm.database.Database
 import org.ktorm.dsl.*
 import ubb.keisatsu.cms.model.Account
 import ubb.keisatsu.cms.model.AccountTable
-import ubb.keisatsu.cms.model.Conference
-import ubb.keisatsu.cms.model.ConferenceTable
 import ubb.keisatsu.cms.repository.memory.MemoryRepository
 
 
@@ -25,7 +23,6 @@ class DbAccountsRepository(val dbConfig: DatabaseConfig) : MemoryRepository<Acco
     }
 
     override fun add(entity: Account) {
-
         val usedEmail = database
             .from(AccountTable)
             .select()
@@ -48,11 +45,13 @@ class DbAccountsRepository(val dbConfig: DatabaseConfig) : MemoryRepository<Acco
             throw RuntimeException("Username is already in use")
         }
 
-        database.insert(AccountTable) {
+        val id = database.insertAndGenerateKey(AccountTable) {
             set(it.username, entity.username)
             set(it.email, entity.email)
             set(it.password, entity.password)
         }
+
+        entity.id = id.toString().toInt()
     }
 
     override fun update(entity: Account) {

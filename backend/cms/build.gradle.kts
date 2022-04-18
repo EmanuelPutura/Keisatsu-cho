@@ -24,6 +24,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
     implementation("org.ktorm:ktorm-core:3.4.1")
+    implementation("com.google.code.gson:gson:2.8.5")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
