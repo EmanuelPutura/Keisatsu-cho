@@ -1,5 +1,6 @@
 package ubb.keisatsu.cms.controller
 
+import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -7,6 +8,7 @@ import ubb.keisatsu.cms.model.Account
 import ubb.keisatsu.cms.service.AccountsService
 
 @RestController
+@CrossOrigin
 class AccountsController(private var accountsService: AccountsService) {
     @PostMapping("accounts/sign-up")
     fun signUp(email: String, userType: String, userName: String, password: String, passwordRepeat: String): Unit {
