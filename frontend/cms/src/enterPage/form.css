@@ -1,0 +1,37 @@
+.form{
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    width: 80%;
+}
+
+.form>label, .form input[type=submit]{
+    margin: 5px 0;
+}
+
+
+.form input[type=submit]{
+    border-radius: 3px;
+    border-width: 0;
+    background-color: #0CE4F8;
+    box-shadow: 0 1px gray;
+    padding: 5px 0;
+    width: 100%;
+}
+
+.form h2{
+    text-align: center;
+}
+
+.input_container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.input_container label:not:first-child{
+    margin: 0 0 0 2px;
+}
+
+.input_container label{
+    width: 50%;
+}
