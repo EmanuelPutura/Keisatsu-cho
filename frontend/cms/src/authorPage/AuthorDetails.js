@@ -9,6 +9,7 @@ function AuthorDetails({author, setAuthor}){
         <Stack component="div"
                direction="row"
                justifyContent="space-evenly"
+               width="100%"
                divider={<Divider orientation="vertical" flexItem /> }
         >
             <TextField

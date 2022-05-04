@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import AddPaperForm from "./AddPaperForm";
 import "./authorStyle.css"
 import SeeNotUploadedPapers from "./SeeNotUploadedPapers";
+import SeeCameraReadyPapers from "./SeeAcceptedPapers";
 
 function AuthorPage({name, token, setToken}) {
 
@@ -81,6 +82,7 @@ function AuthorPage({name, token, setToken}) {
             <Stack component="div" spacing={2}>
                 <AddPaperForm token={token}/>
                 <SeeNotUploadedPapers papers={papersToBeUploaded} token={token}/>
+                <SeeCameraReadyPapers papers={acceptedPapers} token={token}/>
             </Stack>
         </Container>
     )
