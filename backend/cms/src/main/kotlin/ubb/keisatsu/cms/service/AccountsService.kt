@@ -7,7 +7,7 @@ import ubb.keisatsu.cms.repository.AccountsRepository
 @Service
 class AccountsService(private val accountsRepository: AccountsRepository) {
     init {
-        loadDefaultAccounts()
+  //      loadDefaultAccounts()
     }
 
     private fun loadDefaultAccounts() : Unit {
@@ -16,9 +16,9 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
         addAccount(Account("cristina.pop@gmail.com", "cristina15", "popcris"))
     }
 
-    fun addAccount(account: Account): Unit = accountsRepository.addAccount(account)
+    fun addAccount(account: Account): Account = accountsRepository.save(account)
 
-    fun retrieveAccount(email: String): Account? = accountsRepository.retrieveAccount(email)
+    fun retrieveAccount(email: String): Account? = accountsRepository.findByEmail(email)
 
-    fun retrieveAll(): Collection<Account> = accountsRepository.retrieveAll()
+    fun retrieveAll(): Iterable<Account> = accountsRepository.findAll()
 }
