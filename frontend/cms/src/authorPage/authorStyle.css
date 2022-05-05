@@ -1,0 +1,15 @@
+.author_form{
+    margin: 20px auto;
+    width: 80%;
+}
+
+.author_container{
+    align-self: center;
+    width: 80%;
+    background: white;
+    min-width: 300px;
+    margin: 0 10px;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 3px 3px #282c34;
+}
