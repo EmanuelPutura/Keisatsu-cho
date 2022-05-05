@@ -5,6 +5,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
+@Table(name="ConferenceDeadlines")
 class ConferenceDeadlines(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

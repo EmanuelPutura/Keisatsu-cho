@@ -4,7 +4,12 @@ import ubb.keisatsu.cms.model.AbstractJpaHashable
 import java.util.*
 import javax.persistence.*
 
+enum class UserRole {
+    CHAIR, AUTHOR, REVIEWER
+}
+
 @Entity
+@Table(name="Account")
 class Account(
     @Column(name="Email", unique=true)
     var email: String,
@@ -14,6 +19,9 @@ class Account(
 
     @Column(name="PasswordDigest")
     var password: String,
+
+    @Column(name="Role")
+    var role: UserRole,
 
     @Column(name="FirstName")
     var firstName: String? = null,
