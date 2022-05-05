@@ -6,7 +6,6 @@ import java.util.*
 abstract class AbstractJpaHashable {
     val hashId = UUID.randomUUID()
 
-
     override fun equals(other: Any?): Boolean {
         other ?: return false
 
