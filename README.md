@@ -12,7 +12,7 @@ Software Engineering Course Team Project - ```Keisatsu-cho Team```
 </ul>
 
 ### Front-end
-- technology: ```React``` + ```Typescript```
+- technology: ```React``` + ```Javascript```
 - devs: Radu
 
 ### Backend
