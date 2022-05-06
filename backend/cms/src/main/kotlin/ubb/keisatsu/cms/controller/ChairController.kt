@@ -1,9 +1,12 @@
 package ubb.keisatsu.cms.controller
 
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.ConferenceDetailsDto
 import ubb.keisatsu.cms.model.dto.ConferenceSubmitDto
+import ubb.keisatsu.cms.model.dto.TopicOfInterestDto
 import ubb.keisatsu.cms.model.entities.Conference
+import ubb.keisatsu.cms.model.entities.TopicOfInterest
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
 import ubb.keisatsu.cms.service.ConferencesService
@@ -20,7 +23,7 @@ class ChairController(private var conferencesService: ConferencesService, privat
 
         conferencesService.findByMainOrganiser(accountId).forEach { conference ->
             val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForConference(conference.id))
-            conferenceDtoSet.add(ConferenceDetailsDto(conference.name, conference.url, conference.subtitles, topics,
+            conferenceDtoSet.add(ConferenceDetailsDto(conference.id, conference.name, conference.url, conference.subtitles, topics,
                 conference.conferenceDeadlines?.paperSubmissionDeadline, conference.conferenceDeadlines?.paperReviewDeadline,
                 conference.conferenceDeadlines?.acceptanceNotificationDeadline, conference.conferenceDeadlines?.acceptedPaperUploadDeadline
             ))
@@ -37,5 +40,23 @@ class ChairController(private var conferencesService: ConferencesService, privat
         }
 
         conferencesService.addConference(Conference(conferenceDto.name, conferenceDto.url, conferenceDto.subtitles, account))
+    }
+
+    @PostMapping("accounts/conferenceTopics")
+    @Transactional
+    fun setConferenceTopicsOfInterest(@RequestBody topicOfInterestDto: TopicOfInterestDto) {
+        val conference: Conference = conferencesService.retrieveConference(topicOfInterestDto.conferenceID) ?: return
+        conference.topicsOfInterest.clear()
+
+        topicOfInterestDto.topics.lines().forEach { topic ->
+            if (topic == "")
+                return@forEach
+
+            var topicOfInterest: TopicOfInterest = topicsOfInterestService.retrieveTopicOfInterest(topic) ?: TopicOfInterest(topic)
+            topicOfInterest = topicsOfInterestService.addTopicOfInterest(topicOfInterest)
+
+            topicOfInterest.conferencesForTopic.add(conference)
+            conference.topicsOfInterest.add(topicOfInterest)
+        }
     }
 }

@@ -21,7 +21,7 @@ class Conference(
 
     @ManyToMany
     @JoinTable(name = "ConferenceTopic")
-    var topicsOfInterest: MutableSet<TopicOfInterest>? = null,
+    var topicsOfInterest: MutableSet<TopicOfInterest> = mutableSetOf(),
 
     @ManyToOne
     @JoinColumn(name = "DeadlinesID", referencedColumnName = "DeadlinesID")

@@ -15,9 +15,11 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
         return result
     }
 
-        fun findAllForConference(conferenceId: Int): Iterable<TopicOfInterest> = topicsOfInterestRepository.findByConferencesForTopicId(conferenceId)
+    fun findAllForConference(conferenceId: Int): Iterable<TopicOfInterest> = topicsOfInterestRepository.findByConferencesForTopicId(conferenceId)
 
     fun addTopicOfInterest(topicOfInterest: TopicOfInterest): TopicOfInterest = topicsOfInterestRepository.save(topicOfInterest)
+
+    fun retrieveTopicOfInterest(name: String): TopicOfInterest? = topicsOfInterestRepository.findByName(name)
 
     fun retrieveAll(): Iterable<TopicOfInterest> = topicsOfInterestRepository.findAll()
 }
