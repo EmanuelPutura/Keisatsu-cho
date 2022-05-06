@@ -1,5 +1,6 @@
 package ubb.keisatsu.cms.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
@@ -24,6 +25,8 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
     }
 
     fun addAccount(account: Account): Account = accountsRepository.save(account)
+
+    fun retrieveAccount(id: Int): Account? = accountsRepository.findByIdOrNull(id)
 
     fun retrieveAccount(email: String): Account? = accountsRepository.findByEmail(email)
 

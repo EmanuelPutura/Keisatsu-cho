@@ -9,8 +9,11 @@ class Conference(
     @Column(name="Name")
     var name: String,
 
-    @Column(name="url")
+    @Column(name="Url")
     var url: String,
+
+    @Column(name="Subtitles")
+    var subtitles: String,
 
     @ManyToOne
     @JoinColumn(name = "MainOrganiserID", referencedColumnName = "AccountID")

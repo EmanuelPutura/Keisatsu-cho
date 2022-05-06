@@ -1,12 +1,10 @@
 package ubb.keisatsu.cms.controller
 
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
-import ubb.keisatsu.cms.model.dto.AccountDto
+import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.AccountIdDto
+import ubb.keisatsu.cms.model.dto.AccountLoginCredentialsDto
 import ubb.keisatsu.cms.model.dto.AccountRegisterDto
+import ubb.keisatsu.cms.model.dto.AccountUserDataDto
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
@@ -14,6 +12,19 @@ import ubb.keisatsu.cms.service.AccountsService
 @RestController
 @CrossOrigin
 class AccountsController(private var accountsService: AccountsService) {
+    @GetMapping("accounts/getUserData")
+    fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserDataDto? {
+        val account: Account = accountsService.retrieveAccount(accountId) ?: return null
+        val userRole = when (account.role) {
+            UserRole.CHAIR -> "chair"
+            UserRole.REVIEWER -> "reviewer"
+            UserRole.AUTHOR -> "author"
+            else -> null
+        } ?: return null
+
+        return AccountUserDataDto(account.firstName, userRole)
+    }
+
     @PostMapping("accounts/sign-up")
     fun signUp(@RequestBody accountDto: AccountRegisterDto): Unit {
         /*
@@ -38,7 +49,7 @@ class AccountsController(private var accountsService: AccountsService) {
     }
 
     @PostMapping("accounts/login")
-    fun login(@RequestBody accountLoginDto: AccountDto): AccountIdDto {
+    fun login(@RequestBody accountLoginDto: AccountLoginCredentialsDto): AccountIdDto {
         val account: Account = accountsService.retrieveAccount(accountLoginDto.email) ?: return AccountIdDto(-1)
         return if (account.password == accountLoginDto.password) AccountIdDto(account.id) else AccountIdDto(-1)
     }

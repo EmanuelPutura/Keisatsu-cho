@@ -24,10 +24,10 @@ class Account(
     var role: UserRole,
 
     @Column(name="FirstName")
-    var firstName: String? = null,
+    var firstName: String,
 
     @Column(name="LastName")
-    var lastName: String? = null,
+    var lastName: String,
 
     @Column(name="Address")
     var address: String? = null,
