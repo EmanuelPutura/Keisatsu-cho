@@ -1,17 +1,32 @@
 package ubb.keisatsu.cms.controller
 
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import ubb.keisatsu.cms.model.Account
+import org.springframework.web.bind.annotation.*
+import ubb.keisatsu.cms.model.dto.AccountIdDto
+import ubb.keisatsu.cms.model.dto.AccountLoginCredentialsDto
+import ubb.keisatsu.cms.model.dto.AccountRegisterDto
+import ubb.keisatsu.cms.model.dto.AccountUserDataDto
+import ubb.keisatsu.cms.model.entities.Account
+import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
 
 @RestController
 @CrossOrigin
 class AccountsController(private var accountsService: AccountsService) {
+    @GetMapping("accounts/getUserData")
+    fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserDataDto? {
+        val account: Account = accountsService.retrieveAccount(accountId) ?: return null
+        val userRole = when (account.role) {
+            UserRole.CHAIR -> "chair"
+            UserRole.REVIEWER -> "reviewer"
+            UserRole.AUTHOR -> "author"
+            else -> null
+        } ?: return null
+
+        return AccountUserDataDto(account.firstName, userRole)
+    }
+
     @PostMapping("accounts/sign-up")
-    fun signUp(email: String, userType: String, userName: String, password: String, passwordRepeat: String): Unit {
+    fun signUp(@RequestBody accountDto: AccountRegisterDto): Unit {
         /*
             TODO
             - create specialized classes (i.e., chair, author, reviewer), which inherit from Account
@@ -21,15 +36,21 @@ class AccountsController(private var accountsService: AccountsService) {
             - hash passwords
             - server-side validation
         */
-        accountsService.addAccount(Account(email, userName, password))
 
-        // TODO: remove line below
-        println(accountsService.retrieveAll())
+        val role = when (accountDto.userType) {
+            "chair" -> UserRole.CHAIR
+            "reviewer" -> UserRole.REVIEWER
+            "author" -> UserRole.AUTHOR
+            else -> null
+        } ?: return
+
+        accountsService.addAccount(Account(accountDto.email, accountDto.username, accountDto.password, role,
+                accountDto.userFName, accountDto.userLName, accountDto.address, accountDto.birthDate))
     }
 
     @PostMapping("accounts/login")
-    fun login(email: String, password: String): Boolean {
-        val account: Account = accountsService.retrieveAccount(email) ?: return false
-        return account.password == password
+    fun login(@RequestBody accountLoginDto: AccountLoginCredentialsDto): AccountIdDto {
+        val account: Account = accountsService.retrieveAccount(accountLoginDto.email) ?: return AccountIdDto(-1)
+        return if (account.password == accountLoginDto.password) AccountIdDto(account.id) else AccountIdDto(-1)
     }
 }
