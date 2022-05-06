@@ -14,6 +14,8 @@ function LogInForm({setToken}){
     function submitData(){
         if(email === 'chair@chair.com' && password === 'Chair123'){
             setToken(122);
+        } else if(email === 'author@author.com' && password === 'Author123'){
+            setToken(123);
         } else {
             // I need the user ID of the account that logged in
             fetch("http://localhost:8080/accounts/login",

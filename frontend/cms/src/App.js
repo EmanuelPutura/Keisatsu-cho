@@ -6,6 +6,7 @@ import RegisterPage from './enterPage/RegisterPage'
 import Container from "@mui/material/Container";
 import ChairPage from "./chairPage/ChairPage";
 import useLocalStorage from "./UseLocalStorage";
+import AuthorPage from "./authorPage/AuthorPage";
 
 function App() {
     const { setItem: setToken, item: token } = useLocalStorage("token", undefined);
@@ -13,7 +14,8 @@ function App() {
     const [ type, setType ] = useState("");
 
     const accountRequest = accountID => {
-        if (accountID !== undefined && accountID !== 122) {
+
+        if (accountID !== undefined && accountID !== 122 && accountID !== 123) {
             fetch("http://localhost:8080/accounts/getUserData?accountID=" + accountID.toString())
                 .then(response => response.json())
                 .then(data => {
@@ -22,12 +24,12 @@ function App() {
                 })
                 .catch(() => alert("Invalid account!"));
         } else {
-            setName(accountID === 122 ? "testName" : "");
-            setType(accountID === 122 ? "chair" : "");
+            setName(accountID === 122 || accountID === 123 ? "testName" : "");
+            setType(accountID === 122 ? "chair" : accountID === 123 ? "author" : "" );
         }
     }
 
-    useEffect(() => accountRequest(token), []);
+    useEffect(() => accountRequest(token), [token]);
 
     const setAll = token => {
         setToken(token);
@@ -39,6 +41,8 @@ function App() {
         switch (type){
             case "chair":
                 return (<ChairPage name={name} token={token} setToken={setAll}/>);
+            case "author":
+                return (<AuthorPage name={name} token={token} setToken={setAll} />);
             default:
                 //alert(type);
         }
