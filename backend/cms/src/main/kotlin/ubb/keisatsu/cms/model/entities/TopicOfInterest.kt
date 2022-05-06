@@ -6,11 +6,11 @@ import javax.persistence.*
 @Entity
 @Table(name="TopicOfInterest")
 class TopicOfInterest(
-    @Column(name="Name")
+    @Column(name="Name", unique=true)
     var name: String,
 
     @ManyToMany(mappedBy = "topicsOfInterest")
-    var conferencesForTopic: MutableSet<Conference>,
+    var conferencesForTopic: MutableSet<Conference> = mutableSetOf(),
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
