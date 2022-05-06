@@ -19,6 +19,10 @@ class Conference(
     @JoinColumn(name = "MainOrganiserID", referencedColumnName = "AccountID")
     var mainOrganiser: Account,
 
+    @ManyToMany
+    @JoinTable(name = "ConferenceTopic")
+    var topicsOfInterest: MutableSet<TopicOfInterest>? = null,
+
     @ManyToOne
     @JoinColumn(name = "DeadlinesID", referencedColumnName = "DeadlinesID")
     var conferenceDeadlines: ConferenceDeadlines? = null,
