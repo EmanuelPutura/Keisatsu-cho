@@ -1,6 +1,7 @@
 package ubb.keisatsu.cms.model.entities
 
 import ubb.keisatsu.cms.model.AbstractJpaHashable
+import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
 
@@ -13,14 +14,14 @@ class ConferenceDeadlines(
     var id: Int,
 
     @Column(name="PaperSubmissionDeadline")
-    var paperSubmissionDeadline: Date,
+    var paperSubmissionDeadline: LocalDate,
 
     @Column(name="PaperReviewDeadline")
-    var paperReviewDeadline: Date,
+    var paperReviewDeadline: LocalDate,
 
     @Column(name="AcceptanceNotificationDeadline")
-    var acceptanceNotificationDeadline: Date,
+    var acceptanceNotificationDeadline: LocalDate,
 
     @Column(name="AcceptedPaperUploadDeadline")
-    var acceptedPaperUploadDeadline: Date
+    var acceptedPaperUploadDeadline: LocalDate
 ) : AbstractJpaHashable()

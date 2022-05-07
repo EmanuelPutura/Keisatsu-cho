@@ -1,7 +1,7 @@
 package ubb.keisatsu.cms.model.entities
 
 import ubb.keisatsu.cms.model.AbstractJpaHashable
-import java.util.*
+import java.time.LocalDate
 import javax.persistence.*
 
 enum class UserRole {
@@ -33,7 +33,7 @@ class Account(
     var address: String? = null,
 
     @Column(name="BirthDate")
-    var birthDate: Date? = null,
+    var birthDate: LocalDate? = null,
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
