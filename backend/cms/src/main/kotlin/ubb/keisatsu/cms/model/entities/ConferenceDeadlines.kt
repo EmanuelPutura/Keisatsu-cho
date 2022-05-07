@@ -8,11 +8,6 @@ import javax.persistence.*
 @Entity
 @Table(name="ConferenceDeadlines")
 class ConferenceDeadlines(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="DeadlinesID")
-    var id: Int,
-
     @Column(name="PaperSubmissionDeadline")
     var paperSubmissionDeadline: LocalDate,
 
@@ -23,5 +18,10 @@ class ConferenceDeadlines(
     var acceptanceNotificationDeadline: LocalDate,
 
     @Column(name="AcceptedPaperUploadDeadline")
-    var acceptedPaperUploadDeadline: LocalDate
+    var acceptedPaperUploadDeadline: LocalDate,
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="DeadlinesID")
+    var id: Int = -1,
 ) : AbstractJpaHashable()
