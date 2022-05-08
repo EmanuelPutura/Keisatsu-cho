@@ -29,7 +29,7 @@ function PaperDetails({paper, token, url, buttonText}) {
 
     return (
         <Stack component="div" alignSelf="center" width="80%" justifyContent="space-between" direction="row" >
-            <Typography component="h3" variant="p">
+            <Typography component="h3" variant="h6">
                 {paper.title}
             </Typography>
             <Box component="div">
