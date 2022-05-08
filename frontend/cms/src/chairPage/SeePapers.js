@@ -9,6 +9,7 @@ import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import {ListItemWithCollapsible} from "../formUtils";
 import React, {useState} from "react";
+import ListItemText from "@mui/material/ListItemText";
 
 function PaperCollapsible({paper, conferences, token}){
 
@@ -58,6 +59,22 @@ function PaperCollapsible({paper, conferences, token}){
     const [conferenceID, setConferenceID] = useState("");
     return (
         <Box component="div" className="chair-form">
+            <Typography variant="h6" component="h3">
+                Abstract:
+            </Typography>
+            <Typography variant="caption" component="h4">
+                {paperObj.abstract}
+            </Typography>
+            <Typography variant="h6" component="h3">
+                Authors:
+            </Typography>
+            <Box component="div">
+            {
+                paperObj.authors.map((author) => (
+                    <ListItemText key={author}>{author.name}</ListItemText>
+                ))
+            }
+            </Box>
             { !decided ?
             <Stack component="div"
                    direction="row"

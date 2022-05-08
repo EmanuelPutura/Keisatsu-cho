@@ -16,6 +16,8 @@ function LogInForm({setToken}){
             setToken(122);
         } else if(email === 'author@author.com' && password === 'Author123'){
             setToken(123);
+        } else if(email === 'reviewer@reviewer.com' && password === 'Reviewer123'){
+            setToken(124);
         } else {
             // I need the user ID of the account that logged in
             fetch("http://localhost:8080/accounts/login",
@@ -30,7 +32,11 @@ function LogInForm({setToken}){
                     })
                 }).then(response => response.json())
                 .then(data => {
-                    setToken(data.id);
+                    if(data.id !== -1) {
+                        setToken(data.id);
+                    } else {
+                        alert("Invalid email/password combination!");
+                    }
                 })
         }
     }
