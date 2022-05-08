@@ -12,13 +12,5 @@ class PaperConference {
     @JoinColumn(name = "PaperID")
     var paperID: Paper? = null
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "\"ConferenceID\"", nullable = false)
-    var conference: Conference? = null
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"AssigneeID\"")
-    var assigneeID: Chair? = null
-
+    //TODO Reverse Engineering! Migrate other columns to the entity
 }

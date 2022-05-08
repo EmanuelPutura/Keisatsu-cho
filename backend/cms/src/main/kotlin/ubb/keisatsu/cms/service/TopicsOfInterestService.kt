@@ -1,5 +1,6 @@
 package ubb.keisatsu.cms.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import ubb.keisatsu.cms.model.entities.TopicOfInterest
 import ubb.keisatsu.cms.repository.TopicsOfInterestRepository
@@ -22,4 +23,6 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
     fun retrieveTopicOfInterest(name: String): TopicOfInterest? = topicsOfInterestRepository.findByName(name)
 
     fun retrieveAll(): Iterable<TopicOfInterest> = topicsOfInterestRepository.findAll()
+
+    fun findTopicNameById(id: Int): TopicOfInterest? = topicsOfInterestRepository.findByIdOrNull(id)
 }
