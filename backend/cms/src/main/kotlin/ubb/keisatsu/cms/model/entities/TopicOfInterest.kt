@@ -12,6 +12,9 @@ class TopicOfInterest(
     @ManyToMany(mappedBy = "topicsOfInterest")
     var conferencesForTopic: MutableSet<Conference> = mutableSetOf(),
 
+    @ManyToMany(mappedBy = "topicsOfInterest")
+    var accountsForTopic: MutableSet<Account> = mutableSetOf(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="TopicID")

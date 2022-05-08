@@ -15,8 +15,8 @@ function SetTopics({token, papersRequest}){
                 fetch("http://localhost:8080/accounts/topics?accountID=" + token.toString())
                     .then(response => response.json())
                     .then(data => {
-                        setTopics(data);
-                        papersRequest(token);
+                        setTopics(data.topics);
+                        papersRequest();
                     })
                     .catch(() => alert("Invalid topics request!"))
             } else {

@@ -18,6 +18,9 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
 
     fun findAllForConference(conferenceId: Int): Iterable<TopicOfInterest> = topicsOfInterestRepository.findByConferencesForTopicId(conferenceId)
 
+    fun findAllForAccount(accountId: Int): Iterable<TopicOfInterest> = topicsOfInterestRepository.findByAccountsForTopicId(accountId)
+
+
     fun addTopicOfInterest(topicOfInterest: TopicOfInterest): TopicOfInterest = topicsOfInterestRepository.save(topicOfInterest)
 
     fun retrieveTopicOfInterest(name: String): TopicOfInterest? = topicsOfInterestRepository.findByName(name)
