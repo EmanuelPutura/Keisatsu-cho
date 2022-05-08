@@ -29,8 +29,6 @@ function SetTopics({token, papersRequest}){
 
     function submitData(event){
         event.preventDefault();
-        console.log(token);
-        console.log(topics);
         fetch("http://localhost:8080/accounts/topics",
             {
                 method: "PUT",
