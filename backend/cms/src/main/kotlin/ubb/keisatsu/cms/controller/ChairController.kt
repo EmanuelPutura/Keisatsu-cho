@@ -11,7 +11,8 @@ import java.time.format.DateTimeFormatter
 @CrossOrigin
 class ChairController(
         private val conferencesService: ConferencesService, private val accountsService: AccountsService,
-        private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,private val paperService: PaperService) {
+        private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,private val paperService: PaperService,
+    private val paperEvaluationService: ChairPaperEvaluationService) {
 
     @GetMapping("conferences/get")
     fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDetailsDto> {
@@ -85,5 +86,15 @@ class ChairController(
         conference.conferenceDeadlines = conferenceDeadlines
     }
 
+    @PutMapping("accounts/papers")
+    fun acceptPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
+        val paper: Paper=paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
+        val account: Account=accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
+        if ( account.role != UserRole.CHAIR) {
+            return
+        }
+        val paperKey: ChairPaperKey= ChairPaperKey(paperEvaluationDto.paperID,paperEvaluationDto.chairID)
+        paperEvaluationService.addEvaluation(ChairPaperEvaluation(paperKey,paper,account,paperEvaluationDto.isAccepted))
+    }
 
 }

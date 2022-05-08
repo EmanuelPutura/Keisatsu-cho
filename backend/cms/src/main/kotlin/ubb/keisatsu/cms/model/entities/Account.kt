@@ -38,6 +38,9 @@ class Account(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="AccountId")
-    var id: Int = -1
+    var id: Int = -1,
+
+    @OneToMany(mappedBy = "accountID")
+    var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf()
 
 ) : AbstractJpaHashable()

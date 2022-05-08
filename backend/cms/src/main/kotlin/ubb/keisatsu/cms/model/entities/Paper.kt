@@ -27,6 +27,10 @@ class Paper (
     @Column(name = "\"File\"", nullable = false)
     var file: ByteArray,
 
-    @OneToMany(mappedBy = "paperID")
-    var paperConferences: MutableSet<PaperConference> = mutableSetOf()
+    @ManyToMany(mappedBy = "assignedPapers")
+    var papersForConference: MutableSet<Conference> = mutableSetOf(),
+
+    @OneToMany(mappedBy = "paper")
+    var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf()
+
 ) : AbstractJpaHashable()
