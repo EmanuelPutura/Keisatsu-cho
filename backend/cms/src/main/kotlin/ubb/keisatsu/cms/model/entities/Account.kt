@@ -35,6 +35,10 @@ class Account(
     @Column(name="BirthDate")
     var birthDate: LocalDate? = null,
 
+    @ManyToMany
+    @JoinTable(name = "AccountTopic")
+    var topicsOfInterest: MutableSet<TopicOfInterest> = mutableSetOf(),
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="AccountId")
