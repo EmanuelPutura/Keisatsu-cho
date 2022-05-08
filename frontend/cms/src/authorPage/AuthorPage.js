@@ -15,6 +15,8 @@ function AuthorPage({name, token, setToken}) {
     const testAcceptedPapers = [{
         id: 1,
         title: "Paper 1",
+        abstract: "lorem ipsum ...",
+        authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
         decided: true
@@ -22,6 +24,8 @@ function AuthorPage({name, token, setToken}) {
     {
         id: 2,
         title: "Paper 2",
+        abstract: "lorem ipsum ...",
+        authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
         decided: true
@@ -30,6 +34,8 @@ function AuthorPage({name, token, setToken}) {
     const testNotFullPapers = [{
         id: 3,
         title: "Paper 3",
+        abstract: "lorem ipsum ...",
+        authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
         decided: false
@@ -37,6 +43,8 @@ function AuthorPage({name, token, setToken}) {
     {
         id: 4,
         title: "Paper 4",
+        abstract: "lorem ipsum ...",
+        authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
         decided: false
@@ -51,7 +59,7 @@ function AuthorPage({name, token, setToken}) {
                     .then(data => {
                         setAcceptedPapers(data);
                     })
-                    .catch(() => alert("Invalid request!"));
+                    .catch(() => alert("Invalid paper request!"));
             } else {
                 setAcceptedPapers(() => token === 123 ? [...testAcceptedPapers] : []);
             }
@@ -67,7 +75,7 @@ function AuthorPage({name, token, setToken}) {
                     .then(data => {
                         setPapersToBeUploaded(data);
                     })
-                    .catch(() => alert("Invalid request!"));
+                    .catch(() => alert("Invalid paper request!"));
             } else {
                 setPapersToBeUploaded(() => token === 123 ? [...testNotFullPapers] : []);
             }

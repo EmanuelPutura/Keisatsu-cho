@@ -28,12 +28,17 @@ function ChairPage({name, token, setToken}){
     // Papers format
     const testPapers = [{ id: 1,
         title: "Paper 1",
+        abstract: "lorem ipsum ...",
+        authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
         decided: false
     },
     { id: 2,
         title: "Paper 2",
+        abstract: "lorem ipsum 2 ...",
+        authors: [{name: "Author1", email: "i@a.com", address: "idk"},
+            {name: "Author2", email: "a@i.com", address: "idk"}],
         keywords: "...",
         topic: "...",
         decided: true
@@ -47,7 +52,7 @@ function ChairPage({name, token, setToken}){
                     .then(data => {
                         setConferences(data);
                     })
-                    .catch(() => alert("Invalid account!"));
+                    .catch(() => alert("Invalid conference request!"));
             } else {
                 setConferences(() => accountID === 122 ? [...testConferences] : []);
             }
@@ -63,7 +68,7 @@ function ChairPage({name, token, setToken}){
                     .then(data => {
                         setPapers(data);
                     })
-                    .catch(() => alert("Invalid account!"));
+                    .catch(() => alert("Invalid paper request!"));
             } else {
                 setPapers(accountID === 122 ? testPapers : []);
             }

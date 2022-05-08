@@ -7,6 +7,7 @@ import Container from "@mui/material/Container";
 import ChairPage from "./chairPage/ChairPage";
 import useLocalStorage from "./UseLocalStorage";
 import AuthorPage from "./authorPage/AuthorPage";
+import ReviewerPage from "./reviewerPage/ReviewerPage";
 
 function App() {
     const { setItem: setToken, item: token } = useLocalStorage("token", undefined);
@@ -15,7 +16,7 @@ function App() {
 
     const accountRequest = accountID => {
 
-        if (accountID !== undefined && accountID !== 122 && accountID !== 123) {
+        if (accountID !== undefined && accountID !== 122 && accountID !== 123 && accountID !== 124) {
             fetch("http://localhost:8080/accounts/getUserData?accountID=" + accountID.toString())
                 .then(response => response.json())
                 .then(data => {
@@ -24,8 +25,8 @@ function App() {
                 })
                 .catch(() => alert("Invalid account!"));
         } else {
-            setName(accountID === 122 || accountID === 123 ? "testName" : "");
-            setType(accountID === 122 ? "chair" : accountID === 123 ? "author" : "" );
+            setName(accountID === 122 || accountID === 123 || accountID === 124 ? "testName" : "");
+            setType(accountID === 122 ? "chair" : accountID === 123 ? "author" : accountID === 124 ? "reviewer" : "" );
         }
     }
 
@@ -43,6 +44,8 @@ function App() {
                 return (<ChairPage name={name} token={token} setToken={setAll}/>);
             case "author":
                 return (<AuthorPage name={name} token={token} setToken={setAll} />);
+            case "reviewer":
+                return (<ReviewerPage name={name} token={token} setToken={setAll} />)
             default:
                 //alert(type);
         }
