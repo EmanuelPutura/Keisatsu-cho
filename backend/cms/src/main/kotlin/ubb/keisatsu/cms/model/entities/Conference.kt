@@ -30,5 +30,11 @@ class Conference(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ConferenceID")
-    var id: Int = -1
+    var id: Int = -1,
+
+    @ManyToMany
+    @JoinTable(name = "PaperConference")
+    var assignedPapers: MutableSet<Paper> = mutableSetOf(),
+
+
 ) : AbstractJpaHashable()

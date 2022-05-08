@@ -63,12 +63,13 @@ function ChairPage({name, token, setToken}){
     useEffect(() => {
         const paperRequest = accountID => {
             if (accountID !== undefined && accountID !== 122) {
-                fetch("http://localhost:8080/papers?accountID=" + accountID.toString())
+                fetch("http://localhost:8080/papers/get?accountID=" + accountID.toString())
                     .then(response => response.json())
                     .then(data => {
                         setPapers(data);
                     })
-                    .catch(() => alert("Invalid paper request!"));
+                    .catch(() => alert("Invalid account!"));
+
             } else {
                 setPapers(accountID === 122 ? testPapers : []);
             }

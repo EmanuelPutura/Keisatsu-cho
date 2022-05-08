@@ -7,4 +7,5 @@ interface TopicsOfInterestRepository : CrudRepository<TopicOfInterest, Int> {
     fun findByConferencesForTopicId(conferenceId: Int): Iterable<TopicOfInterest>
 
     fun findByName(name: String): TopicOfInterest?
+
 }
