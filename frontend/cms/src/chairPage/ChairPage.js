@@ -68,7 +68,7 @@ function ChairPage({name, token, setToken}){
                     .then(data => {
                         setPapers(data);
                     })
-                    .catch(() => alert("Invalid account!"));
+                    .catch(() => alert("Invalid paper request!"));
 
             } else {
                 setPapers(accountID === 122 ? testPapers : []);
