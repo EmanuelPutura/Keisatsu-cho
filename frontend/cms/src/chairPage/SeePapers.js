@@ -16,6 +16,9 @@ function PaperCollapsible({paper, conferences, token}){
     const paperObj = JSON.parse(paper);
     const conferencesArray = JSON.parse(conferences)
 
+    console.log(paperObj)
+    console.log(conferencesArray)
+
     function sendResponse(response){
         fetch("http://localhost:8080/accounts/papers",
             {
@@ -68,13 +71,13 @@ function PaperCollapsible({paper, conferences, token}){
             <Typography variant="h6" component="h3">
                 Authors:
             </Typography>
-            <Box component="div">
-            {
-                paperObj.authors.map((author) => (
-                    <ListItemText key={author}>{author.name}</ListItemText>
-                ))
-            }
-            </Box>
+            {/*<Box component="div">*/}
+            {/*{*/}
+            {/*    paperObj.authors.map((author) => (*/}
+            {/*        <ListItemText key={author}>{author.name}</ListItemText>*/}
+            {/*    ))*/}
+            {/*}*/}
+            {/*</Box>*/}
             { !decided ?
             <Stack component="div"
                    direction="row"

@@ -45,6 +45,9 @@ class Account(
     var id: Int = -1,
 
     @OneToMany(mappedBy = "accountID")
-    var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf()
+    var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf(),
+
+    @ManyToMany(mappedBy = "paperAuthor")
+    var papersForAuthor: MutableSet<Paper> = mutableSetOf()
 
 ) : AbstractJpaHashable()

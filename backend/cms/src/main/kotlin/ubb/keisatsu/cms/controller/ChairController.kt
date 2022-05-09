@@ -35,7 +35,7 @@ class ChairController(
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
         paperService.retrieveAll().forEach{ paper ->
             val topic: String= topicsOfInterestService.findTopicNameById(paper.id)!!.name
-            papersDtoSet.add(PaperDetailsDto(paper.id,paper.title,paper.keywords,topic,false))
+            papersDtoSet.add(PaperDetailsDto(paper.id,paper.title,paper.keywords,topic,paper.abstract,false))
         }
         return papersDtoSet
     }
