@@ -58,6 +58,7 @@ function ReviewerPage({name, token, setToken}){
         }
     }, [token]);
 
+    /*
     useEffect(() => {
         papersToBidRequest();
     }, [papersToBidRequest]);
@@ -76,14 +77,11 @@ function ReviewerPage({name, token, setToken}){
         }
     }, [token]);
 
-    useEffect(() => {
-        papersToBidRequest();
-    }, [papersToBidRequest]);
 
     useEffect(() => {
         papersToReviewRequest();
     }, [papersToReviewRequest]);
-
+*/
     return(
         <Container component="div" disableGutters={true} maxWidth={false}>
             <Header name={name} setToken={setToken}/>

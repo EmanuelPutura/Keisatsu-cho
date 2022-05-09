@@ -68,16 +68,18 @@ function PaperCollapsible({paper, conferences, token}){
             <Typography variant="caption" component="h4">
                 {paperObj.abstract}
             </Typography>
+            {/*
             <Typography variant="h6" component="h3">
                 Authors:
             </Typography>
-            {/*<Box component="div">*/}
-            {/*{*/}
-            {/*    paperObj.authors.map((author) => (*/}
-            {/*        <ListItemText key={author}>{author.name}</ListItemText>*/}
-            {/*    ))*/}
-            {/*}*/}
-            {/*</Box>*/}
+            <Box component="div">
+            {
+                paperObj.authors.map((author) => (
+                    <ListItemText key={author}>{author.name}</ListItemText>
+                ))
+            }
+            </Box>
+            */}
             { !decided ?
             <Stack component="div"
                    direction="row"
