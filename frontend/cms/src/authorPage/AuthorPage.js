@@ -50,7 +50,6 @@ function AuthorPage({name, token, setToken}) {
         decided: false
     }];
 
-
     useEffect(() => {
         const acceptedPapersRequest = token => {
             if (token !== undefined && token !== 123) {

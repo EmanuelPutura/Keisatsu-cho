@@ -49,7 +49,7 @@ function PaperBidCollapsible({token, paper}){
                             Authors:
                         </Typography>
                         {
-                            paperObj.authors.map((author) => (
+                            paperObj.authors &&  paperObj.authors.length > 0 && paperObj.authors.map((author) => (
                                 <ListItemText key={author}>{author.name}</ListItemText>
                             ))
                         }
@@ -85,7 +85,7 @@ function PaperBid({token, papers}){
                divider={<Divider orientation="horizontal" flexItem/>}
         >
             {
-                papers.map((paper) => (
+                papers && papers.length > 0 && papers.map((paper) => (
                     <ListItemWithCollapsible value={paper.title} collapsible={
                         <PaperBidCollapsible paper={JSON.stringify(paper)} token={token}/>
                     }/>
