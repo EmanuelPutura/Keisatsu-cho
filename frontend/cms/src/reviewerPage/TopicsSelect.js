@@ -7,6 +7,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
+import Typography from "@mui/material/Typography";
 
 function not(a, b) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -91,7 +92,10 @@ export default function TopicsSelect({topics, setTopics, selectedTopics, setSele
 
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item>{customList(topics)}</Grid>
+            <Grid item>
+                <Typography variant="h6" component="p">Topics</Typography>
+                {customList(topics)}
+            </Grid>
             <Grid item>
                 <Grid container direction="column" alignItems="center">
                     <Button
@@ -136,7 +140,10 @@ export default function TopicsSelect({topics, setTopics, selectedTopics, setSele
                     </Button>
                 </Grid>
             </Grid>
-            <Grid item>{customList(selectedTopics)}</Grid>
+            <Grid item>
+                <Typography variant="h6" component="p">Selected Topics</Typography>
+                {customList(selectedTopics)}
+            </Grid>
         </Grid>
     );
 }
