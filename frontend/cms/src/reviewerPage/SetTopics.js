@@ -1,75 +1,82 @@
 import {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import "./reviewerStyle.css";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import TopicsSelect from "./TopicsSelect";
 
 function SetTopics({token, papersRequest}){
-    const [topics, setTopics]=useState("");
-    const testTopics = "Topic1\nTopic2\nTopic3";
+    const [topics, setTopics]=useState([]);
+    const [selectedTopics, setSelectedTopics] = useState([]);
+    const [conferences, setConferences] = useState([]);
+    const [selectedConference, setSelectedConference] = useState('');
+    const testConferences = [{  id: 1,
+        name: "Conference name",
+        url: "conference.com",
+        subtitles: "Subtitle1\nSubtitle2",
+        topics: "Topic1\n" +
+            "Topic2\n" +
+            "Topic3\n",
+        submission:"2021-08-07",
+        review:"2021-09-07",
+        acceptance:"2021-10-07",
+        upload:"2021-11-07"}];
 
-    useEffect(() => {
-        const topicsRequest = token => {
-            if(token !== undefined && token !== 124){
-                fetch("http://localhost:8080/accounts/topics?accountID=" + token.toString())
-                    .then(response => response.json())
-                    .then(data => {
-                        setTopics(data);
-                        papersRequest(token);
-                    })
-                    .catch(() => alert("Invalid topics request!"))
-            } else {
-                setTopics(() => token === 124 ? testTopics : "");
-            }
-        }
-        topicsRequest(token);
-    }, [token, papersRequest]);
-
-
-    function submitData(event){
-        event.preventDefault();
-        fetch("http://localhost:8080/accounts/topics",
-            {
-                method: "PUT",
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    token: token,
-                    topics: topics
-                })
-            }).then(response => response.json())
-            .then(() =>{
-                alert("Topics updated!");
-            })
+    function setSelectedAndUpdatePapers(topics){
+        setSelectedTopics(topics)
+        papersRequest(selectedConference.id, topics.join("\n"));
     }
 
+    useEffect(() => {
+        const conferenceRequest = accountID => {
+            if (accountID !== undefined && accountID !== 124) {
+                fetch("http://localhost:8080/conferences/get")
+                    .then(response => response.json())
+                    .then(data => {
+                        setConferences(data);
+                    })
+                    .catch(() => alert("Invalid conference request!"));
+            } else {
+                setConferences(() => accountID === 124 ? [...testConferences] : []);
+            }
+        }
+        conferenceRequest(token);
+    },[token])
+
+    function handleChange(event){
+        setSelectedConference(event.target.value);
+        setTopics(testConferences.find(conference => conference.id === event.target.value).topics.trim().split("\n"));
+        setSelectedTopics([]);
+    }
 
     return(
         <Box component="div" className="reviewer_container">
             <Typography variant="h5" component="h2" align="center" my="5px">
                 Set up topics of interest:
             </Typography>
-            <Box component="form" className="reviewer_form" onSubmit={submitData}>
-                <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    multiline
-                    label="Topics of Interest, one on each row"
-                    name="topics"
-                    value={topics}
-                    onChange={e => setTopics(e.target.value)}
-                />
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
+            <FormControl fullWidth>
+                <InputLabel id="select-conference-label">Conference</InputLabel>
+                <Select
+                    labelId="select-conference-label"
+                    id="select-conference"
+                    value={selectedConference}
+                    label="Conference"
+                    onChange={handleChange}
                 >
-                    UPDATE TOPICS
-                </Button>
-            </Box>
+                    {conferences && conferences.length > 0  && conferences.map((conference) => (
+                        <MenuItem value={conference.id}>{conference.name}</MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+            <TopicsSelect
+                topics={topics}
+                setTopics={setTopics}
+                selectedTopics={selectedTopics}
+                setSelectedTopics={setSelectedAndUpdatePapers}
+            />
         </Box>
     )
 }

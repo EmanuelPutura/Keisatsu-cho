@@ -4,7 +4,7 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import SetTopics from "./SetTopics";
 import PaperBid from "./PaperBid";
-import Typography from "@mui/material/Typography";
+import PaperReview from "./PaperReview";
 
 function ReviewerPage({name, token, setToken}){
 
@@ -45,23 +45,18 @@ function ReviewerPage({name, token, setToken}){
         comments: []
     }];
 
-    const papersToBidRequest = useCallback( () => {
+    function papersToBidRequest(conference, topics){
         if(token !== undefined && token !== 124){
-            fetch("http://localhost:8080/papers/to_bid?accountID=" + token.toString())
+            fetch("http://localhost:8080/papers/to_bid?accountID=" + token.toString() +"&conferenceID="+ conference + "&topics="+topics)
                 .then(response => response.json())
                 .then(data => {
                     setPapersToBid(data);
                 })
                 .catch(() => alert("Invalid papers request!"))
         } else {
-            setPapersToBid(() => token === 124 ? testPapersToBid : "");
+            setPapersToBid(token === 124 ? testPapersToBid : "");
         }
-    }, [token]);
-
-    useEffect(() => {
-        papersToBidRequest();
-    }, [papersToBidRequest]);
-
+    }
 
     const papersToReviewRequest = useCallback( () => {
         if(token !== undefined && token !== 124){
@@ -72,13 +67,9 @@ function ReviewerPage({name, token, setToken}){
                 })
                 .catch(() => alert("Invalid papers request!"))
         } else {
-            setPapersToReview(() => token === 124 ? testPapersToReview : "");
+            setPapersToReview(token === 124 ? testPapersToReview : "");
         }
     }, [token]);
-
-    useEffect(() => {
-        papersToBidRequest();
-    }, [papersToBidRequest]);
 
     useEffect(() => {
         papersToReviewRequest();
@@ -90,6 +81,7 @@ function ReviewerPage({name, token, setToken}){
             <Stack component="div" spacing={2}>
                 <SetTopics token={token} papersRequest={papersToBidRequest}/>
                 <PaperBid token={token} papers={papersToBid}/>
+                <PaperReview token={token} papers={papersToReview}/>
             </Stack>
         </Container>
     )
