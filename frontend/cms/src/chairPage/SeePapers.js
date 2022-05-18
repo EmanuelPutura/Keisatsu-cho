@@ -2,20 +2,16 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
 import Typography from "@mui/material/Typography";
 import {ListItemWithCollapsible} from "../formUtils";
-import React, {useState} from "react";
+import React from "react";
 import ListItemText from "@mui/material/ListItemText";
 
-function PaperCollapsible({paper, conferences, token}){
+function PaperCollapsible({paper, conference, token}){
 
     const paperObj = JSON.parse(paper);
-    const conferencesArray = JSON.parse(conferences)
 
+    //TODO: request changed -- added conferenceID representing the ID of the conference for which the paper is reviewed
     function sendResponse(response){
         fetch("http://localhost:8080/accounts/papers",
             {
@@ -26,6 +22,7 @@ function PaperCollapsible({paper, conferences, token}){
                 body: JSON.stringify({
                     chairID: token,
                     paperID: paperObj.id,
+                    conferenceID: paperObj.conferenceID,
                     response: response
                 })
             }).then(response => response.json())
@@ -34,29 +31,6 @@ function PaperCollapsible({paper, conferences, token}){
             })
     }
 
-    function assignPaper(event){
-        event.preventDefault();
-        fetch("http://localhost:8080/accounts/papers/assign",
-            {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chairID: token,
-                    paperID: paperObj.id,
-                    conferenceID: conferenceID
-                })
-            }).then(response => response.json())
-            .then(() => {
-                alert("response sent");
-            })
-    }
-
-
-    paper = JSON.parse(paper);
-    const [decided, setDecided] = useState(paper.decided);
-    const [conferenceID, setConferenceID] = useState("");
     return (
         <Box component="div" className="chair-form">
             <Typography variant="h6" component="h3">
@@ -66,65 +40,42 @@ function PaperCollapsible({paper, conferences, token}){
                 {paperObj.abstract}
             </Typography>
             <Typography variant="h6" component="h3">
-                Authors:
+                Conference:
+            </Typography>
+            <Typography variant="caption" component="h4">
+                {conference}
             </Typography>
             <Box component="div">
-            {
-                paperObj.authors.map((author) => (
-                    <ListItemText key={author}>{author.name}</ListItemText>
-                ))
-            }
-            </Box>
-            { !decided ?
-            <Stack component="div"
-                   direction="row"
-                   justifyContent="space-evenly"
-            >
-                <Button
-                    fullWidth
-                    variant="contained"
-                    onClick={() => {sendResponse(true); setDecided(true);}}
+                <Typography variant="h6" component="h3">
+                    Authors:
+                </Typography>
+                <Box component="div">
+                {
+                    paperObj.authors && paperObj.authors.length > 0 && paperObj.authors.map((author) => (
+                        <ListItemText key={author}>{author.name}</ListItemText>
+                    ))
+                }
+                </Box>
+                <Stack component="div"
+                       direction="row"
+                       justifyContent="space-evenly"
                 >
-                    ACCEPT
-                </Button>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    onClick={() => {sendResponse(false); setDecided(true);}}
-                >
-                    REJECT
-                </Button>
-            </Stack> :
-            <Stack component="form"
-                   direction="column"
-                   justifyContent="space-evenly"
-                   onSubmit={assignPaper}
-            >
-                <FormControl required fullWidth size="small" sx={{my: 1}}>
-                    <InputLabel id="conference-select-label">Conference</InputLabel>
-                    <Select
-                        labelId="conference-select-label"
-                        label="Conference"
-                        name="conference"
-                        value={conferenceID}
-                        onChange={e => setConferenceID(e.target.value)}
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        onClick={() => {sendResponse(true);}}
                     >
-                        {
-                            conferencesArray.map((conference) =>(
-                                <MenuItem value={conference.id}>{conference.name}</MenuItem>
-                            ))
-                        }
-                    </Select>
-                </FormControl>
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                >
-                    ASSIGN TO CONFERENCE
-                </Button>
-            </Stack>
-            }
+                        ACCEPT
+                    </Button>
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        onClick={() => {sendResponse(false);}}
+                    >
+                        REJECT
+                    </Button>
+                </Stack>
+            </Box>
         </Box>
     )
 }
@@ -142,9 +93,13 @@ function SeePapers({papers, conferences, token}){
                    divider={<Divider orientation="horizontal" flexItem/>}
             >
                 {
-                    papers.map((paper) => (
+                    papers && papers.length > 0 && papers.map((paper) => (
                     <ListItemWithCollapsible value={paper.title} collapsible={
-                        <PaperCollapsible paper={JSON.stringify(paper)} conferences={JSON.stringify(conferences)} token={token}/>
+                        <PaperCollapsible
+                            paper={JSON.stringify(paper)}
+                            conference={conferences.find((conference) => conference.id===paper.conferenceID).name}
+                            token={token}
+                        />
                     }/>
                     ))
                 }

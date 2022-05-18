@@ -173,7 +173,7 @@ function SeeConferences({conferences}) {
                    divider={<Divider orientation="horizontal" flexItem/>}
             >
                 {
-                    conferences.map((conference) => (
+                    conferences && conferences.length > 0 && conferences.map((conference) => (
                         <ListItemWithCollapsible value={conference.name} collapsible={
                             <ConferenceCollapsible conference={JSON.stringify(conference)}/>
                         }/>

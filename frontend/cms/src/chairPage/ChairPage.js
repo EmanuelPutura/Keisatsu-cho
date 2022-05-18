@@ -32,7 +32,7 @@ function ChairPage({name, token, setToken}){
         authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        decided: false
+        conferenceID: 1
     },
     { id: 2,
         title: "Paper 2",
@@ -41,7 +41,7 @@ function ChairPage({name, token, setToken}){
             {name: "Author2", email: "a@i.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        decided: true
+        conferenceID: 1
     }];
 
     useEffect(() => {

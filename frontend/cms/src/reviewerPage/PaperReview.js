@@ -21,6 +21,7 @@ function PaperReviewCollapsible({paper, token}) {
         comment: "very bad"
     }];
 
+    //TODO: new request
     function getComments(){
         if(token !== undefined && token !== 124){
             fetch("http://localhost:8080/reviewers/comments?paperId="+paperObj.id)
@@ -36,6 +37,7 @@ function PaperReviewCollapsible({paper, token}) {
 
     useEffect(getComments, []);
 
+    //TODO: new request
     function sendComment(){
         fetch("http://localhost:8080/reviewers/comment",
             {
@@ -54,7 +56,7 @@ function PaperReviewCollapsible({paper, token}) {
             })
     }
 
-
+    //TODO: new request
     function signalConflict(){
         fetch("http://localhost:8080/reviewers/conflict",
             {
@@ -72,6 +74,7 @@ function PaperReviewCollapsible({paper, token}) {
             })
     }
 
+    //TODO: new request
     function acceptPaper(){
         fetch("http://localhost:8080/reviewers/acceptPaper",
             {
@@ -89,6 +92,7 @@ function PaperReviewCollapsible({paper, token}) {
             })
     }
 
+    //TODO: new request
     function rejectPaper(){
         fetch("http://localhost:8080/reviewers/rejectPaper",
             {
@@ -128,7 +132,7 @@ function PaperReviewCollapsible({paper, token}) {
                             Authors:
                         </Typography>
                         {
-                            paperObj.authors.map((author) => (
+                            paperObj.authors && paperObj.authors.length > 0 && paperObj.authors.map((author) => (
                                 <ListItemText key={author}>{author.name}</ListItemText>
                             ))
                         }
@@ -181,11 +185,11 @@ function PaperReviewCollapsible({paper, token}) {
                        divider={<Divider orientation="horizontal" flexItem/> }
                 >
                     {
-                        comments.map((comment) => (
+                        comments && comments.length > 0 ? (comments.map((comment) => (
                             <ListItemWithCollapsible value={comment.name} collapsible={
                                 <Typography variant="body1" component="p">{comment.comment}</Typography>
                             }/>
-                        ))
+                        ))) : "There are no comments."
                     }
                 </Stack>
             </Stack>
@@ -204,7 +208,7 @@ export default function PaperReview({token, papers}){
                divider={<Divider orientation="horizontal" flexItem/>}
         >
             {
-                papers.map((paper) => (
+                papers && papers.length > 0 && papers.map((paper) => (
                     <ListItemWithCollapsible value={paper.title} collapsible={
                         <PaperReviewCollapsible paper={JSON.stringify(paper)} token={token}/>
                     }/>

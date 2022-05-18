@@ -17,7 +17,7 @@ function SeeCameraReadyPapers({papers, token}) {
                    divider={<Divider orientation="horizontal" flexItem/> }
             >
                 {
-                    papers.map((paper) => (
+                    papers && papers.length && papers.map((paper) => (
                         <PaperDetails paper={paper}
                                       token={token}
                                       url={"https://localhost:8080/papers/uploadCameraReady"}
