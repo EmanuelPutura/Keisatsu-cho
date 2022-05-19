@@ -30,8 +30,9 @@ class Paper (
     @Column(name="Abstract")
     var abstract: String,
 
-    @ManyToMany(mappedBy = "assignedPapers")
-    var papersForConference: MutableSet<Conference> = mutableSetOf(),
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "\"ConferenceID\"")
+    var conferenceID: Conference? = null,
 
     @OneToMany(mappedBy = "paper")
     var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf(),

@@ -13,5 +13,6 @@ class ConferencesService(private val conferencesRepository: ConferencesRepositor
 
     fun retrieveConference(id: Int): Conference? = conferencesRepository.findByIdOrNull(id)
 
+
     fun retrieveAll(): Iterable<Conference> = conferencesRepository.findAll()
 }
