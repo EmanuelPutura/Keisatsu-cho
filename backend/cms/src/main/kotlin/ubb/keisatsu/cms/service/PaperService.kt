@@ -7,6 +7,7 @@ import ubb.keisatsu.cms.repository.PaperRepository
 
 @Service
 class PaperService(private val paperRepository: PaperRepository) {
+
     fun retrieveAll(): Iterable<Paper> = paperRepository.findAll()
 
     fun retrievePaper(paperID: Int): Paper? = paperRepository.findByIdOrNull(paperID)

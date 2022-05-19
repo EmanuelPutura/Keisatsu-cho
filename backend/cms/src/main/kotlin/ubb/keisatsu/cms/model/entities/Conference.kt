@@ -32,7 +32,7 @@ class Conference(
     @Column(name="ConferenceID")
     var id: Int = -1,
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(name = "PaperConference")
     var assignedPapers: MutableSet<Paper> = mutableSetOf(),
 
