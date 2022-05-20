@@ -18,20 +18,20 @@ class Paper (
     var keywords: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"TopicID\"")
+    @JoinColumn(name = "\"TopicID\"", nullable = false)
     var topicID: TopicOfInterest? = null,
 
-    @Column(name = "\"Format\"", nullable = false, length = 32)
+    @Column(name = "\"Format\"", nullable = true, length = 32)
     var format: String,
 
-    @Column(name = "\"File\"", nullable = false)
+    @Column(name = "\"File\"", nullable = true)
     var file: ByteArray,
 
     @Column(name="Abstract")
     var abstract: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "\"ConferenceID\"")
+    @JoinColumn(name = "\"ConferenceID\"", nullable = false)
     var conferenceID: Conference? = null,
 
     @OneToMany(mappedBy = "paper")
@@ -40,5 +40,4 @@ class Paper (
     @ManyToMany
     @JoinTable(name="PaperAuthor")
     var paperAuthor: MutableSet<Account> = mutableSetOf()
-
 ) : AbstractJpaHashable()

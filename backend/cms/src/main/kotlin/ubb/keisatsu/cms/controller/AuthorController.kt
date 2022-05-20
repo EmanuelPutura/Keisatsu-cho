@@ -2,6 +2,7 @@ package ubb.keisatsu.cms.controller
 
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import ubb.keisatsu.cms.model.dto.ConferenceDetailsDto
 import ubb.keisatsu.cms.service.ConferencesService
@@ -26,5 +27,17 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         };
 
         return conferenceDtoSet;
+    }
+
+    @GetMapping("/papers")
+    fun getPapers(@RequestParam token: Int, @RequestParam type: String) {
+    }
+
+    private fun getAcceptedPapers(token: Int) {
+
+    }
+
+    private fun getMissingFullPapers(token: Int) {
+
     }
 }
