@@ -30,10 +30,10 @@ class Account(
     var lastName: String,
 
     @Column(name="Address")
-    var address: String? = null,
+    var address: String,
 
     @Column(name="BirthDate")
-    var birthDate: LocalDate? = null,
+    var birthDate: LocalDate,
 
     @ManyToMany
     @JoinTable(name = "AccountTopic")
@@ -47,7 +47,7 @@ class Account(
     @OneToMany(mappedBy = "accountID")
     var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf(),
 
-    @ManyToMany(mappedBy = "paperAuthor")
+    @ManyToMany(mappedBy = "paperAuthors")
     var papersForAuthor: MutableSet<Paper> = mutableSetOf()
 
 ) : AbstractJpaHashable()

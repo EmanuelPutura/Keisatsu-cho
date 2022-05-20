@@ -12,7 +12,7 @@ class Paper (
     var id: Int = -1,
 
     @Column(name = "\"Title\"", length = 64)
-    var title: String ,
+    var title: String,
 
     @Column(name = "\"Keywords\"", length = 128)
     var keywords: String,
@@ -32,12 +32,12 @@ class Paper (
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "\"ConferenceID\"", nullable = false)
-    var conferenceID: Conference? = null,
+    var conferenceId: Conference? = null,
 
     @OneToMany(mappedBy = "paper")
     var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf(),
 
     @ManyToMany
     @JoinTable(name="PaperAuthor")
-    var paperAuthor: MutableSet<Account> = mutableSetOf()
+    var paperAuthors: MutableSet<Account> = mutableSetOf()
 ) : AbstractJpaHashable()

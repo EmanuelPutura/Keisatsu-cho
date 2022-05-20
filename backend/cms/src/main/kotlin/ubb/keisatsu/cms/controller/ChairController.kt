@@ -34,10 +34,11 @@ class ChairController(
     fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
         paperService.retrieveAll().forEach{ paper ->
-            val topic: String= paper.topicID!!.name
-            val conferenceID= paper.conferenceID!!.id
-            papersDtoSet.add(PaperDetailsDto(paper.id,paper.title,paper.keywords,topic,paper.abstract,false,conferenceID))
+            val topic: String = paper.topicID!!.name
+            val conferenceID = paper.conferenceId!!.id
 
+            papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                    paper.keywords, topic, conferenceID))
         }
         return papersDtoSet
     }
@@ -90,13 +91,14 @@ class ChairController(
 
     @PutMapping("accounts/papers")
     fun acceptPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
-        val paper: Paper=paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
-        val account: Account=accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
+        val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
+        val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
         if ( account.role != UserRole.CHAIR) {
             return
         }
-        val paperKey: ChairPaperKey= ChairPaperKey(paperEvaluationDto.paperID,paperEvaluationDto.chairID)
-        paperEvaluationService.addEvaluation(ChairPaperEvaluation(paperKey,paper,account,paperEvaluationDto.isAccepted))
+
+        val paperKey: ChairPaperKey = ChairPaperKey(paperEvaluationDto.paperID,paperEvaluationDto.chairID)
+        paperEvaluationService.addEvaluation(ChairPaperEvaluation(paperKey, paper, account, paperEvaluationDto.response))
     }
 
 }

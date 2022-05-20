@@ -24,7 +24,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
                     conference.conferenceDeadlines?.paperSubmissionDeadline?.format(formatter), conference.conferenceDeadlines?.paperReviewDeadline?.format(formatter),
                     conference.conferenceDeadlines?.acceptanceNotificationDeadline?.format(formatter), conference.conferenceDeadlines?.acceptedPaperUploadDeadline?.format(formatter))
             )
-        };
+        }
 
         return conferenceDtoSet;
     }
