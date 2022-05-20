@@ -7,7 +7,7 @@ import {ListItemWithCollapsible} from "../formUtils";
 import React from "react";
 import ListItemText from "@mui/material/ListItemText";
 
-function PaperCollapsible({paper, conference, token}){
+function PaperCollapsible({paper, papersRequest, conference, token}){
 
     const paperObj = JSON.parse(paper);
 
@@ -25,7 +25,11 @@ function PaperCollapsible({paper, conference, token}){
                     conferenceID: paperObj.conferenceID,
                     response: response
                 })
-            }).then(response => response.json())
+            }).then(response => {
+                response.json()
+                papersRequest();
+            }
+                )
             .then(() => {
                 alert("response sent");
             })
@@ -80,7 +84,7 @@ function PaperCollapsible({paper, conference, token}){
     )
 }
 
-function SeePapers({papers, conferences, token}){
+function SeePapers({papers, papersRequest, conferences, token}){
 
     return (
         <Box component="div" className="chair_container">
@@ -97,6 +101,7 @@ function SeePapers({papers, conferences, token}){
                     <ListItemWithCollapsible value={paper.title} collapsible={
                         <PaperCollapsible
                             paper={JSON.stringify(paper)}
+                            papersRequest={papersRequest}
                             conference={conferences.find((conference) => conference.id===paper.conferenceID).name}
                             token={token}
                         />

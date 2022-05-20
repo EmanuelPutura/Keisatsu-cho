@@ -60,11 +60,7 @@ function ChairPage({name, token, setToken}){
         conferenceRequest(token);
     }
 
-    useEffect(() => {
-        conferencesToRequest();
-    }, [token]);
-
-    useEffect(() => {
+    function papersToRequest(){
         const paperRequest = accountID => {
             if (accountID !== undefined && accountID !== 122) {
                 fetch("http://localhost:8080/papers/get?accountID=" + accountID.toString())
@@ -79,7 +75,12 @@ function ChairPage({name, token, setToken}){
             }
         };
         paperRequest(token);
-    }, [token])
+    }
+
+    useEffect(() => {
+        conferencesToRequest();
+        papersToRequest();
+    }, [token]);
 
     return(
         <Container component="div" disableGutters={true} maxWidth={false}>
@@ -87,7 +88,7 @@ function ChairPage({name, token, setToken}){
             <Stack component="div" spacing={2}>
                 <AddConferenceForm conferencesRequest={conferencesToRequest}/>
                 <SeeConferences conferences={conferences}/>
-                <SeePapers papers={papers} conferences={conferences} token={token}/>
+                <SeePapers papers={papers} papersRequest={papersToRequest} conferences={conferences} token={token}/>
             </Stack>
         </Container>
     )
