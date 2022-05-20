@@ -8,7 +8,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
-function PaperReviewCollapsible({paper, token}) {
+function PaperReviewCollapsible({paper, token, paperRequest}) {
     const paperObj = JSON.parse(paper);
     const [comments, setComments] = useState([]);
     const [comment, setComment]=useState("");
@@ -70,6 +70,7 @@ function PaperReviewCollapsible({paper, token}) {
                 })
             }).then(response => response.json())
             .then(() =>{
+                paperRequest();
                 alert("Conflict has been signaled!");
             })
     }
@@ -88,6 +89,7 @@ function PaperReviewCollapsible({paper, token}) {
                 })
             }).then(response => response.json())
             .then(() =>{
+                paperRequest();
                 alert("Paper has been accepted!");
             })
     }
@@ -106,6 +108,7 @@ function PaperReviewCollapsible({paper, token}) {
                 })
             }).then(response => response.json())
             .then(() =>{
+                paperRequest();
                 alert("Paper has been rejected!");
             })
     }
@@ -197,7 +200,7 @@ function PaperReviewCollapsible({paper, token}) {
     )
 }
 
-export default function PaperReview({token, papers}){
+export default function PaperReview({token, papers, paperRequest}){
     return(<Box component="div" className="reviewer_container">
         <Typography component="h2" variant="h5" align="center" my="5px">
             Review Papers
@@ -210,7 +213,7 @@ export default function PaperReview({token, papers}){
             {
                 papers && papers.length > 0 && papers.map((paper) => (
                     <ListItemWithCollapsible value={paper.title} collapsible={
-                        <PaperReviewCollapsible paper={JSON.stringify(paper)} token={token}/>
+                        <PaperReviewCollapsible paper={JSON.stringify(paper)} token={token} paperRequest={paperRequest}/>
                     }/>
                 ))
             }
