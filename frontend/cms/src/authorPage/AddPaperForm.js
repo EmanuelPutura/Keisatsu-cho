@@ -61,7 +61,7 @@ function AddPaperForm({token}){
     //TODO: new request
     const conferenceRequest = (accountID) => {
         if (accountID !== undefined && accountID !== 123) {
-            fetch("http://localhost:8080/conferences/get")
+            fetch("http://localhost:8080/conferences/all")
                 .then(response => response.json())
                 .then(data => {
                     setConferences(data);
