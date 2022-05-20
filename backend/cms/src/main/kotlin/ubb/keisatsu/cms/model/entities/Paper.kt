@@ -3,6 +3,10 @@ package ubb.keisatsu.cms.model.entities
 import ubb.keisatsu.cms.model.AbstractJpaHashable
 import javax.persistence.*
 
+enum class PaperDecision {
+    NOT_YET_DECIDED, ACCEPTED, REJECTED
+}
+
 @Entity
 @Table(name = "\"Paper\"")
 class Paper (
@@ -34,8 +38,12 @@ class Paper (
     @JoinColumn(name = "\"ConferenceID\"", nullable = false)
     var conferenceId: Conference? = null,
 
-    @OneToMany(mappedBy = "paper")
-    var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf(),
+    @ManyToOne
+    @JoinColumn(name = "AcceptRejectDecisionMaker", referencedColumnName = "AccountID")
+    var decisionMaker: Account,
+
+    @Column(name="decision")
+    var decision: PaperDecision = PaperDecision.NOT_YET_DECIDED,
 
     @ManyToMany
     @JoinTable(name="PaperAuthor")

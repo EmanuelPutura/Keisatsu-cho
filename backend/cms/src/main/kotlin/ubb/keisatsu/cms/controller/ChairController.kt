@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 class ChairController(
         private val conferencesService: ConferencesService, private val accountsService: AccountsService,
         private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,
-        private val paperService: PaperService, private val paperEvaluationService: ChairPaperEvaluationService) {
+        private val paperService: PaperService) {
 
     @GetMapping("conferences/get")
     fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDto> {
@@ -90,14 +90,15 @@ class ChairController(
     }
 
     @PutMapping("accounts/papers")
-    fun acceptPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
+    fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
         val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
         val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
         if ( account.role != UserRole.CHAIR) {
             return
         }
 
-        val paperKey: ChairPaperKey = ChairPaperKey(paperEvaluationDto.paperID,paperEvaluationDto.chairID)
-        paperEvaluationService.addEvaluation(ChairPaperEvaluation(paperKey, paper, account, paperEvaluationDto.response))
+        paper.decision = if (paperEvaluationDto.response) PaperDecision.ACCEPTED else PaperDecision.REJECTED
+        paper.decisionMaker = account
+        paperService.addPaper(paper)
     }
 }

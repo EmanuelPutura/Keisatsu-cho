@@ -44,9 +44,6 @@ class Account(
     @Column(name="AccountId")
     var id: Int = -1,
 
-    @OneToMany(mappedBy = "accountID")
-    var evaluation: MutableSet<ChairPaperEvaluation> = mutableSetOf(),
-
     @ManyToMany(mappedBy = "paperAuthors")
     var papersForAuthor: MutableSet<Paper> = mutableSetOf()
 

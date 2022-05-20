@@ -8,6 +8,8 @@ import ubb.keisatsu.cms.repository.PaperRepository
 
 @Service
 class PaperService(private val paperRepository: PaperRepository) {
+    fun addPaper(paper: Paper): Paper = paperRepository.save(paper)
+
     fun retrieveAll(): Iterable<Paper> = paperRepository.findAll()
 
     fun retrievePaper(paperID: Int): Paper? = paperRepository.findByIdOrNull(paperID)
