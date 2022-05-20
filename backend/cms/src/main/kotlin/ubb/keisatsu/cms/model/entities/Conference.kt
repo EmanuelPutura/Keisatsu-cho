@@ -35,6 +35,4 @@ class Conference(
     @OneToMany
     @JoinTable(name = "PaperConference")
     var assignedPapers: MutableSet<Paper> = mutableSetOf(),
-
-
 ) : AbstractJpaHashable()

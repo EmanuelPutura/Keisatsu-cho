@@ -25,7 +25,7 @@ class Paper (
     var format: String,
 
     @Column(name = "\"File\"", nullable = true)
-    var file: ByteArray,
+    var file: ByteArray?,
 
     @Column(name="Abstract")
     var abstract: String,
