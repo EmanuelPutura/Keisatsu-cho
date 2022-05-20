@@ -28,15 +28,18 @@ class Paper (
     @Column(name = "\"Format\"", nullable = true, length = 32)
     var format: String,
 
-    @Column(name = "\"File\"", nullable = true)
-    var file: ByteArray?,
+    @Column(name = "\"FullPaper\"", nullable = true)
+    var fullPaper: String?,
+
+    @Column(name = "\"CameraReadyCopy\"", nullable = true)
+    var cameraReadyCopy: String?,
 
     @Column(name="Abstract")
     var abstract: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "\"ConferenceID\"", nullable = false)
-    var conferenceId: Conference? = null,
+    var conferenceId: Conference,
 
     @ManyToOne
     @JoinColumn(name = "AcceptRejectDecisionMaker", referencedColumnName = "AccountID")

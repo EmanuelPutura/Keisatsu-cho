@@ -33,12 +33,14 @@ class ChairController(
     @GetMapping("papers/get")
     fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
-        paperService.retrieveAll().forEach{ paper ->
-            val topic: String = paper.topicID!!.name
-            val conferenceID = paper.conferenceId!!.id
+//        paperService.retrieveAll().
+        paperService.retrieveUploadedPapersWithoutCameraReadyCopy().
+            forEach{ paper ->
+                val topic: String = paper.topicID!!.name
+                val conferenceID = paper.conferenceId.id
 
-            papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                    paper.keywords, topic, conferenceID))
+                papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                        paper.keywords, topic, conferenceID))
         }
         return papersDtoSet
     }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController
 import ubb.keisatsu.cms.model.dto.ConferenceDetailsDto
 import ubb.keisatsu.cms.model.dto.PaperFromAuthorDto
 import ubb.keisatsu.cms.model.entities.Account
+import ubb.keisatsu.cms.model.entities.Paper
+import ubb.keisatsu.cms.model.entities.PaperDecision
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
 import ubb.keisatsu.cms.service.ConferencesService
@@ -47,38 +49,25 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         }
 
         if (ACCEPTED_PAPER_REQUEST_TYPE == type) {
-            return getAcceptedPapers(account)
+            return getRequestedPapers(account, paperService::retrievePapersHavingAuthorWithoutCameraReadyCopy)
         }
         else if (MISSING_FULL_PAPER_REQUEST_TYPE == type) {
-            return getMissingFullPapers(account)
+            return getRequestedPapers(account, paperService::retrieveNotUploadedPapersHavingAuthor)
         }
 
         return mutableSetOf();  // return an empty set
     }
 
-    private fun getAcceptedPapers(account: Account): Collection<PaperFromAuthorDto> {
+    private fun getRequestedPapers(author: Account, getPapers: (author: Account) -> Collection<Paper>): Collection<PaperFromAuthorDto> {
         val papersDtoSet: MutableSet<PaperFromAuthorDto> = mutableSetOf()
-        paperService.retrieveNotUploadedPapersHavingAuthor(account).forEach{ paper ->
+        getPapers(author).forEach{ paper ->
             val topic: String = paper.topicID!!.name
+            val decision: Boolean = paper.decision == PaperDecision.ACCEPTED
 
-//            papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-//                paper.keywords, topic, conferenceID)
-//            )
+            papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                paper.keywords, topic, decision)
+            )
         }
-        return papersDtoSet
-    }
-
-    private fun getMissingFullPapers(account: Account): Collection<PaperFromAuthorDto> {
-        val papersDtoSet: MutableSet<PaperFromAuthorDto> = mutableSetOf()
-//        paperService.retrieveAll().forEach{ paper ->
-//            val topic: String = paper.topicID!!.name
-//            val conferenceID = paper.conferenceId!!.id
-//
-//            papersDtoSet.add(
-//                PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-//                paper.keywords, topic, conferenceID)
-//            )
-//        }
         return papersDtoSet
     }
 }
