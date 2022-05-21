@@ -1,10 +1,7 @@
 package ubb.keisatsu.cms.controller
 
 import org.springframework.web.bind.annotation.*
-import ubb.keisatsu.cms.model.dto.AccountIdDto
-import ubb.keisatsu.cms.model.dto.AccountLoginCredentialsDto
-import ubb.keisatsu.cms.model.dto.AccountRegisterDto
-import ubb.keisatsu.cms.model.dto.AccountUserTypeDto
+import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
@@ -26,21 +23,23 @@ class AccountsController(private var accountsService: AccountsService) {
     }
 
     @PostMapping("accounts/sign-up")
-    fun signUp(@RequestBody accountDto: AccountRegisterDto): Unit {
+    fun signUp(@RequestBody accountDto: AccountRegisterDto): ErrorDto {
         val role = when (accountDto.userType) {
             "chair" -> UserRole.CHAIR
             "reviewer" -> UserRole.REVIEWER
             "author" -> UserRole.AUTHOR
             else -> null
-        } ?: return
+        } ?: return ErrorDto(true, "The account type received via post request is not valid!")
 
         // the email and username of an account have to be unique
         if (accountsService.retrieveAccountByEmail(accountDto.email) != null || accountsService.retrieveAccountByUsername(accountDto.username) != null) {
-            return
+            return ErrorDto(true, "The email and username of an account must be unique!")
         }
 
         accountsService.addAccount(Account(accountDto.email, accountDto.username, accountDto.password, role,
                 accountDto.userFName, accountDto.userLName, accountDto.address, accountDto.birthDate))
+
+        return ErrorDto(false)
     }
 
     @PostMapping("accounts/login")
