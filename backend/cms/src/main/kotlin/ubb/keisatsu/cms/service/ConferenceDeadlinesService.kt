@@ -14,7 +14,7 @@ class ConferenceDeadlinesService(private val conferenceDeadlinesRepository: Conf
 
     fun validateDeadlines(submissionDeadline: LocalDate, reviewDeadline: LocalDate, acceptanceDeadline: LocalDate, uploadDeadline: LocalDate): Boolean {
         return submissionDeadline.isBefore(reviewDeadline) && reviewDeadline.isBefore(acceptanceDeadline) && acceptanceDeadline.isBefore(uploadDeadline) &&
-                uploadDeadline.isBefore(LocalDate.now())
+                LocalDate.now().isBefore(submissionDeadline)
     }
 
     fun isDeadlineStillValid(deadline: LocalDate): Boolean {
