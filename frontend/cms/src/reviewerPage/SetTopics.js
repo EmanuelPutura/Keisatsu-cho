@@ -48,7 +48,7 @@ function SetTopics({token, papersRequest}){
 
     function handleChange(event){
         setSelectedConference(event.target.value);
-        setTopics(testConferences.find(conference => conference.id === event.target.value).topics.trim().split("\n"));
+        setTopics(conferences.find(conference => conference.id === event.target.value).topics.trim().split("\n"));
         setSelectedTopics([]);
     }
 
