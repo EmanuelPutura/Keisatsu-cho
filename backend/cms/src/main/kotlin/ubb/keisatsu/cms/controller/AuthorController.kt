@@ -2,10 +2,7 @@ package ubb.keisatsu.cms.controller
 
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import ubb.keisatsu.cms.model.dto.ConferenceDto
-import ubb.keisatsu.cms.model.dto.PaperFromAuthorDto
-import ubb.keisatsu.cms.model.dto.SubmittedPaperDetailsDto
-import ubb.keisatsu.cms.model.dto.UploadFullPaperDto
+import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.*
 import ubb.keisatsu.cms.service.*
 import java.time.format.DateTimeFormatter
@@ -78,9 +75,9 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     }
 
     @PostMapping("/papers")
-    fun submitPaper(@RequestBody submittedPaperDetailsDto: SubmittedPaperDetailsDto): Boolean {
-        val conference = conferencesService.retrieveConference(submittedPaperDetailsDto.conference) ?: return false
-        val topicOfInterest = topicsOfInterestService.retrieveTopicOfInterest(submittedPaperDetailsDto.interestTopic) ?: return false
+    fun submitPaper(@RequestBody submittedPaperDetailsDto: SubmittedPaperDetailsDto): ErrorDto {
+        val conference = conferencesService.retrieveConference(submittedPaperDetailsDto.conference) ?: return ErrorDto(false, "Invalid conference ID!")
+        val topicOfInterest = topicsOfInterestService.retrieveTopicOfInterest(submittedPaperDetailsDto.interestTopic) ?: return ErrorDto(false, "Invalid topic of interest ID!")
 
         val paper = Paper(submittedPaperDetailsDto.title, submittedPaperDetailsDto.keywords, topicOfInterest, submittedPaperDetailsDto.abstract, conference)
         val authorsSet: MutableSet<Account> = mutableSetOf()
@@ -88,9 +85,9 @@ class AuthorController(private val conferencesService: ConferencesService, priva
 
         // validation for the authors list
         submittedPaperDetailsDto.authors.forEach{ authorDto ->
-            val author = accountsService.retrieveAccountByEmail(authorDto.email) ?: return false
+            val author = accountsService.retrieveAccountByEmail(authorDto.email) ?: return ErrorDto(false, "Invalid author email: '${authorDto.email}'!")
             if (author.role != UserRole.AUTHOR || author.address != authorDto.address) {
-                return false
+                return ErrorDto(false, "Invalid data for author with email '${authorDto.email}")
             }
 
             if (author.id == submittedPaperDetailsDto.token) {
@@ -101,7 +98,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         }
 
         if (!foundPaperSubmittingAuthor) {
-            return false
+            return ErrorDto(false, "Author who submitted the paper should be present in the authors list!")
         }
 
         // add authors to paper only if all the authors are valid
@@ -110,36 +107,37 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         }
 
         paperService.addPaper(paper)
-        return true
+        return ErrorDto(true)
     }
 
     @PutMapping("/papers/uploadPaper")
-    fun uploadFullPaper(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): Boolean {
-        val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
-        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
+    fun uploadFullPaper(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): ErrorDto {
+        val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return ErrorDto(false, "Invalid paper ID!")
+        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return ErrorDto(false, "Invalid paper author ID!")
 
         if (!paperService.validateFullPaperUpload(author, paper)) {
-            return false
+            return ErrorDto(false, "Invalid paper details!")
         }
 
         paper.fullPaper = fileUploadService.getFileUploadPath(uploadFullPaperDto.file)
         uploadPaperFile(paper, uploadFullPaperDto.file)
 
-        return true
+        return ErrorDto(true)
     }
 
     @PutMapping("/papers/uploadCameraReady")
-    fun uploadPaperCameraReadyCopy(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): Boolean {
-        val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
-        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
+    fun uploadPaperCameraReadyCopy(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): ErrorDto {
+        val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return ErrorDto(false, "Invalid paper ID!")
+        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return ErrorDto(false, "Invalid paper author ID!")
 
         if (!paperService.validatePaperCameraReadyCopyUpload(author, paper)) {
-            return false
+            return ErrorDto(false, "Invalid paper details!")
         }
 
         paper.cameraReadyCopy = fileUploadService.getFileUploadPath(uploadFullPaperDto.file)
         uploadPaperFile(paper, uploadFullPaperDto.file)
-        return true
+
+        return ErrorDto(true)
     }
 
     private fun uploadPaperFile(paper: Paper, file: MultipartFile) {

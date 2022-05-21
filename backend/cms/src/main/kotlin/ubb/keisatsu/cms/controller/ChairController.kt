@@ -31,19 +31,20 @@ class ChairController(
     }
 
     @PostMapping("conferences/add")
-    fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto) {
-        val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return
+    fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto): ErrorDto {
+        val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return ErrorDto(false, "Invalid account email!")
         if (account.role != UserRole.CHAIR) {
-            return
+            return ErrorDto(false, "Invalid account role: only a chair can add conferences to the database!")
         }
 
         conferencesService.addConference(Conference(conferenceDto.name, conferenceDto.url, conferenceDto.subtitles, account))
+        return ErrorDto(true)
     }
 
     @PostMapping("accounts/conferenceTopics")
     @Transactional
-    fun setConferenceTopicsOfInterest(@RequestBody topicOfInterestDto: TopicOfInterestDto) {
-        val conference: Conference = conferencesService.retrieveConference(topicOfInterestDto.conferenceID) ?: return
+    fun setConferenceTopicsOfInterest(@RequestBody topicOfInterestDto: TopicOfInterestDto): ErrorDto {
+        val conference: Conference = conferencesService.retrieveConference(topicOfInterestDto.conferenceID) ?: return ErrorDto(false, "Invalid conference ID!")
         conference.topicsOfInterest.clear()
 
         topicOfInterestDto.topics.lines().forEach { topic ->
@@ -57,19 +58,21 @@ class ChairController(
             topicOfInterest.conferencesForTopic.add(conference)
             conference.topicsOfInterest.add(topicOfInterest)
         }
+
+        return ErrorDto(true)
     }
 
     @PutMapping("accounts/conferenceDeadlines")
     @Transactional
-    fun updateConferenceTopicsOfInterest(@RequestBody conferenceDeadlinesDto: ConferenceDeadlinesDto) {
+    fun updateConferenceTopicsOfInterest(@RequestBody conferenceDeadlinesDto: ConferenceDeadlinesDto): ErrorDto {
         // conference deadlines validation
         if (!conferenceDeadlinesService.validateDeadlines(conferenceDeadlinesDto.submission, conferenceDeadlinesDto.review,
                 conferenceDeadlinesDto.acceptance, conferenceDeadlinesDto.upload)) {
-            return
+            return ErrorDto(false, "Invalid conference deadlines!")
         }
 
         val conference: Conference = conferencesService.retrieveConference(conferenceDeadlinesDto.conferenceID)
-                ?: return
+                ?: return ErrorDto(false, "Invalid conference ID!")
         var conferenceDeadlines: ConferenceDeadlines = conference.conferenceDeadlines
                 ?: ConferenceDeadlines(conferenceDeadlinesDto.submission, conferenceDeadlinesDto.review, conferenceDeadlinesDto.acceptance, conferenceDeadlinesDto.upload)
 
@@ -80,6 +83,8 @@ class ChairController(
 
         conferenceDeadlines = conferenceDeadlinesService.addConferenceDeadlines(conferenceDeadlines)
         conference.conferenceDeadlines = conferenceDeadlines
+
+        return ErrorDto(true)
     }
 
     @GetMapping("papers/get")
@@ -104,23 +109,25 @@ class ChairController(
     }
 
     @PutMapping("accounts/papers")
-    fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto) {
-        val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
-        val conference = conferencesService.retrieveConference(paperEvaluationDto.conferenceID) ?: return
+    fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto): ErrorDto {
+        val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return ErrorDto(false, "Invalid paper ID!")
+        val conference = conferencesService.retrieveConference(paperEvaluationDto.conferenceID) ?: return ErrorDto(false, "Invalid conference ID!")
         val conferenceDeadlines = conference.conferenceDeadlines
 
         // a paper can be accepted only before the acceptance deadline
         if (conferenceDeadlines != null && !conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.acceptanceNotificationDeadline)) {
-            return
+            return ErrorDto(false, "Invalid acceptance notification conference deadline!")
         }
 
-        val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
+        val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return ErrorDto(false, "Invalid account ID!")
         if ( account.role != UserRole.CHAIR) {
-            return
+            return ErrorDto(false, "Invalid account role!")
         }
 
         paper.decision = if (paperEvaluationDto.response) PaperDecision.ACCEPTED else PaperDecision.REJECTED
         paper.decisionMaker = account
         paperService.addPaper(paper)
+
+        return ErrorDto(true)
     }
 }
