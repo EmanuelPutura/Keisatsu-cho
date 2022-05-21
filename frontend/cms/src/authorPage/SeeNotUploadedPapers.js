@@ -20,7 +20,7 @@ function SeeNotUploadedPapers({papers, token}) {
                     papers && papers.length && papers.map((paper) => (
                         <PaperDetails paper={paper}
                                       token={token}
-                                      url={"https://localhost:8080/papers/uploadPaper"}
+                                      url={"http://localhost:8080/papers/uploadPaper"}
                                       buttonText={"Upload Full Paper"}
                         />
                     ))

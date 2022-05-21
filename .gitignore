@@ -25,4 +25,7 @@ hs_err_pid*
 # idea folder
 .idea/
 
+# uploaded folder
+uploaded/*
+
 *.properties

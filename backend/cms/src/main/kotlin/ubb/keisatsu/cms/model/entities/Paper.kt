@@ -27,9 +27,6 @@ class Paper (
     @JoinColumn(name = "\"ConferenceID\"", nullable = false)
     var conference: Conference,
 
-    @Column(name = "\"Format\"", nullable = true, length = 32)
-    var format: String? = null,
-
     @Column(name = "\"FullPaper\"", nullable = true)
     var fullPaper: String? = null,
 

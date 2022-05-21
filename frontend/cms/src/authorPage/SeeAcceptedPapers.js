@@ -20,7 +20,7 @@ function SeeCameraReadyPapers({papers, token}) {
                     papers && papers.length && papers.map((paper) => (
                         <PaperDetails paper={paper}
                                       token={token}
-                                      url={"https://localhost:8080/papers/uploadCameraReady"}
+                                      url={"http://localhost:8080/papers/uploadCameraReady"}
                                       buttonText={"Upload Camera Ready Copy"}
                         />
                     ))

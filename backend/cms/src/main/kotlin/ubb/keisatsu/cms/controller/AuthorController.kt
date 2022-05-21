@@ -4,20 +4,18 @@ import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.ConferenceDto
 import ubb.keisatsu.cms.model.dto.PaperFromAuthorDto
 import ubb.keisatsu.cms.model.dto.SubmittedPaperDetailsDto
+import ubb.keisatsu.cms.model.dto.UploadFullPaperDto
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.Paper
 import ubb.keisatsu.cms.model.entities.PaperDecision
 import ubb.keisatsu.cms.model.entities.UserRole
-import ubb.keisatsu.cms.service.AccountsService
-import ubb.keisatsu.cms.service.ConferencesService
-import ubb.keisatsu.cms.service.PaperService
-import ubb.keisatsu.cms.service.TopicsOfInterestService
+import ubb.keisatsu.cms.service.*
 import java.time.format.DateTimeFormatter
 
 @RestController
 @CrossOrigin
 class AuthorController(private val conferencesService: ConferencesService, private val topicsOfInterestService: TopicsOfInterestService,
-                       private val accountsService: AccountsService, private val paperService: PaperService) {
+                       private val accountsService: AccountsService, private val paperService: PaperService, private val fileUploadService: FileUploadService) {
 
     private val ACCEPTED_PAPER_REQUEST_TYPE: String = "accepted"
     private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull";
@@ -89,6 +87,22 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         }
 
         paperService.addPaper(paper)
+        return true
+    }
+
+    @PutMapping("/papers/uploadPaper")
+    fun uploadFullPaper(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): Boolean {
+        val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
+        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
+
+        if (author.role != UserRole.AUTHOR || !paper.paperAuthors.contains(author)) {
+            return false
+        }
+
+        paper.fullPaper = fileUploadService.getFileUploadPath(uploadFullPaperDto.file)
+        paperService.addPaper(paper)
+        fileUploadService.uploadFile(uploadFullPaperDto.file)
+
         return true
     }
 }
