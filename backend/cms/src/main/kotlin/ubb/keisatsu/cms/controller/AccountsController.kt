@@ -29,17 +29,17 @@ class AccountsController(private var accountsService: AccountsService) {
             "reviewer" -> UserRole.REVIEWER
             "author" -> UserRole.AUTHOR
             else -> null
-        } ?: return ErrorDto(true, "The account type received via post request is not valid!")
+        } ?: return ErrorDto(false, "The account type received via post request is not valid!")
 
         // the email and username of an account have to be unique
         if (accountsService.retrieveAccountByEmail(accountDto.email) != null || accountsService.retrieveAccountByUsername(accountDto.username) != null) {
-            return ErrorDto(true, "The email and username of an account must be unique!")
+            return ErrorDto(false, "The email and username of an account must be unique!")
         }
 
         accountsService.addAccount(Account(accountDto.email, accountDto.username, accountDto.password, role,
                 accountDto.userFName, accountDto.userLName, accountDto.address, accountDto.birthDate))
 
-        return ErrorDto(false)
+        return ErrorDto(true)
     }
 
     @PostMapping("accounts/login")
