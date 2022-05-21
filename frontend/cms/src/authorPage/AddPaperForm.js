@@ -11,7 +11,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 
-function AddPaperForm({token}){
+function AddPaperForm({token, refreshList}){
 
     //TODO: request changed -- added conference representing the conference ID
     function submitData(event){
@@ -35,6 +35,8 @@ function AddPaperForm({token}){
             }).then(response => response.json())
             .then(data => {
                 alert(data ? "paper added" : "paper was not added");
+                if(data)
+                    refreshList();
             });
     }
 

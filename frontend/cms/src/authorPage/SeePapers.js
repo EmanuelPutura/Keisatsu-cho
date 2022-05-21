@@ -1,15 +1,15 @@
 import React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import PaperDetails from "./PaperDetails";
 
-function SeeNotUploadedPapers({papers, token}) {
+function SeePapers({papers, token, papersRequest, title, buttonText, url}) {
     return (
         <Box component="div" className="author_container">
             <Typography component="h2" variant="h5" align="center" my="5px">
-                Papers to be uploaded
+                {title}
             </Typography>
             <Stack component="div"
                    direction="column"
@@ -20,8 +20,9 @@ function SeeNotUploadedPapers({papers, token}) {
                     papers && papers.length && papers.map((paper) => (
                         <PaperDetails paper={paper}
                                       token={token}
-                                      url={"http://localhost:8080/papers/uploadPaper"}
-                                      buttonText={"Upload Full Paper"}
+                                      url={url}
+                                      buttonText={buttonText}
+                                      papersRequest={papersRequest}
                         />
                     ))
                 }
@@ -30,4 +31,4 @@ function SeeNotUploadedPapers({papers, token}) {
     )
 }
 
-export default SeeNotUploadedPapers;
+export default SeePapers;

@@ -6,8 +6,9 @@ import Box from "@mui/material/Box";
 import React from "react";
 import Button from "@mui/material/Button";
 import ListItemText from "@mui/material/ListItemText";
+import PaperComments from "./PaperComments";
 
-function PaperBidCollapsible({token, paper}){
+function PaperBidCollapsible({token, paper, refreshList}){
     const paperObj = JSON.parse(paper);
 
     function bid(){
@@ -24,6 +25,7 @@ function PaperBidCollapsible({token, paper}){
             }).then(response => response.json())
             .then(() =>{
                 alert("Paper has been bid on!");
+                refreshList(paperObj.id);
             })
     }
 
@@ -68,6 +70,7 @@ function PaperBidCollapsible({token, paper}){
                         variant="contained">
                     BID
                 </Button>
+                <PaperComments paperID={paperObj.id} token={token}/>
             </Stack>
         </Box>
     )
@@ -75,6 +78,11 @@ function PaperBidCollapsible({token, paper}){
 }
 
 function PaperBid({token, papers}){
+
+    function deleteFromList(paperID){
+        papers.filter((paper) => paper.id !== paperID)
+    }
+
     return(<Box component="div" className="reviewer_container">
         <Typography component="h2" variant="h5" align="center" my="5px">
             Bid on Papers
@@ -87,7 +95,7 @@ function PaperBid({token, papers}){
             {
                 papers && papers.length > 0 && papers.map((paper) => (
                     <ListItemWithCollapsible value={paper.title} collapsible={
-                        <PaperBidCollapsible paper={JSON.stringify(paper)} token={token}/>
+                        <PaperBidCollapsible paper={JSON.stringify(paper)} token={token} refreshList={deleteFromList}/>
                     }/>
                 ))
             }

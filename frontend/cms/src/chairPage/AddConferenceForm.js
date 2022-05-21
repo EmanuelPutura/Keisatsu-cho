@@ -23,9 +23,7 @@ function AddConferenceForm({ conferencesRequest }){
                     email: email,
                     subtitles: subtitles,
                 })
-            }).then(response => {
-                response.json();
-            })
+            }).then(response => response.json())
             .then(() =>{
                 alert("conference added!");
                 conferencesRequest();
