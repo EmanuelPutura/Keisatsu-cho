@@ -7,3 +7,6 @@ data class PaperDetailsDto(val id: Int, val title: String, val abstract: String,
 
 data class PaperFromAuthorDto(val id: Int, val title: String, val abstract: String, val authors: Collection<AccountUserDataDto>,
                               val keywords: String, val topic: String, val decided: Boolean)
+
+data class SubmittedPaperDetailsDto(val token: Int, val title: String, val abstract: String, val authors: Collection<AccountUserDataDto>,
+                                    val keywords: String, val interestTopic: String, val conference: Int)

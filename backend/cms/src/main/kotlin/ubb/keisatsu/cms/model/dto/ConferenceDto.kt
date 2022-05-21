@@ -4,6 +4,3 @@ data class ConferenceSubmitDto(val email: String, val name: String, val subtitle
 
 data class ConferenceDto(val id: Int, val name: String, val url: String, val subtitles: String, val topics: String,
                          val submission: String?, val review: String?, val acceptance: String?, val upload: String?)
-
-data class ConferenceDetailsDto(val name: String, val url: String, val subtitles: String, val topics: String,
-                                val submission: String?, val review: String?, val acceptance: String?, val upload: String?)

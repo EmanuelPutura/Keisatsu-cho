@@ -36,8 +36,8 @@ class ChairController(
 //        paperService.retrieveAll().
         paperService.retrieveUploadedPapersWithoutCameraReadyCopy().
             forEach{ paper ->
-                val topic: String = paper.topicID!!.name
-                val conferenceID = paper.conferenceId.id
+                val topic: String = paper.topicOfInterest!!.name
+                val conferenceID = paper.conference.id
 
                 papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
                         paper.keywords, topic, conferenceID))

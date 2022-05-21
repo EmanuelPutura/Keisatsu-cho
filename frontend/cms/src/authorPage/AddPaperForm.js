@@ -16,6 +16,7 @@ function AddPaperForm({token}){
     //TODO: request changed -- added conference representing the conference ID
     function submitData(event){
         event.preventDefault();
+
         fetch("http://localhost:8080/papers",
             {
                 method: "POST",
