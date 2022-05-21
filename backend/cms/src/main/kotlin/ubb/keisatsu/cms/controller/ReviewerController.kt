@@ -15,7 +15,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
 
     @GetMapping("accounts/topics")
     fun getTopicsOfReviewer(@RequestParam(name="accountID") accountId: Int): TopicsDto {
-        val account = accountsService.retrieveAccountByEmail(accountId)
+        val account = accountsService.retrieveAccount(accountId)
         if (account == null || account.role != UserRole.REVIEWER) {
             return TopicsDto("")
         }
@@ -26,7 +26,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @PutMapping("accounts/topics")
     @Transactional
     fun updateReviewerTopicsOfInterest(@RequestBody accountTopicsOfInterestDto: AccountTopicsOfInterestDto) {
-        val account = accountsService.retrieveAccountByEmail(accountTopicsOfInterestDto.token)
+        val account = accountsService.retrieveAccount(accountTopicsOfInterestDto.token)
         if (account == null || account.role != UserRole.REVIEWER) {
             return
         }

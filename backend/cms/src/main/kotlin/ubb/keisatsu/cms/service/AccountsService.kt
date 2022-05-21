@@ -27,7 +27,7 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
 
     fun addAccount(account: Account): Account = accountsRepository.save(account)
 
-    fun retrieveAccountByEmail(id: Int): Account? = accountsRepository.findByIdOrNull(id)
+    fun retrieveAccount(id: Int): Account? = accountsRepository.findByIdOrNull(id)
 
     fun retrieveAccountByEmail(email: String): Account? = accountsRepository.findByEmail(email)
 

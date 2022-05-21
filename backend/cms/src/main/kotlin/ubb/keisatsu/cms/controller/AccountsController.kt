@@ -14,7 +14,7 @@ import ubb.keisatsu.cms.service.AccountsService
 class AccountsController(private var accountsService: AccountsService) {
     @GetMapping("accounts/getUserData")
     fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserTypeDto? {
-        val account: Account = accountsService.retrieveAccountByEmail(accountId) ?: return null
+        val account: Account = accountsService.retrieveAccount(accountId) ?: return null
         val userRole = when (account.role) {
             UserRole.CHAIR -> "chair"
             UserRole.REVIEWER -> "reviewer"
