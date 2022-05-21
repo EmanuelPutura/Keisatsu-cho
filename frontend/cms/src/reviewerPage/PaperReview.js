@@ -7,54 +7,10 @@ import {ListItemWithCollapsible} from "../formUtils";
 import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import PaperComments from "./PaperComments";
 
 function PaperReviewCollapsible({paper, token, paperRequest}) {
     const paperObj = JSON.parse(paper);
-    const [comments, setComments] = useState([]);
-    const [comment, setComment]=useState("");
-    const testComments=[{
-        name: "testName",
-        comment: "very good 10/10"
-    },
-    {
-        name: "testName1",
-        comment: "very bad"
-    }];
-
-    //TODO: new request
-    function getComments(){
-        if(token !== undefined && token !== 124){
-            fetch("http://localhost:8080/reviewers/comments?paperId="+paperObj.id)
-                .then(response => response.json())
-                .then(data => {
-                    setComments(data);
-                })
-                .catch(() => alert("Invalid papers request!"))
-        } else {
-            setComments(token === 124 ? testComments : "");
-        }
-    }
-
-    useEffect(getComments, []);
-
-    //TODO: new request
-    function sendComment(){
-        fetch("http://localhost:8080/reviewers/comment",
-            {
-                method: "POST",
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    token: token,
-                    paperID: paperObj.id,
-                    comment: comment
-                })
-            }).then(response => response.json())
-            .then(() =>{
-                alert("Comment has been sent!");
-            })
-    }
 
     //TODO: new request
     function signalConflict(){
@@ -148,6 +104,14 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                             {paperObj.topic}
                         </Typography>
                     </Box>
+                    <Box component="div" width="100%">
+                        <Typography variant="h6" component="h3">
+                            Conference:
+                        </Typography>
+                        <Typography variant="body1" component="h4">
+                            {paperObj.conferenceName}
+                        </Typography>
+                    </Box>
                 </Stack>
                 <Stack component="div"
                        direction="row"
@@ -170,31 +134,7 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                         REJECT
                     </Button>
                 </Stack>
-                <Typography variant="h6" component="p">Comments</Typography>
-                <TextField
-                    margin="normal"
-                    fullWidth
-                    required
-                    multiline
-                    label="Comment"
-                    name="comment"
-                    value={comment}
-                    onChange={e => setComment(e.target.value)}
-                />
-                <Button fullWidth onClick={sendComment} variant="contained">SEND COMMENT</Button>
-                <Stack component="div"
-                       direction="column"
-                       spacing={0}
-                       divider={<Divider orientation="horizontal" flexItem/> }
-                >
-                    {
-                        comments && comments.length > 0 ? (comments.map((comment) => (
-                            <ListItemWithCollapsible value={comment.name} collapsible={
-                                <Typography variant="body1" component="p">{comment.comment}</Typography>
-                            }/>
-                        ))) : "There are no comments."
-                    }
-                </Stack>
+                <PaperComments paperID={paperObj.id} token={token}/>
             </Stack>
         </Box>
     )
