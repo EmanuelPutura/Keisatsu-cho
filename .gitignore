@@ -25,7 +25,7 @@ hs_err_pid*
 # idea folder
 .idea/
 
-# uploaded folder
-uploaded/*
+# uploaded folder containing conference papers
+# uploaded/*
 
 *.properties
