@@ -43,7 +43,7 @@ function AuthorDetails({author, setAuthor}){
                 size="small"
                 type="text"
                 value={author.address}
-                onChange={e => setAuthor({name: author.n, email: author.email, address: e.target.value})}
+                onChange={e => setAuthor({name: author.name, email: author.email, address: e.target.value})}
             />
         </Stack>
     )

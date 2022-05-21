@@ -69,7 +69,7 @@ function AuthorPage({name, token, setToken}) {
     useEffect(() => {
         const notFullPapersRequest = token => {
             if (token !== undefined && token !== 123) {
-                fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=missingfull")
+                fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=missingFull")
                     .then(response => response.json())
                     .then(data => {
                         setPapersToBeUploaded(data);

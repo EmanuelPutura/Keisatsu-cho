@@ -11,17 +11,17 @@ import java.time.format.DateTimeFormatter
 @CrossOrigin
 class ChairController(
         private val conferencesService: ConferencesService, private val accountsService: AccountsService,
-        private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,private val paperService: PaperService,
-    private val paperEvaluationService: ChairPaperEvaluationService) {
+        private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,
+        private val paperService: PaperService) {
 
     @GetMapping("conferences/get")
-    fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDetailsDto> {
-        val conferenceDtoSet: MutableSet<ConferenceDetailsDto> = mutableSetOf()
+    fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDto> {
+        val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         conferencesService.findByMainOrganiser(accountId).forEach { conference ->
             val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForConference(conference.id))
-            conferenceDtoSet.add(ConferenceDetailsDto(conference.id, conference.name, conference.url, conference.subtitles, topics,
+            conferenceDtoSet.add(ConferenceDto(conference.id, conference.name, conference.url, conference.subtitles, topics,
                     conference.conferenceDeadlines?.paperSubmissionDeadline?.format(formatter), conference.conferenceDeadlines?.paperReviewDeadline?.format(formatter),
                     conference.conferenceDeadlines?.acceptanceNotificationDeadline?.format(formatter), conference.conferenceDeadlines?.acceptedPaperUploadDeadline?.format(formatter)
             ))
@@ -33,11 +33,14 @@ class ChairController(
     @GetMapping("papers/get")
     fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
-        paperService.retrieveAll().forEach{ paper ->
-            val topic: String= paper.topicID!!.name
-            val conferenceID= paper.conferenceID!!.id
-            papersDtoSet.add(PaperDetailsDto(paper.id,paper.title,paper.keywords,topic,paper.abstract,false,conferenceID))
+//        paperService.retrieveAll().
+        paperService.retrieveUploadedPapersWithoutCameraReadyCopy().
+            forEach{ paper ->
+                val topic: String = paper.topicOfInterest!!.name
+                val conferenceID = paper.conference.id
 
+                papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                        paper.keywords, topic, conferenceID))
         }
         return papersDtoSet
     }
@@ -89,14 +92,15 @@ class ChairController(
     }
 
     @PutMapping("accounts/papers")
-    fun acceptPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
-        val paper: Paper=paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
-        val account: Account=accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
+    fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
+        val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
+        val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
         if ( account.role != UserRole.CHAIR) {
             return
         }
-        val paperKey: ChairPaperKey= ChairPaperKey(paperEvaluationDto.paperID,paperEvaluationDto.chairID)
-        paperEvaluationService.addEvaluation(ChairPaperEvaluation(paperKey,paper,account,paperEvaluationDto.isAccepted))
-    }
 
+        paper.decision = if (paperEvaluationDto.response) PaperDecision.ACCEPTED else PaperDecision.REJECTED
+        paper.decisionMaker = account
+        paperService.addPaper(paper)
+    }
 }

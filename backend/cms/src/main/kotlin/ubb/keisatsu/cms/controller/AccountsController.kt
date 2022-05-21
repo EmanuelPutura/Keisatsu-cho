@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.AccountIdDto
 import ubb.keisatsu.cms.model.dto.AccountLoginCredentialsDto
 import ubb.keisatsu.cms.model.dto.AccountRegisterDto
-import ubb.keisatsu.cms.model.dto.AccountUserDataDto
+import ubb.keisatsu.cms.model.dto.AccountUserTypeDto
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
@@ -13,7 +13,7 @@ import ubb.keisatsu.cms.service.AccountsService
 @CrossOrigin
 class AccountsController(private var accountsService: AccountsService) {
     @GetMapping("accounts/getUserData")
-    fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserDataDto? {
+    fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserTypeDto? {
         val account: Account = accountsService.retrieveAccount(accountId) ?: return null
         val userRole = when (account.role) {
             UserRole.CHAIR -> "chair"
@@ -22,7 +22,7 @@ class AccountsController(private var accountsService: AccountsService) {
             else -> null
         } ?: return null
 
-        return AccountUserDataDto(account.firstName, userRole)
+        return AccountUserTypeDto(account.firstName, userRole)
     }
 
     @PostMapping("accounts/sign-up")

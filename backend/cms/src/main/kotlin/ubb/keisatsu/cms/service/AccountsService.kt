@@ -2,6 +2,7 @@ package ubb.keisatsu.cms.service
 
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import ubb.keisatsu.cms.model.dto.AccountUserDataDto
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.repository.AccountsRepository
@@ -31,4 +32,13 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
     fun retrieveAccount(email: String): Account? = accountsRepository.findByEmail(email)
 
     fun retrieveAll(): Iterable<Account> = accountsRepository.findAll()
+
+    fun convertToAccountUserDataDtos(accounts: Collection<Account>): Collection<AccountUserDataDto> {
+        val accountDtos: MutableCollection<AccountUserDataDto> = mutableListOf()
+        accounts.forEach{ account ->
+            accountDtos.add(AccountUserDataDto("${account.firstName} ${account.lastName}", account.email, account.address))
+        }
+
+        return accountDtos;
+    }
 }
