@@ -124,8 +124,4 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         paperService.addPaper(paper)
         fileUploadService.uploadFile(file)
     }
-
-
-
-
 }
