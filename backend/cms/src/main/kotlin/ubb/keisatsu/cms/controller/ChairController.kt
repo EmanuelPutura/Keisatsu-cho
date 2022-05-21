@@ -99,7 +99,7 @@ class ChairController(
             val conferenceDeadlines = conference.conferenceDeadlines
 
             // return the current paper only if its acceptance deadline is not set or if it is after the current date
-            if (conferenceDeadlines == null || conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.acceptanceNotificationDeadline)) {
+            if (paper.conference.mainOrganiser.id == accountId && (conferenceDeadlines == null || conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.acceptanceNotificationDeadline))) {
                 papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
                     paper.keywords, topic, conferenceID))
             }
