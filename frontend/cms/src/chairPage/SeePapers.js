@@ -25,9 +25,7 @@ function PaperCollapsible({paper, papersRequest, conference, token}){
                     conferenceID: paperObj.conferenceID,
                     response: response
                 })
-            }).then(response => {
-                response.json()
-            })
+            }).then(response => response.json())
             .then(() => {
                 alert("response sent");
                 papersRequest();

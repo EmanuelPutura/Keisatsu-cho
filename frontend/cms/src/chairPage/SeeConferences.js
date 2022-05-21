@@ -56,25 +56,41 @@ function InterestTopicsForm({conference}) {
 
 function DeadlineForm({conference}) {
 
+    function checkDeadlines(){
+        if(submission === null || review === null || acceptance === null || upload === null){
+            alert("Missing deadline!")
+            return false;
+        } else {
+            const compare = (date1, date2) => date1.localeCompare(date2, undefined, {numeric: true});
+            if(compare(submission, review) >= 0 || compare(review, acceptance) >= 0 || compare(acceptance, upload) >=0){
+                alert("Deadlines are not in order!");
+                return false;
+            }
+        }
+        return true;
+    }
+
     function updateDeadlines(event){
         event.preventDefault();
-        fetch("http://localhost:8080/accounts/conferenceDeadlines/",
-            {
-                method: "PUT",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    conferenceID: conference.id,
-                    submission: submission,
-                    review: review,
-                    acceptance: acceptance,
-                    upload: upload
+        if(checkDeadlines()) {
+            fetch("http://localhost:8080/accounts/conferenceDeadlines/",
+                {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        conferenceID: conference.id,
+                        submission: submission,
+                        review: review,
+                        acceptance: acceptance,
+                        upload: upload
+                    })
+                }).then(response => response.json())
+                .then(() => {
+                    alert("response sent");
                 })
-            }).then(response => response.json())
-            .then(() => {
-                alert("response sent");
-            })
+        }
     }
 
 
@@ -144,7 +160,6 @@ function DeadlineForm({conference}) {
                 type="submit"
                 fullWidth
                 variant="contained"
-
             >
                 UPDATE DEADLINES
             </Button>
