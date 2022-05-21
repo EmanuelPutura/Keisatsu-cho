@@ -1,6 +1,7 @@
 package ubb.keisatsu.cms.service
 
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ubb.keisatsu.cms.model.dto.AccountUserDataDto
 import ubb.keisatsu.cms.model.entities.Account
@@ -9,23 +10,25 @@ import ubb.keisatsu.cms.repository.AccountsRepository
 import java.time.LocalDate
 
 @Service
-class AccountsService(private val accountsRepository: AccountsRepository) {
+class AccountsService(private val accountsRepository: AccountsRepository, val passwordEncoder: PasswordEncoder) {
     init {
 //        addDefaultAccounts()
     }
 
     private final fun addDefaultAccounts() {
-        accountsRepository.save(Account("chair1@chair.com", "Chair1", "Chair123", UserRole.CHAIR,
+        accountsRepository.save(Account("chair1@chair.com", "Chair1", passwordEncoder.encode("Chair123"), UserRole.CHAIR,
             "ChairF1", "ChairL1", "C1Address", LocalDate.now()))
-        accountsRepository.save(Account("chair2@chair.com", "Chair2", "Chair123", UserRole.CHAIR,
+        accountsRepository.save(Account("chair2@chair.com", "Chair2", passwordEncoder.encode("Chair123"), UserRole.CHAIR,
             "ChairF2", "ChairL2", "C2Address", LocalDate.now()))
-        accountsRepository.save(Account("reviewer1@reviewer.com", "Reviewer1", "Reviewer123", UserRole.REVIEWER,
+        accountsRepository.save(Account("reviewer1@reviewer.com", "Reviewer1", passwordEncoder.encode("Reviewer123"), UserRole.REVIEWER,
             "ReviewerF1", "ReviewerL1", "R1Address", LocalDate.now()))
-        accountsRepository.save(Account("author1@author.com", "Author1", "Author123", UserRole.AUTHOR,
+        accountsRepository.save(Account("author1@author.com", "Author1", passwordEncoder.encode("Author123"), UserRole.AUTHOR,
             "AuthorF1", "AuthorL1", "A1Address", LocalDate.now()))
     }
 
-    fun addAccount(account: Account): Account = accountsRepository.save(account)
+    fun addAccount(account: Account): Account {
+        return accountsRepository.save(account)
+    }
 
     fun retrieveAccount(id: Int): Account? = accountsRepository.findByIdOrNull(id)
 

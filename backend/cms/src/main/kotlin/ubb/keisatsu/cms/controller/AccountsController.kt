@@ -1,17 +1,30 @@
 package ubb.keisatsu.cms.controller
 
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
+import ubb.keisatsu.cms.security.JwtTokenUtil
 import ubb.keisatsu.cms.service.AccountsService
 import java.time.LocalDate
 
 @RestController
 @CrossOrigin
-class AccountsController(private var accountsService: AccountsService) {
+class AccountsController(
+    private var accountsService: AccountsService,
+    private var authenticationManager: AuthenticationManager,
+    private val jwtTokenUtil: JwtTokenUtil,
+    private val passwordEncoder: PasswordEncoder
+    ) {
     private val MIN_USER_AGE = 12L  // minimum user age
-
     @GetMapping("accounts/getUserData")
     fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserTypeDto? {
         val account: Account = accountsService.retrieveAccount(accountId) ?: return null
@@ -44,15 +57,29 @@ class AccountsController(private var accountsService: AccountsService) {
             return ErrorDto(false, "Invalid user age: user should be older than $MIN_USER_AGE years old!")
         }
 
-        accountsService.addAccount(Account(accountDto.email, accountDto.username, accountDto.password, role,
+        accountsService.addAccount(Account(accountDto.email, accountDto.username, passwordEncoder.encode(accountDto.password), role,
                 accountDto.userFName, accountDto.userLName, accountDto.address, accountDto.birthDate))
 
         return ErrorDto(true)
     }
 
     @PostMapping("accounts/login")
-    fun login(@RequestBody accountLoginDto: AccountLoginCredentialsDto): AccountIdDto {
-        val account: Account = accountsService.retrieveAccountByEmail(accountLoginDto.email) ?: return AccountIdDto(-1)
-        return if (account.password == accountLoginDto.password) AccountIdDto(account.id) else AccountIdDto(-1)
+    fun login(@RequestBody accountLoginDto: AccountLoginCredentialsDto): ResponseEntity<AccountIdDto> {
+        try {
+            val authenticate: Authentication = authenticationManager.authenticate(
+                UsernamePasswordAuthenticationToken(accountLoginDto.email, accountLoginDto.password))
+
+            val account: Account = authenticate.principal as Account
+            //autaccountsService.validate(accountLoginDto.email, accountLoginDto.password)
+
+            return ResponseEntity.ok()
+                .header(
+                    HttpHeaders.AUTHORIZATION,
+                    jwtTokenUtil.createJWT(account.id.toString(), null, account.email, account.role, 60 * 60)
+                )
+                .body(AccountIdDto(account.id))
+        } catch(e: Exception) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
     }
 }
