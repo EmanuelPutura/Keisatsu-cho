@@ -14,7 +14,7 @@ import ubb.keisatsu.cms.service.AccountsService
 class AccountsController(private var accountsService: AccountsService) {
     @GetMapping("accounts/getUserData")
     fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserTypeDto? {
-        val account: Account = accountsService.retrieveAccount(accountId) ?: return null
+        val account: Account = accountsService.retrieveAccountByEmail(accountId) ?: return null
         val userRole = when (account.role) {
             UserRole.CHAIR -> "chair"
             UserRole.REVIEWER -> "reviewer"
@@ -27,16 +27,6 @@ class AccountsController(private var accountsService: AccountsService) {
 
     @PostMapping("accounts/sign-up")
     fun signUp(@RequestBody accountDto: AccountRegisterDto): Unit {
-        /*
-            TODO
-            - create specialized classes (i.e., chair, author, reviewer), which inherit from Account
-            - based on the userType value, create a corresponding type of user
-            - add address and birth date fields
-            - make Account an interface/abstract
-            - hash passwords
-            - server-side validation
-        */
-
         val role = when (accountDto.userType) {
             "chair" -> UserRole.CHAIR
             "reviewer" -> UserRole.REVIEWER
@@ -44,13 +34,18 @@ class AccountsController(private var accountsService: AccountsService) {
             else -> null
         } ?: return
 
+        // the email and username of an account have to be unique
+        if (accountsService.retrieveAccountByEmail(accountDto.email) != null || accountsService.retrieveAccountByUsername(accountDto.username) != null) {
+            return
+        }
+
         accountsService.addAccount(Account(accountDto.email, accountDto.username, accountDto.password, role,
                 accountDto.userFName, accountDto.userLName, accountDto.address, accountDto.birthDate))
     }
 
     @PostMapping("accounts/login")
     fun login(@RequestBody accountLoginDto: AccountLoginCredentialsDto): AccountIdDto {
-        val account: Account = accountsService.retrieveAccount(accountLoginDto.email) ?: return AccountIdDto(-1)
+        val account: Account = accountsService.retrieveAccountByEmail(accountLoginDto.email) ?: return AccountIdDto(-1)
         return if (account.password == accountLoginDto.password) AccountIdDto(account.id) else AccountIdDto(-1)
     }
 }

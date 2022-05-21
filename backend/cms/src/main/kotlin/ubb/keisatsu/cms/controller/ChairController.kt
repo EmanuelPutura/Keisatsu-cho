@@ -32,7 +32,7 @@ class ChairController(
 
     @PostMapping("conferences/add")
     fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto) {
-        val account = accountsService.retrieveAccount(conferenceDto.email)
+        val account = accountsService.retrieveAccountByEmail(conferenceDto.email)
         if (account == null || account.role != UserRole.CHAIR) {
             return
         }
@@ -114,7 +114,7 @@ class ChairController(
             return
         }
 
-        val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
+        val account: Account = accountsService.retrieveAccountByEmail(paperEvaluationDto.chairID) ?: return
         if ( account.role != UserRole.CHAIR) {
             return
         }

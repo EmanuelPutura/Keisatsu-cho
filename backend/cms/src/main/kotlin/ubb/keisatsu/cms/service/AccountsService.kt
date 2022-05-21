@@ -27,9 +27,11 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
 
     fun addAccount(account: Account): Account = accountsRepository.save(account)
 
-    fun retrieveAccount(id: Int): Account? = accountsRepository.findByIdOrNull(id)
+    fun retrieveAccountByEmail(id: Int): Account? = accountsRepository.findByIdOrNull(id)
 
-    fun retrieveAccount(email: String): Account? = accountsRepository.findByEmail(email)
+    fun retrieveAccountByEmail(email: String): Account? = accountsRepository.findByEmail(email)
+
+    fun retrieveAccountByUsername(username: String): Account? = accountsRepository.findByUserName(username)
 
     fun retrieveAll(): Iterable<Account> = accountsRepository.findAll()
 

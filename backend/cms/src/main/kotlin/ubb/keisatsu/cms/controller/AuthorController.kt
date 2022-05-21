@@ -43,7 +43,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
 
     @GetMapping("/papers")
     fun getPapers(@RequestParam token: Int, @RequestParam type: String): Collection<PaperFromAuthorDto> {
-        val account = accountsService.retrieveAccount(token) ?: return mutableSetOf()  // return an empty set
+        val account = accountsService.retrieveAccountByEmail(token) ?: return mutableSetOf()  // return an empty set
         if (account.role != UserRole.AUTHOR) {
             return mutableSetOf()  // return an empty set
         }
@@ -85,7 +85,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
 
         val paper = Paper(submittedPaperDetailsDto.title, submittedPaperDetailsDto.keywords, topicOfInterest, submittedPaperDetailsDto.abstract, conference)
         submittedPaperDetailsDto.authors.forEach{ authorDtos ->
-            val author = accountsService.retrieveAccount(authorDtos.email) ?: return false
+            val author = accountsService.retrieveAccountByEmail(authorDtos.email) ?: return false
             if (author.role != UserRole.AUTHOR) {
                 return false
             }
@@ -100,7 +100,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     @PutMapping("/papers/uploadPaper")
     fun uploadFullPaper(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): Boolean {
         val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
-        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
+        val author = accountsService.retrieveAccountByEmail(uploadFullPaperDto.token) ?: return false
 
         if (!paperService.validateFullPaperUpload(author, paper)) {
             return false
@@ -115,7 +115,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     @PutMapping("/papers/uploadCameraReady")
     fun uploadPaperCameraReadyCopy(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): Boolean {
         val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
-        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
+        val author = accountsService.retrieveAccountByEmail(uploadFullPaperDto.token) ?: return false
 
         if (!paperService.validatePaperCameraReadyCopyUpload(author, paper)) {
             return false
