@@ -17,7 +17,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
                        private val conferenceDeadlinesService: ConferenceDeadlinesService) {
 
     private val ACCEPTED_PAPER_REQUEST_TYPE: String = "accepted"
-    private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull";
+    private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull"
 
     @GetMapping("conferences/all")
     fun getAllConferences(): MutableSet<ConferenceDto> {
@@ -38,14 +38,14 @@ class AuthorController(private val conferencesService: ConferencesService, priva
             }
         }
 
-        return conferenceDtoSet;
+        return conferenceDtoSet
     }
 
     @GetMapping("/papers")
     fun getPapers(@RequestParam token: Int, @RequestParam type: String): Collection<PaperFromAuthorDto> {
         val account = accountsService.retrieveAccount(token) ?: return mutableSetOf()  // return an empty set
         if (account.role != UserRole.AUTHOR) {
-            return mutableSetOf();  // return an empty set
+            return mutableSetOf()  // return an empty set
         }
 
         if (ACCEPTED_PAPER_REQUEST_TYPE == type) {
@@ -57,7 +57,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
             return getRequestedPapers(account, paperService::retrieveNotUploadedPapersHavingAuthor, checkDeadlinesFunction)
         }
 
-        return mutableSetOf();  // return an empty set
+        return mutableSetOf()  // return an empty set
     }
 
     private fun getRequestedPapers(author: Account, getPapers: (author: Account) -> Collection<Paper>, validDeadlines: (deadlines: ConferenceDeadlines?) -> Boolean): Collection<PaperFromAuthorDto> {
