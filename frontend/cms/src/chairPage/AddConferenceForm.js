@@ -25,10 +25,10 @@ function AddConferenceForm({ conferencesRequest }){
                 })
             }).then(response => {
                 response.json();
-                conferencesRequest();
             })
             .then(() =>{
                 alert("conference added!");
+                conferencesRequest();
             })
     }
 

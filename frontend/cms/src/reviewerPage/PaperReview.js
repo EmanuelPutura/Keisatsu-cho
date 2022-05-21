@@ -70,8 +70,8 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                 })
             }).then(response => response.json())
             .then(() =>{
-                paperRequest();
                 alert("Conflict has been signaled!");
+                paperRequest();
             })
     }
 
@@ -89,8 +89,8 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                 })
             }).then(response => response.json())
             .then(() =>{
-                paperRequest();
                 alert("Paper has been accepted!");
+                paperRequest();
             })
     }
 
@@ -108,8 +108,8 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                 })
             }).then(response => response.json())
             .then(() =>{
-                paperRequest();
                 alert("Paper has been rejected!");
+                paperRequest();
             })
     }
 
