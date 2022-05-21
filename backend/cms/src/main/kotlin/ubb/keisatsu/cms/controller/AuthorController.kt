@@ -6,22 +6,19 @@ import ubb.keisatsu.cms.model.dto.ConferenceDto
 import ubb.keisatsu.cms.model.dto.PaperFromAuthorDto
 import ubb.keisatsu.cms.model.dto.SubmittedPaperDetailsDto
 import ubb.keisatsu.cms.model.dto.UploadFullPaperDto
-import ubb.keisatsu.cms.model.entities.Account
-import ubb.keisatsu.cms.model.entities.Paper
-import ubb.keisatsu.cms.model.entities.PaperDecision
-import ubb.keisatsu.cms.model.entities.UserRole
+import ubb.keisatsu.cms.model.entities.*
 import ubb.keisatsu.cms.service.*
 import java.time.format.DateTimeFormatter
 
 @RestController
 @CrossOrigin
 class AuthorController(private val conferencesService: ConferencesService, private val topicsOfInterestService: TopicsOfInterestService,
-                       private val accountsService: AccountsService, private val paperService: PaperService, private val fileUploadService: FileUploadService) {
+                       private val accountsService: AccountsService, private val paperService: PaperService, private val fileUploadService: FileUploadService,
+                       private val conferenceDeadlinesService: ConferenceDeadlinesService) {
 
     private val ACCEPTED_PAPER_REQUEST_TYPE: String = "accepted"
     private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull";
 
-    // TODO: check dates
     @GetMapping("conferences/all")
     fun getAllConferences(): MutableSet<ConferenceDto> {
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
@@ -29,17 +26,21 @@ class AuthorController(private val conferencesService: ConferencesService, priva
 
         conferencesService.retrieveAll().forEach{ conference ->
             val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForConference(conference.id))
-            conferenceDtoSet.add(
-                ConferenceDto(conference.id, conference.name, conference.url, conference.subtitles, topics,
-                    conference.conferenceDeadlines?.paperSubmissionDeadline?.format(formatter), conference.conferenceDeadlines?.paperReviewDeadline?.format(formatter),
-                    conference.conferenceDeadlines?.acceptanceNotificationDeadline?.format(formatter), conference.conferenceDeadlines?.acceptedPaperUploadDeadline?.format(formatter))
-            )
+            val conferenceDeadlines = conference.conferenceDeadlines
+
+            // only the conferences whose paper submission deadline is still valid should be returned
+            if (conferenceDeadlines == null || conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.paperSubmissionDeadline)) {
+                conferenceDtoSet.add(
+                    ConferenceDto(conference.id, conference.name, conference.url, conference.subtitles, topics,
+                        conference.conferenceDeadlines?.paperSubmissionDeadline?.format(formatter), conference.conferenceDeadlines?.paperReviewDeadline?.format(formatter),
+                        conference.conferenceDeadlines?.acceptanceNotificationDeadline?.format(formatter), conference.conferenceDeadlines?.acceptedPaperUploadDeadline?.format(formatter))
+                )
+            }
         }
 
         return conferenceDtoSet;
     }
 
-    // TODO: check dates
     @GetMapping("/papers")
     fun getPapers(@RequestParam token: Int, @RequestParam type: String): Collection<PaperFromAuthorDto> {
         val account = accountsService.retrieveAccount(token) ?: return mutableSetOf()  // return an empty set
@@ -48,25 +49,30 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         }
 
         if (ACCEPTED_PAPER_REQUEST_TYPE == type) {
-            return getRequestedPapers(account, paperService::retrievePapersHavingAuthorWithoutCameraReadyCopy)
+            val checkDeadlinesFunction = { deadlines: ConferenceDeadlines? -> deadlines == null || conferenceDeadlinesService.isDeadlineStillValid(deadlines.paperSubmissionDeadline) }
+            return getRequestedPapers(account, paperService::retrievePapersHavingAuthorWithoutCameraReadyCopy, checkDeadlinesFunction)
         }
         else if (MISSING_FULL_PAPER_REQUEST_TYPE == type) {
-            return getRequestedPapers(account, paperService::retrieveNotUploadedPapersHavingAuthor)
+            val checkDeadlinesFunction = { deadlines: ConferenceDeadlines? -> deadlines == null || conferenceDeadlinesService.isDeadlineStillValid(deadlines.acceptedPaperUploadDeadline) }
+            return getRequestedPapers(account, paperService::retrieveNotUploadedPapersHavingAuthor, checkDeadlinesFunction)
         }
 
         return mutableSetOf();  // return an empty set
     }
 
-    // TODO: check dates
-    private fun getRequestedPapers(author: Account, getPapers: (author: Account) -> Collection<Paper>): Collection<PaperFromAuthorDto> {
+    private fun getRequestedPapers(author: Account, getPapers: (author: Account) -> Collection<Paper>, validDeadlines: (deadlines: ConferenceDeadlines?) -> Boolean): Collection<PaperFromAuthorDto> {
         val papersDtoSet: MutableSet<PaperFromAuthorDto> = mutableSetOf()
         getPapers(author).forEach{ paper ->
-            val topic: String = paper.topicOfInterest!!.name
+            val topic: String = paper.topicOfInterest.name
             val decision: Boolean = paper.decision == PaperDecision.ACCEPTED
+            val conferenceDeadlines = paper.conference.conferenceDeadlines
 
-            papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                paper.keywords, topic, decision)
-            )
+            // only the papers assigned to conferences whose paper submission deadline is still valid should be considered
+            if (validDeadlines(conferenceDeadlines)) {
+                papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                    paper.keywords, topic, decision)
+                )
+            }
         }
         return papersDtoSet
     }
