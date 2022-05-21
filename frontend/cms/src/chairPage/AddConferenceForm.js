@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 
 import React, {useState} from "react";
 
-function AddConferenceForm(){
+function AddConferenceForm({ conferencesRequest }){
 
     function submitData(event){
         event.preventDefault();
@@ -23,9 +23,12 @@ function AddConferenceForm(){
                     email: email,
                     subtitles: subtitles,
                 })
-            }).then(response => response.json())
+            }).then(response => {
+                response.json();
+            })
             .then(() =>{
                 alert("conference added!");
+                conferencesRequest();
             })
     }
 

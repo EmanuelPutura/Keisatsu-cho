@@ -81,7 +81,7 @@ function ReviewerPage({name, token, setToken}){
             <Stack component="div" spacing={2}>
                 <SetTopics token={token} papersRequest={papersToBidRequest}/>
                 <PaperBid token={token} papers={papersToBid}/>
-                <PaperReview token={token} papers={papersToReview}/>
+                <PaperReview token={token} papers={papersToReview} paperRequest={papersToReviewRequest}/>
             </Stack>
         </Container>
     )
