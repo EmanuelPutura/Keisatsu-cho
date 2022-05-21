@@ -1,10 +1,13 @@
 package ubb.keisatsu.cms.controller
 
+import org.springframework.core.io.InputStreamResource
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.*
 import ubb.keisatsu.cms.service.*
+import java.io.File
+import java.io.FileInputStream
 import java.time.format.DateTimeFormatter
 
 @RestController
@@ -57,21 +60,18 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         return mutableSetOf()  // return an empty set
     }
 
-    private fun getRequestedPapers(author: Account, getPapers: (author: Account) -> Collection<Paper>, validDeadlines: (deadlines: ConferenceDeadlines?) -> Boolean): Collection<PaperFromAuthorDto> {
-        val papersDtoSet: MutableSet<PaperFromAuthorDto> = mutableSetOf()
-        getPapers(author).forEach{ paper ->
-            val topic: String = paper.topicOfInterest.name
-            val decision: Boolean = paper.decision == PaperDecision.ACCEPTED
-            val conferenceDeadlines = paper.conference.conferenceDeadlines
+    @GetMapping("/papers/getFullPaper")
+    fun getFullPaperFile(@RequestParam paperId: Int): InputStreamResource? {
+        val paper = paperService.retrievePaper(paperId) ?: return null
+        val fullPaperPath = paper.fullPaper ?: return null
+        return InputStreamResource(FileInputStream(File(fullPaperPath)))
+    }
 
-            // only the papers assigned to conferences whose paper submission deadline is still valid should be considered
-            if (validDeadlines(conferenceDeadlines)) {
-                papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                    paper.keywords, topic, paper.conference.name)
-                )
-            }
-        }
-        return papersDtoSet
+    @GetMapping("/papers/getCameraReadyCopy")
+    fun getPaperCameraReadyCopy(@RequestParam paperId: Int): InputStreamResource? {
+        val paper = paperService.retrievePaper(paperId) ?: return null
+        val cameraReadyCopyPath = paper.cameraReadyCopy ?: return null
+        return try { InputStreamResource(FileInputStream(File(cameraReadyCopyPath))) } catch (e: Exception) { null }
     }
 
     @PostMapping("/papers")
@@ -138,6 +138,23 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         uploadPaperFile(paper, uploadFullPaperDto.file)
 
         return ErrorDto(true)
+    }
+
+    private fun getRequestedPapers(author: Account, getPapers: (author: Account) -> Collection<Paper>, validDeadlines: (deadlines: ConferenceDeadlines?) -> Boolean): Collection<PaperFromAuthorDto> {
+        val papersDtoSet: MutableSet<PaperFromAuthorDto> = mutableSetOf()
+        getPapers(author).forEach{ paper ->
+            val topic: String = paper.topicOfInterest.name
+            val decision: Boolean = paper.decision == PaperDecision.ACCEPTED
+            val conferenceDeadlines = paper.conference.conferenceDeadlines
+
+            // only the papers assigned to conferences whose paper submission deadline is still valid should be considered
+            if (validDeadlines(conferenceDeadlines)) {
+                papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                    paper.keywords, topic, paper.conference.name)
+                )
+            }
+        }
+        return papersDtoSet
     }
 
     private fun uploadPaperFile(paper: Paper, file: MultipartFile) {
