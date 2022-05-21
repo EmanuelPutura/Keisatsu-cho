@@ -1,6 +1,7 @@
 package ubb.keisatsu.cms.controller
 
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import ubb.keisatsu.cms.model.dto.ConferenceDto
 import ubb.keisatsu.cms.model.dto.PaperFromAuthorDto
 import ubb.keisatsu.cms.model.dto.SubmittedPaperDetailsDto
@@ -95,14 +96,36 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
         val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
 
-        if (author.role != UserRole.AUTHOR || !paper.paperAuthors.contains(author)) {
+        if (!paperService.validateFullPaperUpload(author, paper)) {
             return false
         }
 
         paper.fullPaper = fileUploadService.getFileUploadPath(uploadFullPaperDto.file)
-        paperService.addPaper(paper)
-        fileUploadService.uploadFile(uploadFullPaperDto.file)
+        uploadPaperFile(paper, uploadFullPaperDto.file)
 
         return true
     }
+
+    @PutMapping("/papers/uploadCameraReady")
+    fun uploadPaperCameraReadyCopy(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): Boolean {
+        val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return false
+        val author = accountsService.retrieveAccount(uploadFullPaperDto.token) ?: return false
+
+        if (!paperService.validatePaperCameraReadyCopyUpload(author, paper)) {
+            return false
+        }
+
+        paper.cameraReadyCopy = fileUploadService.getFileUploadPath(uploadFullPaperDto.file)
+        uploadPaperFile(paper, uploadFullPaperDto.file)
+        return true
+    }
+
+    private fun uploadPaperFile(paper: Paper, file: MultipartFile) {
+        paperService.addPaper(paper)
+        fileUploadService.uploadFile(file)
+    }
+
+
+
+
 }

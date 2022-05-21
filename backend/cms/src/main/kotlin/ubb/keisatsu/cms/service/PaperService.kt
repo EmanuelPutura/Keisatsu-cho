@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.Paper
 import ubb.keisatsu.cms.model.entities.PaperDecision
+import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.repository.PaperRepository
 
 @Service
@@ -36,4 +37,15 @@ class PaperService(private val paperRepository: PaperRepository) {
     fun retrievePapersHavingAuthorWithoutCameraReadyCopy(author: Account): Collection<Paper> =
         retrievePapersHavingAuthor(author).filter { paper ->
             (paper.cameraReadyCopy == null || "" == paper.cameraReadyCopy) && paper.decision == PaperDecision.ACCEPTED }
+
+    fun validateFullPaperUpload(account: Account, paper: Paper): Boolean {
+        return !(account.role != UserRole.AUTHOR || !paper.paperAuthors.contains(account) ||
+                (paper.fullPaper != null && paper.fullPaper != ""))
+    }
+
+    fun validatePaperCameraReadyCopyUpload(account: Account, paper: Paper): Boolean {
+        return !(account.role != UserRole.AUTHOR || !paper.paperAuthors.contains(account) ||
+                paper.fullPaper == null || paper.fullPaper == "" || paper.decision != PaperDecision.ACCEPTED ||
+                (paper.cameraReadyCopy != null && paper.cameraReadyCopy != ""))
+    }
 }
