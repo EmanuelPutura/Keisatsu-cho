@@ -5,10 +5,13 @@ import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.Account
 import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.AccountsService
+import java.time.LocalDate
 
 @RestController
 @CrossOrigin
 class AccountsController(private var accountsService: AccountsService) {
+    private val MIN_USER_AGE = 12L  // minimum user age
+
     @GetMapping("accounts/getUserData")
     fun getUserData(@RequestParam(name = "accountID") accountId: Int): AccountUserTypeDto? {
         val account: Account = accountsService.retrieveAccount(accountId) ?: return null
@@ -34,6 +37,11 @@ class AccountsController(private var accountsService: AccountsService) {
         // the email and username of an account have to be unique
         if (accountsService.retrieveAccountByEmail(accountDto.email) != null || accountsService.retrieveAccountByUsername(accountDto.username) != null) {
             return ErrorDto(false, "The email and username of an account must be unique!")
+        }
+
+        // a user must be older than MIN_USER_AGE years old
+        if (!accountDto.birthDate.isBefore(LocalDate.now().minusYears(MIN_USER_AGE))) {
+            return ErrorDto(false, "Invalid user age: user should be older than $MIN_USER_AGE years old!")
         }
 
         accountsService.addAccount(Account(accountDto.email, accountDto.username, accountDto.password, role,
