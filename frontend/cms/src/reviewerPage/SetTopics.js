@@ -27,7 +27,7 @@ function SetTopics({token, papersRequest}){
 
     function setSelectedAndUpdatePapers(topics){
         setSelectedTopics(topics)
-        papersRequest(selectedConference.id, topics.join("\n"));
+        papersRequest(selectedConference, topics.join(";"));
     }
 
     useEffect(() => {
