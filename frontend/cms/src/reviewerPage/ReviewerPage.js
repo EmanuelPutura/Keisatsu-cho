@@ -33,7 +33,7 @@ function ReviewerPage({name, token, setToken}){
         authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        comments: [{name: "Andrew", comment: "Great paper"}]
+        conferenceName: "Conference 1"
     },
     { id: 2,
         title: "Paper 2",
@@ -42,7 +42,7 @@ function ReviewerPage({name, token, setToken}){
             {name: "Author2", email: "a@i.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        comments: []
+        conferenceName: "Conference 2"
     }];
 
     function papersToBidRequest(conference, topics){

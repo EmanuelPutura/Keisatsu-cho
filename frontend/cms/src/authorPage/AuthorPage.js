@@ -4,8 +4,7 @@ import Header from "../commons/Header";
 import Stack from "@mui/material/Stack";
 import AddPaperForm from "./AddPaperForm";
 import "./authorStyle.css"
-import SeeNotUploadedPapers from "./SeeNotUploadedPapers";
-import SeeCameraReadyPapers from "./SeeAcceptedPapers";
+import SeePapers from "./SeePapers";
 
 function AuthorPage({name, token, setToken}) {
 
@@ -19,7 +18,7 @@ function AuthorPage({name, token, setToken}) {
         authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        decided: true
+        conferenceName: "Conference 1"
     },
     {
         id: 2,
@@ -28,7 +27,7 @@ function AuthorPage({name, token, setToken}) {
         authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        decided: true
+        conferenceName: "Conference 2"
     }];
 
     const testNotFullPapers = [{
@@ -38,7 +37,7 @@ function AuthorPage({name, token, setToken}) {
         authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        decided: false
+        conferenceName: "Conference 3"
     },
     {
         id: 4,
@@ -47,10 +46,10 @@ function AuthorPage({name, token, setToken}) {
         authors: [{name: "Author1", email: "i@a.com", address: "idk"}],
         keywords: "...",
         topic: "...",
-        decided: false
+        conferenceName: "Conference 4"
     }];
 
-    useEffect(() => {
+    function requestAcceptedPapers() {
         const acceptedPapersRequest = token => {
             if (token !== undefined && token !== 123) {
                 fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=accepted")
@@ -64,9 +63,13 @@ function AuthorPage({name, token, setToken}) {
             }
         }
         acceptedPapersRequest(token);
-    }, [token]);
+    }
 
     useEffect(() => {
+        requestAcceptedPapers();
+    }, [token]);
+
+    function requestNotUploadedPapers() {
         const notFullPapersRequest = token => {
             if (token !== undefined && token !== 123) {
                 fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=missingFull")
@@ -80,16 +83,32 @@ function AuthorPage({name, token, setToken}) {
             }
         }
         notFullPapersRequest(token);
-    }, [token]);
+    }
+
+    useEffect(() => {
+        requestNotUploadedPapers()
+    }, []);
 
 
     return (
         <Container component="div" disableGutters={true} maxWidth={false}>
             <Header name={name} setToken={setToken}/>
             <Stack component="div" spacing={2}>
-                <AddPaperForm token={token}/>
-                <SeeNotUploadedPapers papers={papersToBeUploaded} token={token}/>
-                <SeeCameraReadyPapers papers={acceptedPapers} token={token}/>
+                <AddPaperForm token={token} refreshList={requestNotUploadedPapers}/>
+                <SeePapers papers={papersToBeUploaded}
+                           token={token}
+                           papersRequest={requestNotUploadedPapers}
+                           title={"Papers to be uploaded"}
+                           buttonText={"Upload Full Paper"}
+                           url={"http://localhost:8080/papers/uploadPaper"}
+                />
+                <SeePapers papers={acceptedPapers}
+                           token={token}
+                           papersRequest={requestAcceptedPapers}
+                           title={"Papers that need Camera Ready Copies"}
+                           buttonText={"Upload Camera Ready Copy"}
+                           url={"http://localhost:8080/papers/uploadCameraReady"}
+                />
             </Stack>
         </Container>
     )

@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
-function PaperDetails({paper, token, url, buttonText}) {
+function PaperDetails({paper, token, url, buttonText, papersRequest}) {
 
     const [file, setFile] = useState();
 
@@ -24,13 +24,17 @@ function PaperDetails({paper, token, url, buttonText}) {
             body: data
         })
             .then(response => response.json())
-            .then(data => alert(data ? "File uploaded" : "File was not uploaded"));
+            .then(data => {
+                alert(data ? "File uploaded" : "File was not uploaded");
+                if(data)
+                    papersRequest();
+            });
     }
 
     return (
         <Stack component="div" alignSelf="center" width="80%" justifyContent="space-between" direction="row" >
             <Typography component="h3" variant="h6">
-                {paper.title}
+                {paper.title} at Conference {paper.conferenceName}
             </Typography>
             <Box component="div">
                 <input
