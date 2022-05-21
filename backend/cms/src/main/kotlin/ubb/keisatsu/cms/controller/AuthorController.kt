@@ -67,7 +67,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
             // only the papers assigned to conferences whose paper submission deadline is still valid should be considered
             if (validDeadlines(conferenceDeadlines)) {
                 papersDtoSet.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                    paper.keywords, topic, decision)
+                    paper.keywords, topic, paper.conference.name)
                 )
             }
         }
