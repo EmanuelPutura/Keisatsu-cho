@@ -30,21 +30,6 @@ class ChairController(
         return conferenceDtoSet
     }
 
-    @GetMapping("papers/get")
-    fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
-        val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
-//        paperService.retrieveAll().
-        paperService.retrieveUploadedPapersWithoutCameraReadyCopy().
-            forEach{ paper ->
-                val topic: String = paper.topicOfInterest!!.name
-                val conferenceID = paper.conference.id
-
-                papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                        paper.keywords, topic, conferenceID))
-        }
-        return papersDtoSet
-    }
-
     @PostMapping("conferences/add")
     fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto) {
         val account = accountsService.retrieveAccount(conferenceDto.email)
@@ -77,6 +62,12 @@ class ChairController(
     @PutMapping("accounts/conferenceDeadlines")
     @Transactional
     fun updateConferenceTopicsOfInterest(@RequestBody conferenceDeadlinesDto: ConferenceDeadlinesDto) {
+        // conference deadlines validation
+        if (!conferenceDeadlinesService.validateDeadlines(conferenceDeadlinesDto.submission, conferenceDeadlinesDto.review,
+                conferenceDeadlinesDto.acceptance, conferenceDeadlinesDto.upload)) {
+            return
+        }
+
         val conference: Conference = conferencesService.retrieveConference(conferenceDeadlinesDto.conferenceID)
                 ?: return
         var conferenceDeadlines: ConferenceDeadlines = conference.conferenceDeadlines
@@ -91,9 +82,38 @@ class ChairController(
         conference.conferenceDeadlines = conferenceDeadlines
     }
 
+    @GetMapping("papers/get")
+    fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
+        val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
+//        paperService.retrieveAll().
+        paperService.retrieveUploadedPapersWithoutCameraReadyCopy().
+        forEach{ paper ->
+            val topic: String = paper.topicOfInterest.name
+            val conferenceID = paper.conference.id
+            val conference = conferencesService.retrieveConference(conferenceID) ?: return@forEach
+            val conferenceDeadlines = conference.conferenceDeadlines
+
+            // return the current paper only if its acceptance deadline is not set or if it is after the current date
+            if (conferenceDeadlines == null || conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.acceptanceNotificationDeadline)) {
+                papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                    paper.keywords, topic, conferenceID))
+            }
+        }
+
+        return papersDtoSet
+    }
+
     @PutMapping("accounts/papers")
-    fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto){
+    fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto) {
         val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return
+        val conference = conferencesService.retrieveConference(paperEvaluationDto.conferenceID) ?: return
+        val conferenceDeadlines = conference.conferenceDeadlines
+
+        // a paper can be accepted only before the acceptance deadline
+        if (conferenceDeadlines != null && !conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.acceptanceNotificationDeadline)) {
+            return
+        }
+
         val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return
         if ( account.role != UserRole.CHAIR) {
             return
