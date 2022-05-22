@@ -12,5 +12,5 @@ export default function downloadFile(paperObj){
                 document.body.appendChild(link);
                 link.click();
             }
-        })
+        });
 }
