@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import {ListItemWithCollapsible} from "../formUtils";
 import React from "react";
 import ListItemText from "@mui/material/ListItemText";
+import downloadFile from "../commons/FileDownload";
 
 function PaperCollapsible({paper, papersRequest, conference, token}){
 
@@ -65,6 +66,13 @@ function PaperCollapsible({paper, papersRequest, conference, token}){
                        direction="row"
                        justifyContent="space-evenly"
                 >
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        onClick={() => {downloadFile(paperObj);}}
+                    >
+                        DOWNLOAD
+                    </Button>
                     <Button
                         fullWidth
                         variant="contained"
