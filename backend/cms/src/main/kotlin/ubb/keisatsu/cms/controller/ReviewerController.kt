@@ -2,20 +2,18 @@ package ubb.keisatsu.cms.controller;
 
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
-import ubb.keisatsu.cms.model.dto.AccountTopicsOfInterestDto
-import ubb.keisatsu.cms.model.dto.ConferenceDto
-import ubb.keisatsu.cms.model.dto.TopicsDto
+import ubb.keisatsu.cms.model.dto.*
+import ubb.keisatsu.cms.model.entities.Comment
+import ubb.keisatsu.cms.model.entities.Conference
 import ubb.keisatsu.cms.model.entities.TopicOfInterest
 import ubb.keisatsu.cms.model.entities.UserRole
-import ubb.keisatsu.cms.service.AccountsService
-import ubb.keisatsu.cms.service.ConferencesService
-import ubb.keisatsu.cms.service.TopicsOfInterestService;
+import ubb.keisatsu.cms.service.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @RestController
 @CrossOrigin
-class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService) {
+class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService, private val paperService: PaperService, private val commentsService: CommentService) {
 
     @GetMapping("accounts/topics")
     fun getTopicsOfReviewer(@RequestParam(name="accountID") accountId: Int): TopicsDto {
@@ -53,7 +51,6 @@ class ReviewerController(private val accountsService: AccountsService, private v
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
         conferencesService.retrieveAll().forEach { conference ->
-            println("hei")
             if(conference.conferenceDeadlines?.paperReviewDeadline?.isBefore(LocalDate.now()) == false) {
                 val topics: String = topicsOfInterestService.convertTopicsArrayToString(
                     topicsOfInterestService.findAllForConference(conference.id)
@@ -77,4 +74,47 @@ class ReviewerController(private val accountsService: AccountsService, private v
         return conferenceDtoSet
     }
 
+    @GetMapping("papers/to_bid")
+    fun getPapersToBid(@RequestParam(name="accountID") accountId: Int, @RequestParam(name="conferenceID") conferenceId: Int, @RequestParam(name="topics") topics: String): MutableSet<PaperDetailsDto>{
+        val result: MutableSet<PaperDetailsDto> = mutableSetOf()
+        val listOfTopics = this.topicsOfInterestService.getTopicsArrayFromString(topics)
+        this.paperService.retrievePapersFromConference(conferenceId).forEach{ paper ->
+            listOfTopics.forEach { topic ->
+                if (topic.id==paper.topicOfInterest.id) {
+                    result.add(
+                        PaperDetailsDto(
+                            paper.id,
+                            paper.title,
+                            paper.abstract,
+                            accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                            paper.keywords,
+                            paper.topicOfInterest.name,
+                            paper.conference.id
+                        )
+                    )
+                }
+            }
+        }
+        return result;
+    }
+
+    @GetMapping("reviewers/comments")
+    fun getComments(@RequestParam(name="paperId") paperId: Int): MutableSet<CommentDto>{
+        val result: MutableSet<CommentDto> = mutableSetOf()
+        commentsService.retrieveCommentsForPaper(paperId).forEach{ comment ->  result.add(CommentDto(comment.reviewer.userName, comment.comment))}
+        return result
+    }
+
+    @PostMapping("reviewers/comment")
+    fun addComment(@RequestBody commentDto: CommentSubmitDto): ErrorDto {
+        val account = accountsService.retrieveAccount(commentDto.token) ?: return ErrorDto(false, "Invalid account id!")
+        if (account.role != UserRole.REVIEWER) {
+            return ErrorDto(false, "Invalid account role: only a reviewer can add comments for a paper!")
+        }
+
+        println(commentDto.paperID)
+        val paper = paperService.retrievePaper(commentDto.paperID) ?: return ErrorDto(false, "Invalid paper id")
+        commentsService.addComment(Comment(paper ,account,commentDto.comment))
+        return ErrorDto(true)
+    }
 }

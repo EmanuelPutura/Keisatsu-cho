@@ -48,4 +48,6 @@ class PaperService(private val paperRepository: PaperRepository) {
                 paper.fullPaper == null || paper.fullPaper == "" || paper.decision != PaperDecision.ACCEPTED ||
                 (paper.cameraReadyCopy != null && paper.cameraReadyCopy != ""))
     }
+
+    fun retrievePapersFromConference(conferenceId: Int): Iterable<Paper> = paperRepository.findByConferenceId(conferenceId)
 }
