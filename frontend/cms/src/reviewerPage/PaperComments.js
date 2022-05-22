@@ -48,7 +48,7 @@ export default function PaperComments({paperID, token}) {
                 method: "POST",
                 headers:{
                     'Content-Type': 'application/json',
-                    'Authorization': localStorage.getItem('jwt')
+                    'Authorization': 'Bearer ' + localStorage.getItem('jwt')
                 },
                 body: JSON.stringify({
                     token: token,
