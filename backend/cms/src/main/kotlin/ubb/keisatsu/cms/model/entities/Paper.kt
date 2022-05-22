@@ -37,6 +37,10 @@ class Paper (
     @JoinColumn(name = "AcceptRejectDecisionMaker", referencedColumnName = "AccountID")
     var decisionMaker: Account? = null,
 
+    @ManyToOne
+    @JoinColumn(name = "reviewer", referencedColumnName = "AccountID")
+    var reviewer: Account? = null,
+
     @Column(name="decision")
     var decision: PaperDecision = PaperDecision.NOT_YET_DECIDED,
 

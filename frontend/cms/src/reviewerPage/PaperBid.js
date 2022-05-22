@@ -24,9 +24,13 @@ function PaperBidCollapsible({token, paper, refreshList}){
                     paperID: paperObj.id
                 })
             }).then(response => response.json())
-            .then(() =>{
-                alert("Paper has been bid on!");
-                refreshList(paperObj.id);
+            .then(data => {
+                if(data.executedWithoutErrors){
+                    alert("Paper has been bid on!");
+                    refreshList(paperObj.id);
+                } else {
+                    alert(data.errorMessage);
+                }
             })
     }
 

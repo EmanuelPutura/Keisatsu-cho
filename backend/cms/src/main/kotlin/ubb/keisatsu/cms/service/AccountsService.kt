@@ -35,6 +35,8 @@ class AccountsService(private val accountsRepository: AccountsRepository) {
 
     fun retrieveAll(): Iterable<Account> = accountsRepository.findAll()
 
+    fun retrieveReviewers(): Iterable<Account> = accountsRepository.findByRole(UserRole.REVIEWER)
+
     fun convertToAccountUserDataDtos(accounts: Collection<Account>): Collection<AccountUserDataDto> {
         val accountDtos: MutableCollection<AccountUserDataDto> = mutableListOf()
         accounts.forEach{ account ->

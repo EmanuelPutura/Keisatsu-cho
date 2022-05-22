@@ -14,3 +14,5 @@ data class SubmittedPaperDetailsDto(val token: Int, val title: String, val abstr
                                     val keywords: String, val interestTopic: String, val conference: Int)
 
 data class UploadFullPaperDto(val token: Int, val paper: Int, val file: MultipartFile)
+
+data class PaperSentenceDto(val token: Int, val paperID: Int)
