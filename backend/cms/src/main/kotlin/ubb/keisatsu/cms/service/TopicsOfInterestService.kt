@@ -19,7 +19,6 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
     fun getTopicsArrayFromString(topics: String): Iterable<TopicOfInterest>{
         val result: MutableList<TopicOfInterest> = mutableListOf()
         topics.split(";").forEach{ topic ->
-            println(topic)
             val topicOfInterest: TopicOfInterest = retrieveTopicOfInterest(topic)
             result.add(topicOfInterest)
         }

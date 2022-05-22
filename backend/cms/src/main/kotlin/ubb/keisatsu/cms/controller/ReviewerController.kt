@@ -77,6 +77,9 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @GetMapping("papers/to_bid")
     fun getPapersToBid(@RequestParam(name="accountID") accountId: Int, @RequestParam(name="conferenceID") conferenceId: Int, @RequestParam(name="topics") topics: String): MutableSet<PaperDetailsDto>{
         val result: MutableSet<PaperDetailsDto> = mutableSetOf()
+        if(topics.length==0){
+            return result
+        }
         val listOfTopics = this.topicsOfInterestService.getTopicsArrayFromString(topics)
         this.paperService.retrievePapersFromConference(conferenceId).forEach{ paper ->
             listOfTopics.forEach { topic ->
@@ -111,8 +114,6 @@ class ReviewerController(private val accountsService: AccountsService, private v
         if (account.role != UserRole.REVIEWER) {
             return ErrorDto(false, "Invalid account role: only a reviewer can add comments for a paper!")
         }
-
-        println(commentDto.paperID)
         val paper = paperService.retrievePaper(commentDto.paperID) ?: return ErrorDto(false, "Invalid paper id")
         commentsService.addComment(Comment(paper ,account,commentDto.comment))
         return ErrorDto(true)
