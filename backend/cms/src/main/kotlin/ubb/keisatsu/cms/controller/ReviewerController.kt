@@ -132,6 +132,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("papers/to_review")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getPapersToReview(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperFromAuthorDto>{
         val papers: MutableSet<PaperFromAuthorDto> = mutableSetOf<PaperFromAuthorDto>()
         paperService.retrieveAll().forEach{ paper: Paper ->
@@ -143,26 +144,25 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @PostMapping("reviewers/acceptPaper")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun acceptPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
         reviewService.acceptPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 
     @PostMapping("reviewers/rejectPaper")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun rejectPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
         reviewService.rejectPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 
     @PostMapping("reviewers/conflict")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun signalConflict(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
-        val account: Account? = accountsService.retrieveAccount(paperSentenceDto.token)
-        if (account == null || account.role != UserRole.REVIEWER){
-            return ErrorDto(false, "No reviewer account found for this token!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
 
-        val paper: Paper? = paperService.retrievePaper(paperSentenceDto.paperID)
-        if(paper == null){
-            return ErrorDto(false, "The paper does not exist")
-        }
+        val paper: Paper = paperService.retrievePaper(paperSentenceDto.paperID)
+            ?: return ErrorDto(false, "The paper does not exist")
 
         val review: Review = reviewService.retrieveReview(paperSentenceDto.token, paperSentenceDto.paperID)
         review.reviewStatus = ReviewStatus.CONFLICT
@@ -198,16 +198,13 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @PostMapping("reviewers/bid")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun bid(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
-        val account: Account? = accountsService.retrieveAccount(paperSentenceDto.token)
-        if (account == null || account.role != UserRole.REVIEWER){
-            return ErrorDto(false, "No reviewer account found for this token!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
 
-        val paper: Paper? = paperService.retrievePaper(paperSentenceDto.paperID)
-        if(paper == null){
-            return ErrorDto(false, "The paper does not exist")
-        }
+        val paper: Paper = paperService.retrievePaper(paperSentenceDto.paperID)
+            ?: return ErrorDto(false, "The paper does not exist")
 
         reviewService.addReview(Review(account,paper,ReviewStatus.BID))
         return ErrorDto(true)
