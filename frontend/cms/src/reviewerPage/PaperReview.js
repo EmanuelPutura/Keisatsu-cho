@@ -6,8 +6,8 @@ import Divider from "@mui/material/Divider";
 import {ListItemWithCollapsible} from "../formUtils";
 import ListItemText from "@mui/material/ListItemText";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import PaperComments from "./PaperComments";
+import downloadFile from "../commons/FileDownload";
 
 function PaperReviewCollapsible({paper, token, paperRequest}) {
     const paperObj = JSON.parse(paper);
@@ -118,6 +118,11 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                        spacing={0}
                        divider={<Divider orientation="vertical" flexItem/> }
                 >
+                    <Button fullWidth
+                            onClick={() => downloadFile(paperObj)}
+                            variant="contained">
+                        DOWNLOAD
+                    </Button>
                     <Button fullWidth
                             onClick={signalConflict}
                             variant="contained">
