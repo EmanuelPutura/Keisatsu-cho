@@ -23,7 +23,12 @@ export default function PaperComments({paperID, token}) {
     //TODO: new request
     function getComments(){
         if(token !== undefined && token !== 124){
-            fetch("http://localhost:8080/reviewers/comments?paperId="+paperID)
+            fetch("http://localhost:8080/reviewers/comments?paperId="+paperID, {
+                method: 'GET',
+                headers: {
+                    'Authorization' : 'Bearer ' + localStorage.getItem('jwt')
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     setComments(data);
@@ -42,7 +47,8 @@ export default function PaperComments({paperID, token}) {
             {
                 method: "POST",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwt')
                 },
                 body: JSON.stringify({
                     token: token,

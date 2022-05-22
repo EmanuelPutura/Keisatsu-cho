@@ -17,7 +17,13 @@ function App() {
     const accountRequest = accountID => {
 
         if (accountID !== undefined && accountID !== 122 && accountID !== 123 && accountID !== 124) {
-            fetch("http://localhost:8080/accounts/getUserData?accountID=" + accountID.toString())
+            fetch("http://localhost:8080/accounts/getUserData?accountID=" + accountID.toString(),
+            {
+                method: "GET",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("jwt")
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     setName(data.name);
@@ -31,6 +37,7 @@ function App() {
     }
 
     useEffect(() => accountRequest(token), [token]);
+
 
     const setAll = token => {
         setToken(token);

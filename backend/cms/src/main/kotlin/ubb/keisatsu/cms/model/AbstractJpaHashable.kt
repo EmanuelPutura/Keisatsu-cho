@@ -4,7 +4,7 @@ import org.springframework.data.util.ProxyUtils
 import java.util.*
 
 abstract class AbstractJpaHashable {
-    val hashId = UUID.randomUUID()
+    val hashId: UUID = UUID.randomUUID()
 
     override fun equals(other: Any?): Boolean {
         other ?: return false

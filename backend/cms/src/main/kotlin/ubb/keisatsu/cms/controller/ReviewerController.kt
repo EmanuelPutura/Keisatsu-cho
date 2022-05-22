@@ -1,9 +1,19 @@
 package ubb.keisatsu.cms.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.*
+import ubb.keisatsu.cms.model.entities.Comment
+import ubb.keisatsu.cms.model.entities.Conference
+import ubb.keisatsu.cms.model.dto.AccountTopicsOfInterestDto
+import ubb.keisatsu.cms.model.dto.TopicsDto
+import ubb.keisatsu.cms.model.entities.Account
+import ubb.keisatsu.cms.model.entities.TopicOfInterest
+import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -13,22 +23,22 @@ import java.time.format.DateTimeFormatter
 class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService, private val paperService: PaperService, private val commentsService: CommentService, private val reviewService: ReviewService) {
 
     @GetMapping("accounts/topics")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getTopicsOfReviewer(@RequestParam(name="accountID") accountId: Int): TopicsDto {
-        val account = accountsService.retrieveAccount(accountId)
-        if (account == null || account.role != UserRole.REVIEWER) {
-            return TopicsDto("")
-        }
-        val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForAccount(accountId))
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
+        val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForAccount(account.id))
         return TopicsDto(topics)
     }
 
     @PutMapping("accounts/topics")
     @Transactional
+    @PreAuthorize("hasRole('REVIEWER')")
     fun updateReviewerTopicsOfInterest(@RequestBody accountTopicsOfInterestDto: AccountTopicsOfInterestDto) {
-        val account = accountsService.retrieveAccount(accountTopicsOfInterestDto.token)
-        if (account == null || account.role != UserRole.REVIEWER) {
-            return
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
         account.topicsOfInterest.clear()
         accountTopicsOfInterestDto.topics.lines().forEach { topic ->
             if (topic == "")
@@ -43,6 +53,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("conferences/getAll")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getAllConferences(): MutableSet<ConferenceDto>{
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -72,6 +83,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("papers/to_bid")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getPapersToBid(@RequestParam(name="accountID") accountId: Int, @RequestParam(name="conferenceID") conferenceId: Int, @RequestParam(name="topics") topics: String): MutableSet<PaperDetailsDto>{
         val result: MutableSet<PaperDetailsDto> = mutableSetOf()
         if(topics.length==0){
@@ -101,6 +113,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("reviewers/comments")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getComments(@RequestParam(name="paperId") paperId: Int): MutableSet<CommentDto>{
         val result: MutableSet<CommentDto> = mutableSetOf()
         commentsService.retrieveCommentsForPaper(paperId).forEach{ comment ->  result.add(CommentDto(comment.reviewer.userName, comment.comment))}
@@ -108,17 +121,18 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @PostMapping("reviewers/comment")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun addComment(@RequestBody commentDto: CommentSubmitDto): ErrorDto {
-        val account = accountsService.retrieveAccount(commentDto.token) ?: return ErrorDto(false, "Invalid account id!")
-        if (account.role != UserRole.REVIEWER) {
-            return ErrorDto(false, "Invalid account role: only a reviewer can add comments for a paper!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
         val paper = paperService.retrievePaper(commentDto.paperID) ?: return ErrorDto(false, "Invalid paper id")
         commentsService.addComment(Comment(paper ,account,commentDto.comment))
         return ErrorDto(true)
     }
 
     @GetMapping("papers/to_review")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getPapersToReview(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperFromAuthorDto>{
         val papers: MutableSet<PaperFromAuthorDto> = mutableSetOf<PaperFromAuthorDto>()
         paperService.retrieveAll().forEach{ paper: Paper ->
@@ -130,26 +144,25 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @PostMapping("reviewers/acceptPaper")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun acceptPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
         reviewService.acceptPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 
     @PostMapping("reviewers/rejectPaper")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun rejectPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
         reviewService.rejectPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 
     @PostMapping("reviewers/conflict")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun signalConflict(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
-        val account: Account? = accountsService.retrieveAccount(paperSentenceDto.token)
-        if (account == null || account.role != UserRole.REVIEWER){
-            return ErrorDto(false, "No reviewer account found for this token!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
 
-        val paper: Paper? = paperService.retrievePaper(paperSentenceDto.paperID)
-        if(paper == null){
-            return ErrorDto(false, "The paper does not exist")
-        }
+        val paper: Paper = paperService.retrievePaper(paperSentenceDto.paperID)
+            ?: return ErrorDto(false, "The paper does not exist")
 
         val review: Review = reviewService.retrieveReview(paperSentenceDto.token, paperSentenceDto.paperID)
         review.reviewStatus = ReviewStatus.CONFLICT
@@ -185,16 +198,13 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @PostMapping("reviewers/bid")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun bid(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
-        val account: Account? = accountsService.retrieveAccount(paperSentenceDto.token)
-        if (account == null || account.role != UserRole.REVIEWER){
-            return ErrorDto(false, "No reviewer account found for this token!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
 
-        val paper: Paper? = paperService.retrievePaper(paperSentenceDto.paperID)
-        if(paper == null){
-            return ErrorDto(false, "The paper does not exist")
-        }
+        val paper: Paper = paperService.retrievePaper(paperSentenceDto.paperID)
+            ?: return ErrorDto(false, "The paper does not exist")
 
         reviewService.addReview(Review(account,paper,ReviewStatus.BID))
         return ErrorDto(true)

@@ -15,7 +15,8 @@ function AddConferenceForm({ conferencesRequest }){
             {
                 method: "POST",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("jwt") 
                 },
                 body: JSON.stringify({
                     name: name,
@@ -23,6 +24,7 @@ function AddConferenceForm({ conferencesRequest }){
                     email: email,
                     subtitles: subtitles,
                 })
+
             }).then(response => response.json())
             .then(data =>{
                 if(data.executedWithoutErrors){
@@ -32,8 +34,8 @@ function AddConferenceForm({ conferencesRequest }){
                     alert(data.errorMessage);
                 }
             });
-    }
-
+        }
+        
     const [name, setName] = useState("");
     const [url, setURL] = useState("");
     const [email, setEmail] = useState("")

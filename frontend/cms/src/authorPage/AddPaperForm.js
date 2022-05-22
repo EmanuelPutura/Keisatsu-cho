@@ -21,7 +21,8 @@ function AddPaperForm({token, refreshList}){
             {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("jwt")
                 },
                 body: JSON.stringify({
                     token: token,
@@ -67,7 +68,13 @@ function AddPaperForm({token, refreshList}){
     //TODO: new request
     const conferenceRequest = (accountID) => {
         if (accountID !== undefined && accountID !== 123) {
-            fetch("http://localhost:8080/conferences/all")
+            fetch("http://localhost:8080/conferences/all",
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem("jwt")
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     setConferences(data);

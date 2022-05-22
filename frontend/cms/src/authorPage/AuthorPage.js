@@ -52,7 +52,13 @@ function AuthorPage({name, token, setToken}) {
     function requestAcceptedPapers() {
         const acceptedPapersRequest = token => {
             if (token !== undefined && token !== 123) {
-                fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=accepted")
+                fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=accepted",
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem("jwt")
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         setAcceptedPapers(data);
@@ -72,7 +78,13 @@ function AuthorPage({name, token, setToken}) {
     function requestNotUploadedPapers() {
         const notFullPapersRequest = token => {
             if (token !== undefined && token !== 123) {
-                fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=missingFull")
+                fetch("http://localhost:8080/papers?token=" + token.toString() + "&type=missingFull",
+                {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem("jwt")
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         setPapersToBeUploaded(data);

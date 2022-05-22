@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography";
 import {checkPassword} from "../formUtils";
 
 function LogInForm({setToken}){
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -24,13 +23,19 @@ function LogInForm({setToken}){
                 {
                     method: "POST",
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         email: email,
                         password: password,
                     })
-                }).then(response => response.json())
+                }).then(response => {
+                    console.log(Array.from(response.headers.keys()));
+                    let jwt = response.headers.get("Authorization");
+                    alert("Jwt is " + jwt);
+                    localStorage.setItem("jwt", jwt);
+                    return response.json();
+                })
                 .then(data => {
                     if(data.id !== -1) {
                         setToken(data.id);
