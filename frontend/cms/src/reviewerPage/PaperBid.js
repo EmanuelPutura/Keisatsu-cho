@@ -7,6 +7,7 @@ import React from "react";
 import Button from "@mui/material/Button";
 import ListItemText from "@mui/material/ListItemText";
 import PaperComments from "./PaperComments";
+import downloadFile from "../commons/FileDownload";
 
 function PaperBidCollapsible({token, paper, refreshList}){
     const paperObj = JSON.parse(paper);
@@ -65,11 +66,23 @@ function PaperBidCollapsible({token, paper, refreshList}){
                         </Typography>
                     </Box>
                 </Stack>
-                <Button fullWidth
-                        onClick={bid}
-                        variant="contained">
-                    BID
-                </Button>
+                <Stack component="div"
+                    direction="row"
+                    spacing={0}
+                    divider={<Divider orientation="vertical" flexItem/> }
+                    >
+                    <Button fullWidth
+                            onClick={() => downloadFile(paperObj)}
+                            variant="contained">
+                        DOWNLOAD
+                    </Button>
+                    <Button fullWidth
+                            onClick={bid}
+                            variant="contained">
+                        BID
+                    </Button>
+                </Stack>
+
                 <PaperComments paperID={paperObj.id} token={token}/>
             </Stack>
         </Box>

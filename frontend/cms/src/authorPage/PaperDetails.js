@@ -9,7 +9,12 @@ function PaperDetails({paper, token, url, buttonText, papersRequest}) {
     const [file, setFile] = useState();
 
     function handleFileSelected(e) {
-        setFile(e.target.files[0]);
+        if((e.target.files[0].size/1024/1024).toFixed(4) <= 10) {
+            setFile(e.target.files[0]);
+        } else {
+            alert("File is too big! Maximum 10 MB!");
+            document.getElementById("file-input").value = "";
+        }
     }
 
     function uploadPaper(e) {
@@ -44,6 +49,7 @@ function PaperDetails({paper, token, url, buttonText, papersRequest}) {
                     onChange={handleFileSelected}
                     type="file"
                     accept="application/pdf"
+                    id="file-input"
                 />
                 <Button
                     variant="contained"
