@@ -26,6 +26,9 @@ function PaperDetails({paper, token, url, buttonText, papersRequest}) {
         e.preventDefault();
         fetch(url, {
             method: 'PUT',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+            },
             body: data
         })
             .then(response => response.json())

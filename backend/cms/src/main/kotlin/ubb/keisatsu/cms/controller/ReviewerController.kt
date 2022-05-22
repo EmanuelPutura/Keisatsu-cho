@@ -53,6 +53,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("conferences/getAll")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getAllConferences(): MutableSet<ConferenceDto>{
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -82,6 +83,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("papers/to_bid")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getPapersToBid(@RequestParam(name="accountID") accountId: Int, @RequestParam(name="conferenceID") conferenceId: Int, @RequestParam(name="topics") topics: String): MutableSet<PaperDetailsDto>{
         val result: MutableSet<PaperDetailsDto> = mutableSetOf()
         if(topics.length==0){
@@ -111,6 +113,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @GetMapping("reviewers/comments")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getComments(@RequestParam(name="paperId") paperId: Int): MutableSet<CommentDto>{
         val result: MutableSet<CommentDto> = mutableSetOf()
         commentsService.retrieveCommentsForPaper(paperId).forEach{ comment ->  result.add(CommentDto(comment.reviewer.userName, comment.comment))}
@@ -118,11 +121,11 @@ class ReviewerController(private val accountsService: AccountsService, private v
     }
 
     @PostMapping("reviewers/comment")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun addComment(@RequestBody commentDto: CommentSubmitDto): ErrorDto {
-        val account = accountsService.retrieveAccount(commentDto.token) ?: return ErrorDto(false, "Invalid account id!")
-        if (account.role != UserRole.REVIEWER) {
-            return ErrorDto(false, "Invalid account role: only a reviewer can add comments for a paper!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
         val paper = paperService.retrievePaper(commentDto.paperID) ?: return ErrorDto(false, "Invalid paper id")
         commentsService.addComment(Comment(paper ,account,commentDto.comment))
         return ErrorDto(true)

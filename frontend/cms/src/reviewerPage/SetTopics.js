@@ -33,7 +33,12 @@ function SetTopics({token, papersRequest}){
     useEffect(() => {
         const conferenceRequest = accountID => {
             if (accountID !== undefined && accountID !== 124) {
-                fetch("http://localhost:8080/conferences/getAll")
+                fetch("http://localhost:8080/conferences/getAll", {
+                    method: 'GET',
+                    headers: {
+                        'Authorization' : 'Bearer ' + localStorage.getItem('jwt')
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         setConferences(data);

@@ -47,7 +47,12 @@ function ReviewerPage({name, token, setToken}){
 
     function papersToBidRequest(conference, topics){
         if(token !== undefined && token !== 124){
-            fetch("http://localhost:8080/papers/to_bid?accountID=" + token.toString() +"&conferenceID="+ conference + "&topics="+topics)
+            fetch("http://localhost:8080/papers/to_bid?accountID=" + token.toString() +"&conferenceID="+ conference + "&topics="+topics, {
+                method: 'GET',
+                headers: {
+                    'Authorization' : 'Bearer ' + localStorage.getItem('jwt')
+                }
+            }) 
                 .then(response => response.json())
                 .then(data => {
                     setPapersToBid(data);
@@ -60,7 +65,12 @@ function ReviewerPage({name, token, setToken}){
 
     const papersToReviewRequest = useCallback( () => {
         if(token !== undefined && token !== 124){
-            fetch("http://localhost:8080/papers/to_review?accountID=" + token.toString())
+            fetch("http://localhost:8080/papers/to_review?accountID=" + token.toString(), {
+                method: 'GET',
+                headers: {
+                    'Authorization' : 'Bearer ' + localStorage.getItem('jwt')
+                }
+            })
                 .then(response => response.json())
                 .then(data => {
                     setPapersToReview(data);

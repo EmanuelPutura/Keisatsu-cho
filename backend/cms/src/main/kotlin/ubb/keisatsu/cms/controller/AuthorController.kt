@@ -23,6 +23,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull"
 
     @GetMapping("conferences/all")
+    @PreAuthorize("hasRole('AUTHOR')")
     fun getAllConferences(): MutableSet<ConferenceDto> {
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")

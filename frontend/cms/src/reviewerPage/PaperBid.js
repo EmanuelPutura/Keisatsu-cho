@@ -17,7 +17,8 @@ function PaperBidCollapsible({token, paper, refreshList}){
             {
                 method: "POST",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwt')
                 },
                 body: JSON.stringify({
                     token: token,

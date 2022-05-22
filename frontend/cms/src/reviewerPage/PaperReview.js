@@ -18,7 +18,8 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
             {
                 method: "POST",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwt')
                 },
                 body: JSON.stringify({
                     token: token,
@@ -43,7 +44,8 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
             {
                 method: "POST",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwt')
                 },
                 body: JSON.stringify({
                     token: token,
@@ -64,7 +66,8 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
             {
                 method: "POST",
                 headers:{
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': localStorage.getItem('jwt')
                 },
                 body: JSON.stringify({
                     token: token,

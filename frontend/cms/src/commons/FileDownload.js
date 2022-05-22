@@ -1,5 +1,11 @@
 export default function downloadFile(paperObj){
-    fetch("http://localhost:8080/papers/getFullPaper?paperId="+paperObj.id)
+    fetch("http://localhost:8080/papers/getFullPaper?paperId="+paperObj.id,
+    {
+        method: 'GET',
+        headers: {
+            'Authorization' : 'Bearer ' + localStorage.getItem('jwt')
+        }
+    })
         .then(response => response !== null ? response.blob() : null)
         .then((response) => {
             if(response.size === 0){
