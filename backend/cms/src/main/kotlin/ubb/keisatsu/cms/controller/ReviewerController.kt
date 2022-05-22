@@ -79,7 +79,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
         }
         val listOfTopics = this.topicsOfInterestService.getTopicsArrayFromString(topics)
         this.paperService.retrievePapersFromConference(conferenceId).forEach{ paper ->
-            if((paper.reviewer?.id ?: Int) != accountId && paper.decision == PaperDecision.NOT_YET_DECIDED) {
+            if((paper.reviewer?.id ?: Int) != accountId && paper.decision == PaperDecision.NOT_YET_DECIDED && reviewService.notInConflict(accountId,paper.id) && reviewService.isDecisionNotTaken(paper.id)) {
                 listOfTopics.forEach { topic ->
                     if (topic.id==paper.topicOfInterest.id) {
                         result.add(
@@ -137,5 +137,66 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @PostMapping("reviewers/rejectPaper")
     fun rejectPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
         reviewService.rejectPaper(paperSentenceDto.token, paperSentenceDto.paperID)
+    }
+
+    @PostMapping("reviewers/conflict")
+    fun signalConflict(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
+        val account: Account? = accountsService.retrieveAccount(paperSentenceDto.token)
+        if (account == null || account.role != UserRole.REVIEWER){
+            return ErrorDto(false, "No reviewer account found for this token!")
+        }
+
+        val paper: Paper? = paperService.retrievePaper(paperSentenceDto.paperID)
+        if(paper == null){
+            return ErrorDto(false, "The paper does not exist")
+        }
+
+        val review: Review = reviewService.retrieveReview(paperSentenceDto.token, paperSentenceDto.paperID)
+        review.reviewStatus = ReviewStatus.CONFLICT
+        reviewService.addReview(review)
+
+        val newReview: Review? = reviewService.getFirstBid(paperSentenceDto.paperID)
+        if(newReview != null) {
+            newReview.reviewStatus = ReviewStatus.PENDING
+            reviewService.addReview(newReview)
+            paper.reviewer = newReview.reviewer
+            paperService.addPaper(paper)
+            return ErrorDto(true)
+        }
+
+        var laziestReviewer: Account? = null
+        var minNumberOfReviews: Int = 1000
+        accountsService.retrieveReviewers().forEach{ reviewer ->
+            val pendingReviews = reviewService.getPendingReviewsOfReviewer(reviewer.id)
+            if(reviewService.notInConflict(reviewer.id, paper.id) && pendingReviews < minNumberOfReviews){
+                minNumberOfReviews = pendingReviews
+                laziestReviewer = reviewer
+            }
+        }
+
+        if(laziestReviewer != null){
+            paper.reviewer = laziestReviewer
+            reviewService.addReview(Review(laziestReviewer!!, paper))
+            paperService.addPaper(paper)
+        }
+
+
+        return ErrorDto(true)
+    }
+
+    @PostMapping("reviewers/bid")
+    fun bid(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
+        val account: Account? = accountsService.retrieveAccount(paperSentenceDto.token)
+        if (account == null || account.role != UserRole.REVIEWER){
+            return ErrorDto(false, "No reviewer account found for this token!")
+        }
+
+        val paper: Paper? = paperService.retrievePaper(paperSentenceDto.paperID)
+        if(paper == null){
+            return ErrorDto(false, "The paper does not exist")
+        }
+
+        reviewService.addReview(Review(account,paper,ReviewStatus.BID))
+        return ErrorDto(true)
     }
 }
