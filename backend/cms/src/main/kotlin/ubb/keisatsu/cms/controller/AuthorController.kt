@@ -1,5 +1,6 @@
 package ubb.keisatsu.cms.controller
 
+import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.core.io.InputStreamResource
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -21,12 +22,15 @@ class AuthorController(private val conferencesService: ConferencesService, priva
 
     private val ACCEPTED_PAPER_REQUEST_TYPE: String = "accepted"
     private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull"
+    private val log = LoggerFactory.logger(AuthorController::class.java)
 
     @GetMapping("conferences/all")
     @PreAuthorize("hasRole('AUTHOR')")
     fun getAllConferences(): MutableSet<ConferenceDto> {
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
+        log.info("Retrieved all conferences")
 
         conferencesService.retrieveAll().forEach{ conference ->
             val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForConference(conference.id))
@@ -51,6 +55,8 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
 
+        log.info("GET request for papers by ${account.email}")
+
         if (ACCEPTED_PAPER_REQUEST_TYPE == type) {
             val checkDeadlinesFunction = { deadlines: ConferenceDeadlines? -> deadlines == null || conferenceDeadlinesService.isDeadlineStillValid(deadlines.paperSubmissionDeadline) }
             return getRequestedPapers(account, paperService::retrievePapersHavingAuthorWithoutCameraReadyCopy, checkDeadlinesFunction)
@@ -60,6 +66,8 @@ class AuthorController(private val conferencesService: ConferencesService, priva
             return getRequestedPapers(account, paperService::retrieveNotUploadedPapersHavingAuthor, checkDeadlinesFunction)
         }
 
+        log.warn("Invalid type ($type)")
+
         return mutableSetOf()  // return an empty set
     }
 
@@ -67,8 +75,10 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     @PreAuthorize("hasRole('CHAIR') or hasRole('REVIEWER')")
 //    @PreAuthorize("hasRole('AUTHOR')")
     fun getFullPaperFile(@RequestParam paperId: Int): InputStreamResource? {
+        log.info("GET request for full paper file")
         val paper = paperService.retrievePaper(paperId) ?: return null
         val fullPaperPath = paper.fullPaper ?: return null
+        log.info("Found paper")
         return InputStreamResource(FileInputStream(File(fullPaperPath)))
     }
 
@@ -76,14 +86,17 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     @PreAuthorize("hasRole('CHAIR') or hasRole('REVIEWER')")
 //    @PreAuthorize("hasRole('AUTHOR')")
     fun getPaperCameraReadyCopy(@RequestParam paperId: Int): InputStreamResource? {
+        log.info("GET request for CameraReadyCopy")
         val paper = paperService.retrievePaper(paperId) ?: return null
         val cameraReadyCopyPath = paper.cameraReadyCopy ?: return null
+        log.info("Found paper")
         return try { InputStreamResource(FileInputStream(File(cameraReadyCopyPath))) } catch (e: Exception) { null }
     }
 
     @PostMapping("/papers")
     @PreAuthorize("hasRole('AUTHOR')")
     fun submitPaper(@RequestBody submittedPaperDetailsDto: SubmittedPaperDetailsDto): ErrorDto {
+        log.info("POST request to submit paper")
         val conference = conferencesService.retrieveConference(submittedPaperDetailsDto.conference) ?: return ErrorDto(false, "Invalid conference ID!")
         val topicOfInterest = topicsOfInterestService.retrieveTopicOfInterest(submittedPaperDetailsDto.interestTopic) ?: return ErrorDto(false, "Invalid topic of interest ID!")
 
@@ -95,6 +108,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         submittedPaperDetailsDto.authors.forEach{ authorDto ->
             val author = accountsService.retrieveAccountByEmail(authorDto.email) ?: return ErrorDto(false, "Invalid author email: '${authorDto.email}'!")
             if (author.role != UserRole.AUTHOR || author.address != authorDto.address) {
+                log.error("Invalid data for author with email ${authorDto.email}")
                 return ErrorDto(false, "Invalid data for author with email '${authorDto.email}")
             }
 
@@ -106,6 +120,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         }
 
         if (!foundPaperSubmittingAuthor) {
+            log.error("Author who submitted the paper should be present in the authors list")
             return ErrorDto(false, "Author who submitted the paper should be present in the authors list!")
         }
 
@@ -134,11 +149,13 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     @PutMapping("/papers/uploadPaper")
     @PreAuthorize("hasRole('AUTHOR')")
     fun uploadFullPaper(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): ErrorDto {
+        log.info("PUT request to upload full paper with id=${uploadFullPaperDto.paper}")
         val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return ErrorDto(false, "Invalid paper ID!")
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val author = token.principal as Account
 
         if (!paperService.validateFullPaperUpload(author, paper)) {
+            log.error("Invalid paper details")
             return ErrorDto(false, "Invalid paper details!")
         }
 
@@ -151,11 +168,13 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     @PutMapping("/papers/uploadCameraReady")
     @PreAuthorize("hasRole('AUTHOR')")
     fun uploadPaperCameraReadyCopy(@ModelAttribute uploadFullPaperDto: UploadFullPaperDto): ErrorDto {
+        log.info("PUT request to upload camera ready copy with id=${uploadFullPaperDto.paper}")
         val paper = paperService.retrievePaper(uploadFullPaperDto.paper) ?: return ErrorDto(false, "Invalid paper")
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val author = token.principal as Account
 
         if (!paperService.validatePaperCameraReadyCopyUpload(author, paper)) {
+            log.error("Invalid paper details")
             return ErrorDto(false, "Invalid paper details!")
         }
 
