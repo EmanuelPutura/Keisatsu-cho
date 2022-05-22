@@ -51,10 +51,7 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                     token: token,
                     paperID: paperObj.id
                 })
-            }).then(response =>
-                response.json()
-            )
-            .then(() =>{
+            }).then(() =>{
                 alert("Paper has been accepted!");
                 paperRequest();
             })
@@ -73,10 +70,7 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                     token: token,
                     paperID: paperObj.id
                 })
-            }).then(response =>
-                response.json()
-            )
-            .then(() =>{
+            }).then(() =>{
                 alert("Paper has been rejected!");
                 paperRequest();
             })
