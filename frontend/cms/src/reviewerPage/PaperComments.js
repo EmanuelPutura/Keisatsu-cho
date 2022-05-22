@@ -50,8 +50,13 @@ export default function PaperComments({paperID, token}) {
                     comment: comment
                 })
             }).then(response => response.json())
-            .then(() =>{
-                alert("Comment has been sent!");
+            .then(data => {
+                if(data.executedWithoutErrors){
+                    alert("Comment uploaded!");
+                    getComments();
+                } else {
+                    alert(data.errorMessage);
+                }
             })
     }
 
