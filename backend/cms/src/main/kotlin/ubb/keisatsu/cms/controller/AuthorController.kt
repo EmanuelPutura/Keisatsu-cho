@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter
 @CrossOrigin
 class AuthorController(private val conferencesService: ConferencesService, private val topicsOfInterestService: TopicsOfInterestService,
                        private val accountsService: AccountsService, private val paperService: PaperService, private val fileUploadService: FileUploadService,
-                       private val conferenceDeadlinesService: ConferenceDeadlinesService) {
+                       private val conferenceDeadlinesService: ConferenceDeadlinesService, private val reviewService: ReviewService) {
 
     private val ACCEPTED_PAPER_REQUEST_TYPE: String = "accepted"
     private val MISSING_FULL_PAPER_REQUEST_TYPE: String = "missingFull"
@@ -79,7 +79,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
         val conference = conferencesService.retrieveConference(submittedPaperDetailsDto.conference) ?: return ErrorDto(false, "Invalid conference ID!")
         val topicOfInterest = topicsOfInterestService.retrieveTopicOfInterest(submittedPaperDetailsDto.interestTopic) ?: return ErrorDto(false, "Invalid topic of interest ID!")
 
-        val paper = Paper(submittedPaperDetailsDto.title, submittedPaperDetailsDto.keywords, topicOfInterest, submittedPaperDetailsDto.abstract, conference)
+        var paper = Paper(submittedPaperDetailsDto.title, submittedPaperDetailsDto.keywords, topicOfInterest, submittedPaperDetailsDto.abstract, conference)
         val authorsSet: MutableSet<Account> = mutableSetOf()
         var foundPaperSubmittingAuthor = false
 
@@ -106,7 +106,20 @@ class AuthorController(private val conferencesService: ConferencesService, priva
             paper.paperAuthors.add(author)
         }
 
-        paperService.addPaper(paper)
+        var laziestReviewer: Account? = null
+        var minNumberOfReviews: Int = 1000
+        accountsService.retrieveReviewers().forEach{ reviewer ->
+            var pendingReviews = reviewService.getPendingReviewsOfReviewer(reviewer.id)
+            if(pendingReviews < minNumberOfReviews){
+                minNumberOfReviews = pendingReviews
+                laziestReviewer = reviewer
+            }
+        }
+        paper = paperService.addPaper(paper)
+        if(laziestReviewer != null){
+            paper.reviewer = laziestReviewer
+            reviewService.addReview(Review(laziestReviewer!!, paper))
+        }
         return ErrorDto(true)
     }
 

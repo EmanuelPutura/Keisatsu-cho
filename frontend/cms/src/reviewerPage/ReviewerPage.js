@@ -63,7 +63,7 @@ function ReviewerPage({name, token, setToken}){
             fetch("http://localhost:8080/papers/to_review?accountID=" + token.toString())
                 .then(response => response.json())
                 .then(data => {
-                    setPapersToBid(data);
+                    setPapersToReview(data);
                 })
                 .catch(() => alert("Invalid papers request!"))
         } else {

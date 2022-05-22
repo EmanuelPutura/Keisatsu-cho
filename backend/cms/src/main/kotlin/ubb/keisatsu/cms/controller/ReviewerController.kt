@@ -3,17 +3,14 @@ package ubb.keisatsu.cms.controller;
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.*
-import ubb.keisatsu.cms.model.entities.Comment
-import ubb.keisatsu.cms.model.entities.Conference
-import ubb.keisatsu.cms.model.entities.TopicOfInterest
-import ubb.keisatsu.cms.model.entities.UserRole
+import ubb.keisatsu.cms.model.entities.*
 import ubb.keisatsu.cms.service.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @RestController
 @CrossOrigin
-class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService, private val paperService: PaperService, private val commentsService: CommentService) {
+class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService, private val paperService: PaperService, private val commentsService: CommentService, private val reviewService: ReviewService) {
 
     @GetMapping("accounts/topics")
     fun getTopicsOfReviewer(@RequestParam(name="accountID") accountId: Int): TopicsDto {
@@ -82,19 +79,21 @@ class ReviewerController(private val accountsService: AccountsService, private v
         }
         val listOfTopics = this.topicsOfInterestService.getTopicsArrayFromString(topics)
         this.paperService.retrievePapersFromConference(conferenceId).forEach{ paper ->
-            listOfTopics.forEach { topic ->
-                if (topic.id==paper.topicOfInterest.id) {
-                    result.add(
-                        PaperDetailsDto(
-                            paper.id,
-                            paper.title,
-                            paper.abstract,
-                            accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                            paper.keywords,
-                            paper.topicOfInterest.name,
-                            paper.conference.id
+            if((paper.reviewer?.id ?: Int) != accountId && paper.decision == PaperDecision.NOT_YET_DECIDED) {
+                listOfTopics.forEach { topic ->
+                    if (topic.id==paper.topicOfInterest.id) {
+                        result.add(
+                            PaperDetailsDto(
+                                paper.id,
+                                paper.title,
+                                paper.abstract,
+                                accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                                paper.keywords,
+                                paper.topicOfInterest.name,
+                                paper.conference.id
+                            )
                         )
-                    )
+                    }
                 }
             }
         }
@@ -117,5 +116,26 @@ class ReviewerController(private val accountsService: AccountsService, private v
         val paper = paperService.retrievePaper(commentDto.paperID) ?: return ErrorDto(false, "Invalid paper id")
         commentsService.addComment(Comment(paper ,account,commentDto.comment))
         return ErrorDto(true)
+    }
+
+    @GetMapping("papers/to_review")
+    fun getPapersToReview(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperFromAuthorDto>{
+        val papers: MutableSet<PaperFromAuthorDto> = mutableSetOf<PaperFromAuthorDto>()
+        paperService.retrieveAll().forEach{ paper: Paper ->
+            if(((paper.reviewer?.id ?: Int) == accountId) && paper.decision == PaperDecision.NOT_YET_DECIDED && reviewService.notReviewed(paper.id,accountId)){
+                papers.add(PaperFromAuthorDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),paper.keywords, paper.topicOfInterest.name, paper.conference.name))
+            }
+        }
+        return papers
+    }
+
+    @PostMapping("reviewers/acceptPaper")
+    fun acceptPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
+        reviewService.acceptPaper(paperSentenceDto.token, paperSentenceDto.paperID)
+    }
+
+    @PostMapping("reviewers/rejectPaper")
+    fun rejectPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
+        reviewService.rejectPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 }
