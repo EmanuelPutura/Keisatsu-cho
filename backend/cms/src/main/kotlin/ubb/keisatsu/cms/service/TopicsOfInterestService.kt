@@ -16,6 +16,15 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
         return result
     }
 
+    fun getTopicsArrayFromString(topics: String): Iterable<TopicOfInterest>{
+        val result: MutableList<TopicOfInterest> = mutableListOf()
+        topics.split(";").forEach{ topic ->
+            val topicOfInterest: TopicOfInterest = retrieveTopicOfInterest(topic)
+            result.add(topicOfInterest)
+        }
+        return result
+    }
+
     fun findAllForConference(conferenceId: Int): Iterable<TopicOfInterest> = topicsOfInterestRepository.findByConferencesForTopicId(conferenceId)
 
     fun findAllForAccount(accountId: Int): Iterable<TopicOfInterest> = topicsOfInterestRepository.findByAccountsForTopicId(accountId)
@@ -23,7 +32,7 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
 
     fun addTopicOfInterest(topicOfInterest: TopicOfInterest): TopicOfInterest = topicsOfInterestRepository.save(topicOfInterest)
 
-    fun retrieveTopicOfInterest(name: String): TopicOfInterest? = topicsOfInterestRepository.findByName(name)
+    fun retrieveTopicOfInterest(name: String): TopicOfInterest = topicsOfInterestRepository.findByName(name)!!
 
     fun retrieveAll(): Iterable<TopicOfInterest> = topicsOfInterestRepository.findAll()
 
