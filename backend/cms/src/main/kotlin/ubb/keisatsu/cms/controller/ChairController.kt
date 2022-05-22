@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter
 class ChairController(
         private val conferencesService: ConferencesService, private val accountsService: AccountsService,
         private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,
-        private val paperService: PaperService) {
+        private val paperService: PaperService, private val reviewService: ReviewService) {
 
     /**
      * Get conferences organized by
@@ -149,8 +149,19 @@ class ChairController(
 
             // return the current paper only if its acceptance deadline is not set or if it is after the current date
             if (paper.conference.mainOrganiser.id == accountId && (conferenceDeadlines == null || conferenceDeadlinesService.isDeadlineStillValid(conferenceDeadlines.acceptanceNotificationDeadline))) {
-                papersDtoSet.add(PaperDetailsDto(paper.id, paper.title, paper.abstract, accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
-                    paper.keywords, topic, conferenceID))
+                if(reviewService.isRejected(paper.id)) {
+                    papersDtoSet.add(
+                        PaperDetailsDto(
+                            paper.id,
+                            paper.title,
+                            paper.abstract,
+                            accountsService.convertToAccountUserDataDtos(paper.paperAuthors),
+                            paper.keywords,
+                            topic,
+                            conferenceID
+                        )
+                    )
+                }
             }
         }
 
