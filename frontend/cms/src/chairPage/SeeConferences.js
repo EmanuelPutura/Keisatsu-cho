@@ -25,9 +25,13 @@ function InterestTopicsForm({conference}) {
                     topics: topics
                 })
             }).then(response => response.json())
-            .then(() => {
-                alert("response sent");
-            })
+            .then(data => {
+                if(data.executedWithoutErrors){
+                    alert("Topics set!");
+                } else {
+                    alert(data.errorMessage);
+                }
+            });
     }
 
     return (
@@ -87,9 +91,13 @@ function DeadlineForm({conference}) {
                         upload: upload
                     })
                 }).then(response => response.json())
-                .then(() => {
-                    alert("response sent");
-                })
+                .then(data => {
+                    if(data.executedWithoutErrors){
+                        alert("Deadlines were set!");
+                    } else {
+                        alert(data.errorMessage);
+                    }
+                });
         }
     }
 

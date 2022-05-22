@@ -24,10 +24,14 @@ function AddConferenceForm({ conferencesRequest }){
                     subtitles: subtitles,
                 })
             }).then(response => response.json())
-            .then(() =>{
-                alert("conference added!");
-                conferencesRequest();
-            })
+            .then(data =>{
+                if(data.executedWithoutErrors){
+                    alert("Conference was added!");
+                    conferencesRequest();
+                } else {
+                    alert(data.errorMessage);
+                }
+            });
     }
 
     const [name, setName] = useState("");
