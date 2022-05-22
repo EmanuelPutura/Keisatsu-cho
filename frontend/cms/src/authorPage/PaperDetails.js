@@ -25,9 +25,12 @@ function PaperDetails({paper, token, url, buttonText, papersRequest}) {
         })
             .then(response => response.json())
             .then(data => {
-                alert(data ? "File uploaded" : "File was not uploaded");
-                if(data)
+                if(data.executedWithoutErrors){
+                    alert("File uploaded!");
                     papersRequest();
+                } else {
+                    alert(data.errorMessage);
+                }
             });
     }
 

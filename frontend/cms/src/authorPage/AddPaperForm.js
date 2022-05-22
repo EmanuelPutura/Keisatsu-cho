@@ -34,9 +34,12 @@ function AddPaperForm({token, refreshList}){
                 })
             }).then(response => response.json())
             .then(data => {
-                alert(data ? "paper added" : "paper was not added");
-                if(data)
+                if(data.executedWithoutErrors){
+                    alert("Paper was added!");
                     refreshList();
+                } else {
+                    alert(data.errorMessage);
+                }
             });
     }
 

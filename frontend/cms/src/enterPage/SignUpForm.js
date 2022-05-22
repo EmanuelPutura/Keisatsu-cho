@@ -51,16 +51,10 @@ function SignUpForm(){
                 })
             }).then(response => response.json())
             .then(data =>{
-                switch (data){
-                    case 1: // invalid account due to random data
-                        alert("Invalid account!");
-                        break;
-                    case 2: // email already in use
-                        alert("An account with that email already exists!");
-                        break;
-                    default:
-                        alert("Account created! Please log in!");
-                        break;
+                if(data.executedWithoutErrors){
+                    alert("Account created! Please log in!");
+                } else {
+                    alert(data.errorMessage);
                 }
             })
     }

@@ -26,10 +26,14 @@ function PaperCollapsible({paper, papersRequest, conference, token}){
                     response: response
                 })
             }).then(response => response.json())
-            .then(() => {
-                alert("response sent");
-                papersRequest();
-            })
+            .then(data => {
+                if(data.executedWithoutErrors){
+                    alert("Response sent!");
+                    papersRequest();
+                } else {
+                    alert(data.errorMessage);
+                }
+            });
     }
 
     return (
