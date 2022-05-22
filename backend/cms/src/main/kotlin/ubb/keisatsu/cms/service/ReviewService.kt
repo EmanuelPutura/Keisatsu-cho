@@ -57,4 +57,8 @@ class ReviewService(private val reviewRepository: ReviewRepository) {
         return true
 
     }
+
+    fun isRejected(paperId: Int): Boolean {
+        return reviewRepository.findByPaperIdAndReviewStatus(paperId,ReviewStatus.REJECTED).count() != 0
+    }
 }
