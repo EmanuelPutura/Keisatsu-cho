@@ -7,6 +7,16 @@ import ubb.keisatsu.cms.model.entities.*
 import ubb.keisatsu.cms.service.*
 import java.time.format.DateTimeFormatter
 
+/**
+ * Chair controller
+ *
+ * @property conferencesService
+ * @property accountsService
+ * @property topicsOfInterestService
+ * @property conferenceDeadlinesService
+ * @property paperService
+ * @constructor Create empty Chair controller
+ */
 @RestController
 @CrossOrigin
 class ChairController(
@@ -14,6 +24,12 @@ class ChairController(
         private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,
         private val paperService: PaperService) {
 
+    /**
+     * Get conferences organized by
+     *
+     * @param accountId
+     * @return
+     */
     @GetMapping("conferences/get")
     fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDto> {
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
@@ -30,6 +46,12 @@ class ChairController(
         return conferenceDtoSet
     }
 
+    /**
+     * Add conference
+     *
+     * @param conferenceDto
+     * @return
+     */
     @PostMapping("conferences/add")
     fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto): ErrorDto {
         val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return ErrorDto(false, "Invalid account email!")
@@ -41,6 +63,12 @@ class ChairController(
         return ErrorDto(true)
     }
 
+    /**
+     * Set conference topics of interest
+     *
+     * @param topicOfInterestDto
+     * @return
+     */
     @PostMapping("accounts/conferenceTopics")
     @Transactional
     fun setConferenceTopicsOfInterest(@RequestBody topicOfInterestDto: TopicOfInterestDto): ErrorDto {
@@ -62,6 +90,12 @@ class ChairController(
         return ErrorDto(true)
     }
 
+    /**
+     * Update conference topics of interest
+     *
+     * @param conferenceDeadlinesDto
+     * @return
+     */
     @PutMapping("accounts/conferenceDeadlines")
     @Transactional
     fun updateConferenceTopicsOfInterest(@RequestBody conferenceDeadlinesDto: ConferenceDeadlinesDto): ErrorDto {
@@ -87,6 +121,12 @@ class ChairController(
         return ErrorDto(true)
     }
 
+    /**
+     * Get papers
+     *
+     * @param accountId
+     * @return
+     */
     @GetMapping("papers/get")
     fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
@@ -108,6 +148,12 @@ class ChairController(
         return papersDtoSet
     }
 
+    /**
+     * Make decision regarding paper
+     *
+     * @param paperEvaluationDto
+     * @return
+     */
     @PutMapping("accounts/papers")
     fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto): ErrorDto {
         val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return ErrorDto(false, "Invalid paper ID!")
