@@ -24,10 +24,12 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                     token: token,
                     paperID: paperObj.id
                 })
-            }).then(response => response.json())
+            }).then(response => {
+                response.json()
+                paperRequest();
+            })
             .then(() =>{
                 alert("Conflict has been signaled!");
-                paperRequest();
             })
     }
 
@@ -43,10 +45,12 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                     token: token,
                     paperID: paperObj.id
                 })
-            }).then(response => response.json())
+            }).then(response => {
+                response.json()
+                paperRequest();
+            })
             .then(() =>{
                 alert("Paper has been accepted!");
-                paperRequest();
             })
     }
 
@@ -62,10 +66,12 @@ function PaperReviewCollapsible({paper, token, paperRequest}) {
                     token: token,
                     paperID: paperObj.id
                 })
-            }).then(response => response.json())
+            }).then(response => {
+                response.json()
+                paperRequest();
+            })
             .then(() =>{
                 alert("Paper has been rejected!");
-                paperRequest();
             })
     }
 
