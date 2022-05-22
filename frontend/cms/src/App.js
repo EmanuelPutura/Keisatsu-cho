@@ -8,6 +8,7 @@ import ChairPage from "./chairPage/ChairPage";
 import useLocalStorage from "./UseLocalStorage";
 import AuthorPage from "./authorPage/AuthorPage";
 import ReviewerPage from "./reviewerPage/ReviewerPage";
+import Header from "./commons/Header";
 
 function App() {
     const { setItem: setToken, item: token } = useLocalStorage("token", undefined);
@@ -54,7 +55,7 @@ function App() {
             case "reviewer":
                 return (<ReviewerPage name={name} token={token} setToken={setAll} />)
             default:
-                //alert(type);
+                return (<Header name={"Error account"} setToken={setAll} /> )
         }
     }
 
