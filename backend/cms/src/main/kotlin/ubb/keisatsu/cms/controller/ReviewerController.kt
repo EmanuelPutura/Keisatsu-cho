@@ -1,5 +1,6 @@
 package ubb.keisatsu.cms.controller;
 
+import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -22,11 +23,14 @@ import java.time.format.DateTimeFormatter
 @CrossOrigin
 class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService, private val paperService: PaperService, private val commentsService: CommentService, private val reviewService: ReviewService) {
 
+    private val log = LoggerFactory.logger(ReviewerController::class.java)
+
     @GetMapping("accounts/topics")
     @PreAuthorize("hasRole('REVIEWER')")
     fun getTopicsOfReviewer(@RequestParam(name="accountID") accountId: Int): TopicsDto {
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
+        log.info("GET request for the topics of the reviewer with email=${account.email}")
 
         val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForAccount(account.id))
         return TopicsDto(topics)
@@ -38,6 +42,8 @@ class ReviewerController(private val accountsService: AccountsService, private v
     fun updateReviewerTopicsOfInterest(@RequestBody accountTopicsOfInterestDto: AccountTopicsOfInterestDto) {
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
+        log.info("PUT request for updating the topics of the reviewer with email=${account.email}")
+
 
         account.topicsOfInterest.clear()
         accountTopicsOfInterestDto.topics.lines().forEach { topic ->
@@ -55,6 +61,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @GetMapping("conferences/getAll")
     @PreAuthorize("hasRole('REVIEWER')")
     fun getAllConferences(): MutableSet<ConferenceDto>{
+        log.info("GET request for all conferences")
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
@@ -85,6 +92,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @GetMapping("papers/to_bid")
     @PreAuthorize("hasRole('REVIEWER')")
     fun getPapersToBid(@RequestParam(name="accountID") accountId: Int, @RequestParam(name="conferenceID") conferenceId: Int, @RequestParam(name="topics") topics: String): MutableSet<PaperDetailsDto>{
+        log.info("GET request get paper to bid")
         val result: MutableSet<PaperDetailsDto> = mutableSetOf()
         if(topics.length==0){
             return result
@@ -115,6 +123,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @GetMapping("reviewers/comments")
     @PreAuthorize("hasRole('REVIEWER')")
     fun getComments(@RequestParam(name="paperId") paperId: Int): MutableSet<CommentDto>{
+        log.info("GET request get paper")
         val result: MutableSet<CommentDto> = mutableSetOf()
         commentsService.retrieveCommentsForPaper(paperId).forEach{ comment ->  result.add(CommentDto(comment.reviewer.userName, comment.comment))}
         return result
@@ -125,6 +134,8 @@ class ReviewerController(private val accountsService: AccountsService, private v
     fun addComment(@RequestBody commentDto: CommentSubmitDto): ErrorDto {
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
+        log.info("POST request to add comment by ${account.email}")
+
 
         val paper = paperService.retrievePaper(commentDto.paperID) ?: return ErrorDto(false, "Invalid paper id")
         commentsService.addComment(Comment(paper ,account,commentDto.comment))
@@ -146,12 +157,14 @@ class ReviewerController(private val accountsService: AccountsService, private v
     @PostMapping("reviewers/acceptPaper")
     @PreAuthorize("hasRole('REVIEWER')")
     fun acceptPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
+        log.info("POST request to accept paper with id=${paperSentenceDto.paperID}")
         reviewService.acceptPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 
     @PostMapping("reviewers/rejectPaper")
     @PreAuthorize("hasRole('REVIEWER')")
     fun rejectPaper(@RequestBody paperSentenceDto: PaperSentenceDto){
+        log.info("POST request to reject paper with id=${paperSentenceDto.paperID}")
         reviewService.rejectPaper(paperSentenceDto.token, paperSentenceDto.paperID)
     }
 
@@ -160,6 +173,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     fun signalConflict(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
+        log.info("POST request to signal a conflict by ${account.email}")
 
         val paper: Paper = paperService.retrievePaper(paperSentenceDto.paperID)
             ?: return ErrorDto(false, "The paper does not exist")
@@ -202,6 +216,7 @@ class ReviewerController(private val accountsService: AccountsService, private v
     fun bid(@RequestBody paperSentenceDto: PaperSentenceDto): ErrorDto{
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
+        log.info("POST request to bid for paper with id=${paperSentenceDto.paperID} by ${account.email}")
 
         val paper: Paper = paperService.retrievePaper(paperSentenceDto.paperID)
             ?: return ErrorDto(false, "The paper does not exist")

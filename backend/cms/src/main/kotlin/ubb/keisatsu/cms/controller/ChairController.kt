@@ -1,5 +1,6 @@
 package ubb.keisatsu.cms.controller
 
+import org.hibernate.annotations.common.util.impl.LoggerFactory
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -27,6 +28,8 @@ class ChairController(
         private val topicsOfInterestService: TopicsOfInterestService, private val conferenceDeadlinesService: ConferenceDeadlinesService,
         private val paperService: PaperService, private val reviewService: ReviewService) {
 
+    private val log = LoggerFactory.logger(ChairController::class.java)
+
     /**
      * Get conferences organized by
      *
@@ -38,7 +41,7 @@ class ChairController(
     fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDto> {
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
+        log.info("GET request for conferences organized by ${accountId}")
         val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
         val account = token.principal as Account
 
@@ -62,9 +65,9 @@ class ChairController(
     @PostMapping("conferences/add")
     @PreAuthorize("hasRole('CHAIR')")
     fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto): ErrorDto {
-//        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
-//        val account = token.principal as Account
-        val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return ErrorDto(false, "Invalid account email!")
+        val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return ErrorDto(false, "No account with that email")
+        log.info("POST request to add conference organized by ${account.email}")
+
         conferencesService.addConference(Conference(conferenceDto.name, conferenceDto.url, conferenceDto.subtitles, account))
         return ErrorDto(true)
     }
@@ -79,6 +82,7 @@ class ChairController(
     @Transactional
     @PreAuthorize("hasRole('CHAIR')")
     fun setConferenceTopicsOfInterest(@RequestBody topicOfInterestDto: TopicOfInterestDto): ErrorDto {
+        log.info("POST request to set conferences topic of interest")
         val conference: Conference = conferencesService.retrieveConference(topicOfInterestDto.conferenceID) ?: return ErrorDto(false, "Invalid conference ID!")
         conference.topicsOfInterest.clear()
 
@@ -107,6 +111,7 @@ class ChairController(
     @Transactional
     @PreAuthorize("hasRole('CHAIR')")
     fun updateConferenceTopicsOfInterest(@RequestBody conferenceDeadlinesDto: ConferenceDeadlinesDto): ErrorDto {
+        log.info("PUT request to update conferences topic of interest")
         // conference deadlines validation
         if (!conferenceDeadlinesService.validateDeadlines(conferenceDeadlinesDto.submission, conferenceDeadlinesDto.review,
                 conferenceDeadlinesDto.acceptance, conferenceDeadlinesDto.upload)) {
@@ -138,6 +143,7 @@ class ChairController(
     @GetMapping("papers/get")
     @PreAuthorize("hasRole('CHAIR')")
     fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
+        log.info("GET request to get papers")
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
 //        paperService.retrieveAll().
         paperService.retrieveUploadedPapersWithoutCameraReadyCopy().
@@ -177,6 +183,7 @@ class ChairController(
     @PutMapping("accounts/papers")
     @PreAuthorize("hasRole('CHAIR')")
     fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto): ErrorDto {
+        log.info("PUT request to make decision regarding paper")
         val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return ErrorDto(false, "Invalid paper ID!")
         val conference = conferencesService.retrieveConference(paperEvaluationDto.conferenceID) ?: return ErrorDto(false, "Invalid conference ID!")
         val conferenceDeadlines = conference.conferenceDeadlines
