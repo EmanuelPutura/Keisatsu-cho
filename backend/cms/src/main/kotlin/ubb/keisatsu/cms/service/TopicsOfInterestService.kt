@@ -19,7 +19,7 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
     fun getTopicsArrayFromString(topics: String): Iterable<TopicOfInterest>{
         val result: MutableList<TopicOfInterest> = mutableListOf()
         topics.split(";").forEach{ topic ->
-            val topicOfInterest: TopicOfInterest = retrieveTopicOfInterest(topic)
+            val topicOfInterest: TopicOfInterest = retrieveTopicOfInterest(topic) ?: return@forEach
             result.add(topicOfInterest)
         }
         return result
@@ -32,7 +32,7 @@ class TopicsOfInterestService(private val topicsOfInterestRepository: TopicsOfIn
 
     fun addTopicOfInterest(topicOfInterest: TopicOfInterest): TopicOfInterest = topicsOfInterestRepository.save(topicOfInterest)
 
-    fun retrieveTopicOfInterest(name: String): TopicOfInterest = topicsOfInterestRepository.findByName(name)!!
+    fun retrieveTopicOfInterest(name: String): TopicOfInterest? = topicsOfInterestRepository.findByName(name)
 
     fun retrieveAll(): Iterable<TopicOfInterest> = topicsOfInterestRepository.findAll()
 
