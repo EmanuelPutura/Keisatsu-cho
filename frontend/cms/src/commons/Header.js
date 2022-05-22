@@ -6,6 +6,7 @@ import React from "react";
 function Header({name, setToken}){
     function logOut(){
         setToken(undefined)
+        localStorage.removeItem("jwt")
     }
 
     return(

@@ -16,7 +16,7 @@ function RegisterPage({setToken}){
                     <SignUpForm />
                 </Box>
                 <Box component="div" className="log-form_container">
-                    <LogInForm setToken={setToken} />
+                    <LogInForm setToken={setToken}/>
                 </Box>
             </Box>
         </Container>

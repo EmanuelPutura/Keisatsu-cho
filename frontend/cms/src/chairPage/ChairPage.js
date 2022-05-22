@@ -47,7 +47,13 @@ function ChairPage({name, token, setToken}){
     function conferencesToRequest(){
         const conferenceRequest = accountID => {
             if (accountID !== undefined && accountID !== 122) {
-                fetch("http://localhost:8080/conferences/get?accountID=" + accountID.toString())
+                fetch("http://localhost:8080/conferences/get?accountID=" + accountID.toString(),
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("jwt") 
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         setConferences(data);
@@ -63,7 +69,13 @@ function ChairPage({name, token, setToken}){
     function papersToRequest(){
         const paperRequest = accountID => {
             if (accountID !== undefined && accountID !== 122) {
-                fetch("http://localhost:8080/papers/get?accountID=" + accountID.toString())
+                fetch("http://localhost:8080/papers/get?accountID=" + accountID.toString(),
+                {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("jwt") 
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         setPapers(data);

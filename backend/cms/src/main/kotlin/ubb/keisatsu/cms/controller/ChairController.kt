@@ -1,5 +1,8 @@
 package ubb.keisatsu.cms.controller
 
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.*
@@ -31,11 +34,15 @@ class ChairController(
      * @return
      */
     @GetMapping("conferences/get")
+    @PreAuthorize("hasRole('CHAIR')")
     fun getConferencesOrganizedBy(@RequestParam(name = "accountID") accountId: Int): MutableSet<ConferenceDto> {
         val conferenceDtoSet: MutableSet<ConferenceDto> = mutableSetOf()
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-        conferencesService.findByMainOrganiser(accountId).forEach { conference ->
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
+        conferencesService.findByMainOrganiser(account.id).forEach { conference ->
             val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForConference(conference.id))
             conferenceDtoSet.add(ConferenceDto(conference.id, conference.name, conference.url, conference.subtitles, topics,
                     conference.conferenceDeadlines?.paperSubmissionDeadline?.format(formatter), conference.conferenceDeadlines?.paperReviewDeadline?.format(formatter),
@@ -53,11 +60,10 @@ class ChairController(
      * @return
      */
     @PostMapping("conferences/add")
+    @PreAuthorize("hasRole('CHAIR')")
     fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto): ErrorDto {
-        val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return ErrorDto(false, "Invalid account email!")
-        if (account.role != UserRole.CHAIR) {
-            return ErrorDto(false, "Invalid account role: only a chair can add conferences to the database!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
 
         conferencesService.addConference(Conference(conferenceDto.name, conferenceDto.url, conferenceDto.subtitles, account))
         return ErrorDto(true)
@@ -71,6 +77,7 @@ class ChairController(
      */
     @PostMapping("accounts/conferenceTopics")
     @Transactional
+    @PreAuthorize("hasRole('CHAIR')")
     fun setConferenceTopicsOfInterest(@RequestBody topicOfInterestDto: TopicOfInterestDto): ErrorDto {
         val conference: Conference = conferencesService.retrieveConference(topicOfInterestDto.conferenceID) ?: return ErrorDto(false, "Invalid conference ID!")
         conference.topicsOfInterest.clear()
@@ -98,6 +105,7 @@ class ChairController(
      */
     @PutMapping("accounts/conferenceDeadlines")
     @Transactional
+    @PreAuthorize("hasRole('CHAIR')")
     fun updateConferenceTopicsOfInterest(@RequestBody conferenceDeadlinesDto: ConferenceDeadlinesDto): ErrorDto {
         // conference deadlines validation
         if (!conferenceDeadlinesService.validateDeadlines(conferenceDeadlinesDto.submission, conferenceDeadlinesDto.review,
@@ -128,6 +136,7 @@ class ChairController(
      * @return
      */
     @GetMapping("papers/get")
+    @PreAuthorize("hasRole('CHAIR')")
     fun getPapers(@RequestParam(name="accountID") accountId: Int): MutableSet<PaperDetailsDto>{
         val papersDtoSet: MutableSet<PaperDetailsDto> = mutableSetOf()
 //        paperService.retrieveAll().
@@ -155,6 +164,7 @@ class ChairController(
      * @return
      */
     @PutMapping("accounts/papers")
+    @PreAuthorize("hasRole('CHAIR')")
     fun makeDecisionRegardingPaper(@RequestBody paperEvaluationDto: PaperEvaluationDto): ErrorDto {
         val paper: Paper = paperService.retrievePaper(paperEvaluationDto.paperID) ?: return ErrorDto(false, "Invalid paper ID!")
         val conference = conferencesService.retrieveConference(paperEvaluationDto.conferenceID) ?: return ErrorDto(false, "Invalid conference ID!")
@@ -165,10 +175,8 @@ class ChairController(
             return ErrorDto(false, "Invalid acceptance notification conference deadline!")
         }
 
-        val account: Account = accountsService.retrieveAccount(paperEvaluationDto.chairID) ?: return ErrorDto(false, "Invalid account ID!")
-        if ( account.role != UserRole.CHAIR) {
-            return ErrorDto(false, "Invalid account role!")
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
 
         paper.decision = if (paperEvaluationDto.response) PaperDecision.ACCEPTED else PaperDecision.REJECTED
         paper.decisionMaker = account

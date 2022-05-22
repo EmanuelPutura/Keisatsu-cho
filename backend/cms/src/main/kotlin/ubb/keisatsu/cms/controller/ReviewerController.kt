@@ -1,9 +1,19 @@
 package ubb.keisatsu.cms.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.*
 import ubb.keisatsu.cms.model.dto.*
 import ubb.keisatsu.cms.model.entities.*
+import ubb.keisatsu.cms.model.entities.Comment
+import ubb.keisatsu.cms.model.entities.Conference
+import ubb.keisatsu.cms.model.dto.AccountTopicsOfInterestDto
+import ubb.keisatsu.cms.model.dto.TopicsDto
+import ubb.keisatsu.cms.model.entities.Account
+import ubb.keisatsu.cms.model.entities.TopicOfInterest
+import ubb.keisatsu.cms.model.entities.UserRole
 import ubb.keisatsu.cms.service.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -13,22 +23,22 @@ import java.time.format.DateTimeFormatter
 class ReviewerController(private val accountsService: AccountsService, private val topicsOfInterestService: TopicsOfInterestService, private val conferencesService: ConferencesService, private val paperService: PaperService, private val commentsService: CommentService, private val reviewService: ReviewService) {
 
     @GetMapping("accounts/topics")
+    @PreAuthorize("hasRole('REVIEWER')")
     fun getTopicsOfReviewer(@RequestParam(name="accountID") accountId: Int): TopicsDto {
-        val account = accountsService.retrieveAccount(accountId)
-        if (account == null || account.role != UserRole.REVIEWER) {
-            return TopicsDto("")
-        }
-        val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForAccount(accountId))
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
+        val topics: String = topicsOfInterestService.convertTopicsArrayToString(topicsOfInterestService.findAllForAccount(account.id))
         return TopicsDto(topics)
     }
 
     @PutMapping("accounts/topics")
     @Transactional
+    @PreAuthorize("hasRole('REVIEWER')")
     fun updateReviewerTopicsOfInterest(@RequestBody accountTopicsOfInterestDto: AccountTopicsOfInterestDto) {
-        val account = accountsService.retrieveAccount(accountTopicsOfInterestDto.token)
-        if (account == null || account.role != UserRole.REVIEWER) {
-            return
-        }
+        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+        val account = token.principal as Account
+
         account.topicsOfInterest.clear()
         accountTopicsOfInterestDto.topics.lines().forEach { topic ->
             if (topic == "")

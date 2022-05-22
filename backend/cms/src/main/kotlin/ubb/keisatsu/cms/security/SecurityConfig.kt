@@ -66,10 +66,11 @@ class SecurityConfig(val accountRepo: AccountsRepository, var jwtTokenFilter: Jw
     fun corsFilter(): CorsFilter {
         val source = UrlBasedCorsConfigurationSource()
         val config = CorsConfiguration()
-        config.allowCredentials = true
+       // config.allowCredentials = true
         config.addAllowedOrigin("*")
         config.addAllowedHeader("*")
         config.addAllowedMethod("*")
+        config.addExposedHeader("Authorization")
         source.registerCorsConfiguration("/**", config)
         return CorsFilter(source)
     }
