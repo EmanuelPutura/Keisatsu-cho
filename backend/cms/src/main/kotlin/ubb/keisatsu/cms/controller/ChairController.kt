@@ -62,9 +62,9 @@ class ChairController(
     @PostMapping("conferences/add")
     @PreAuthorize("hasRole('CHAIR')")
     fun addConference(@RequestBody conferenceDto: ConferenceSubmitDto): ErrorDto {
-        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
-        val account = token.principal as Account
-
+//        val token = SecurityContextHolder.getContext().authentication as UsernamePasswordAuthenticationToken;
+//        val account = token.principal as Account
+        val account = accountsService.retrieveAccountByEmail(conferenceDto.email) ?: return ErrorDto(false, "Invalid account email!")
         conferencesService.addConference(Conference(conferenceDto.name, conferenceDto.url, conferenceDto.subtitles, account))
         return ErrorDto(true)
     }
