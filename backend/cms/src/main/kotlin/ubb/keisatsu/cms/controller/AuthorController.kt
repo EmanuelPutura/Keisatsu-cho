@@ -64,6 +64,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     }
 
     @GetMapping("/papers/getFullPaper")
+    @PreAuthorize("hasRole('AUTHOR')")
     fun getFullPaperFile(@RequestParam paperId: Int): InputStreamResource? {
         val paper = paperService.retrievePaper(paperId) ?: return null
         val fullPaperPath = paper.fullPaper ?: return null
@@ -71,6 +72,7 @@ class AuthorController(private val conferencesService: ConferencesService, priva
     }
 
     @GetMapping("/papers/getCameraReadyCopy")
+    @PreAuthorize("hasRole('AUTHOR')")
     fun getPaperCameraReadyCopy(@RequestParam paperId: Int): InputStreamResource? {
         val paper = paperService.retrievePaper(paperId) ?: return null
         val cameraReadyCopyPath = paper.cameraReadyCopy ?: return null
