@@ -9,6 +9,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.noarg") version "1.6.21"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
+
+    id("org.jetbrains.dokka") version "1.6.21"
 }
 
 allOpen {
