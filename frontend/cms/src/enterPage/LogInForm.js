@@ -32,7 +32,6 @@ function LogInForm({setToken}){
                 }).then(response => {
                     console.log(Array.from(response.headers.keys()));
                     let jwt = response.headers.get("Authorization");
-                    alert("Jwt is " + jwt);
                     localStorage.setItem("jwt", jwt);
                     return response.json();
                 })
