@@ -7,7 +7,7 @@
 
 ## <a name="diagram-db"></a>Database Diagram
 
-<p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/database_diagram.jpg" height="500"/> </p>
+<p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/final-database-diagram.png" height="500"/> </p>
 
 <hr/>
 
@@ -26,5 +26,11 @@
 ## Arhitecture Diagram
 
 <p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/Architecture_diagram.drawio.png" height="600"/> </p>
+
+<hr/>
+
+## Class Diagram
+
+<p align="center"> <img src="https://github.com/EmanuelPutura/Keisatsu-cho/blob/main/diagrams/class_diagram.jpg"/> </p>
 
 <hr/>
